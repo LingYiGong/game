@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="description" content="第1版：经典单颗掉落版 — 云朵彩虹糖果" />
+  <meta name="description" content="第1版：经典单颗掉落版 — 云朵彩虹糖果（集满10颗胜利版）" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍬</text></svg>" />
   <title>第1版：经典单颗掉落版 — 云朵彩虹糖果</title>
   <style>
@@ -14,11 +14,11 @@
       --ink-dark: #282a24;
       --cloud-frame: #cfd428;
       --cloud-frame-shade: #b9be1c;
-      --col-red: #ce2026;
+      --col-red: #cf2027;
       --col-pink: #f39bc3;
       --col-green: #1d8f24;
       --col-purple: #5d4b86;
-      --col-blue: #454ea8;
+      --col-blue: #4650b0;
       --col-orange: #e36517;
       --col-skyblue: #298cd4;
     }
@@ -58,6 +58,7 @@
       padding: env(safe-area-inset-top, 6px) 8px env(safe-area-inset-bottom, 8px);
     }
 
+    /* Top HUD Bar */
     .hud-bar {
       width: 100%;
       display: flex;
@@ -65,7 +66,7 @@
       justify-content: space-between;
       gap: 6px;
       padding: 6px 10px;
-      background: rgba(255, 252, 245, 0.94);
+      background: rgba(255, 252, 245, 0.95);
       border: 2.5px solid var(--ink-dark);
       border-radius: 16px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
@@ -77,7 +78,7 @@
     .hud-stats {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       flex-wrap: wrap;
     }
 
@@ -88,18 +89,27 @@
       background: #fff;
       border: 2px solid var(--ink-dark);
       border-radius: 999px;
-      padding: 3px 10px;
+      padding: 3px 9px;
       font-weight: 800;
-      font-size: 14px;
+      font-size: 13.5px;
       color: var(--ink-dark);
       box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
     }
 
     .stat-pill span.val {
       color: #d62828;
-      font-size: 16px;
-      min-width: 20px;
+      font-size: 15px;
+      min-width: 18px;
       text-align: center;
+    }
+
+    .stat-pill.pill-target {
+      background: #fdf5d6;
+      border-color: #8c6a08;
+    }
+
+    .stat-pill.pill-target span.val {
+      color: #b25900;
     }
 
     .hud-actions {
@@ -116,7 +126,7 @@
       color: var(--ink-dark);
       font-weight: 800;
       font-size: 13px;
-      padding: 5px 10px;
+      padding: 5px 9px;
       border-radius: 12px;
       cursor: pointer;
       box-shadow: 2px 2px 0 var(--ink-dark);
@@ -141,13 +151,14 @@
       background: #d4f5b4;
     }
 
+    /* Main Drawing Paper Game Canvas */
     #paper-stage {
       position: relative;
       width: 100%;
       flex: 1;
       min-height: 0;
       background: var(--paper-bg);
-      border-radius: 10px;
+      border-radius: 12px;
       box-shadow:
         0 10px 30px rgba(0, 0, 0, 0.45),
         inset 0 0 40px rgba(210, 195, 165, 0.25);
@@ -168,6 +179,7 @@
       cursor: grabbing;
     }
 
+    /* Bottom Touch & Quick Control Bar */
     .control-bar {
       width: 100%;
       display: flex;
@@ -214,6 +226,7 @@
       background: #f5c227;
     }
 
+    /* Modals */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -305,7 +318,7 @@
     }
 
     .mode-item strong {
-      font-size: 16px;
+      font-size: 15.5px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -317,12 +330,109 @@
       line-height: 1.4;
     }
 
+    /* Victory Modal Card */
+    .victory-card {
+      text-align: center;
+      background: linear-gradient(180deg, #fffcf5 0%, #fff6e0 100%);
+      border: 4px solid #332f28;
+      border-radius: 26px;
+      padding: 24px 20px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 0 4px #ffe682;
+      animation: popWin 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popWin {
+      0% { transform: scale(0.65); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .victory-badge {
+      font-size: 56px;
+      line-height: 1;
+      margin-bottom: 8px;
+      filter: drop-shadow(0 6px 12px rgba(230, 160, 20, 0.4));
+      animation: bounceBadge 1s infinite alternate ease-in-out;
+    }
+
+    @keyframes bounceBadge {
+      from { transform: translateY(0); }
+      to { transform: translateY(-8px); }
+    }
+
+    .victory-title {
+      font-size: 26px;
+      font-weight: 900;
+      color: #ce2026;
+      text-shadow: 2px 2px 0 #fff, 3px 3px 0 rgba(0,0,0,0.15);
+      margin-bottom: 6px;
+    }
+
+    .victory-subtitle {
+      font-size: 14.5px;
+      color: #5d4b86;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .victory-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin: 16px 0 22px 0;
+    }
+
+    .vstat-box {
+      background: #fff;
+      border: 2px solid var(--ink-dark);
+      border-radius: 14px;
+      padding: 10px 8px;
+      box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+    }
+
+    .vstat-box .label {
+      font-size: 12px;
+      color: #666;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .vstat-box .num {
+      font-size: 20px;
+      font-weight: 900;
+      color: #ce2026;
+    }
+
+    .victory-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-win-replay {
+      background: linear-gradient(180deg, #6ae070 0%, #2db434 100%);
+      color: #fff;
+      border: 2.5px solid var(--ink-dark);
+      padding: 10px 24px;
+      font-size: 17px;
+      font-weight: 900;
+      border-radius: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 var(--ink-dark);
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .btn-win-replay:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 var(--ink-dark);
+    }
+
     .hint-toast {
       position: absolute;
       bottom: 12px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(40, 42, 36, 0.85);
+      background: rgba(40, 42, 36, 0.88);
       color: #fff;
       padding: 6px 14px;
       border-radius: 999px;
@@ -334,21 +444,24 @@
       transition: opacity 0.4s;
     }
 
-    @media (max-width: 520px) {
+    @media (max-width: 540px) {
       .stat-pill {
         font-size: 12px;
-        padding: 2px 8px;
+        padding: 2px 7px;
       }
       .stat-pill span.val {
-        font-size: 14px;
+        font-size: 13px;
       }
       .btn-cute {
         font-size: 12px;
-        padding: 4px 8px;
+        padding: 4px 7px;
       }
       .touch-btn {
         height: 44px;
         font-size: 15px;
+      }
+      .victory-title {
+        font-size: 22px;
       }
     }
   </style>
@@ -359,14 +472,17 @@
     <div class="hud-bar">
       <div class="hud-stats">
         <a class="btn-cute" href="index.html" title="返回版本选择大厅">🏠 换版本</a>
-        <div class="stat-pill" title="接住的同色糖果得分">
-          🍬 糖果 <span class="val" id="score-val">0</span>
+        <div class="stat-pill pill-target" title="胜利目标：7个彩色柱子各装满10颗糖果">
+          🏆 满柱 <span class="val" id="full-tubes-val">0/7</span>
         </div>
-        <div class="stat-pill" title="连续投进正确颜色的连击">
+        <div class="stat-pill" title="收集到的糖果总数 (目标 70 颗)">
+          🍬 收集 <span class="val" id="total-val">0/70</span>
+        </div>
+        <div class="stat-pill" title="连续投进同色柱子的连击加成">
           🔥 连击 <span class="val" id="combo-val">0</span>
         </div>
-        <div class="stat-pill" title="集齐全部7种颜色即可召唤一次彩虹大奖">
-          🌈 彩虹 <span class="val" id="rainbow-val">0/7</span>
+        <div class="stat-pill" title="总得分">
+          ⭐ 分数 <span class="val" id="score-val">0</span>
         </div>
       </div>
 
@@ -380,6 +496,9 @@
         <button class="btn-cute" id="btn-sound" title="开关声音">
           🔊 音效
         </button>
+        <button class="btn-cute" id="btn-quick-reset" title="重新开始本局">
+          🔄 重来
+        </button>
       </div>
     </div>
 
@@ -387,7 +506,7 @@
     <div id="paper-stage">
       <canvas id="game-canvas"></canvas>
       <div class="hint-toast" id="hint-toast">
-        💻 电脑：左右方向键移动、空格放糖果 ｜ 📱 平板/手机：直接拖动云朵或点颜色列
+        🎯 胜利目标：7种颜色各收集满 10 颗糖果！左右移动云朵对准放糖吧~
       </div>
     </div>
 
@@ -405,33 +524,66 @@
     </div>
   </div>
 
+  <!-- Victory Celebration Modal -->
+  <div class="modal-backdrop" id="victory-modal">
+    <div class="modal-card victory-card">
+      <div class="victory-badge">🏆</div>
+      <h2 class="victory-title">🎉 恭喜通关！彩虹大圆满！</h2>
+      <p class="victory-subtitle">所有 7 个彩虹柱子都完美装满了 10 颗糖果！太棒了！</p>
+
+      <div class="victory-stats-grid">
+        <div class="vstat-box">
+          <div class="label">🍬 糖果总数</div>
+          <div class="num" id="win-candies">70 / 70</div>
+        </div>
+        <div class="vstat-box">
+          <div class="label">⏱️ 通关用时</div>
+          <div class="num" id="win-time">00:00</div>
+        </div>
+        <div class="vstat-box">
+          <div class="label">🔥 最高连击</div>
+          <div class="num" id="win-combo">0</div>
+        </div>
+        <div class="vstat-box">
+          <div class="label">⭐ 最终得分</div>
+          <div class="num" id="win-score">0</div>
+        </div>
+      </div>
+
+      <div class="victory-actions">
+        <button class="btn-win-replay" id="btn-win-replay">🎈 再玩一局</button>
+        <button class="btn-cute" id="btn-win-art" style="font-size:15px; padding: 10px 18px;">🎨 欣赏原作</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Mode & Rules Modal -->
   <div class="modal-backdrop" id="mode-modal">
     <div class="modal-card">
       <div class="modal-header">
-        <h2>🌈 第1版：选择糖果掉落节奏</h2>
+        <h2>🌈 糖果收集规则与模式</h2>
         <button class="btn-cute" id="close-mode-modal">✖ 关闭</button>
       </div>
-      <p style="font-size:14px; color:#444;">
-        根据手绘设计：移动上方的<strong>笑脸云朵横条</strong>，把彩色的糖果送进下方<strong>对应颜色的彩条</strong>里！
+      <p style="font-size:14px; color:#444; line-height: 1.5;">
+        🎯 <strong>胜利目标：</strong>将掉落的彩色糖果送进下方对应颜色的<strong>彩虹柱</strong>里，<strong>每个柱子刚好装满 10 颗</strong>即可大获全胜！
       </p>
       <div class="mode-grid">
         <div class="mode-item selected" data-mode="classic">
           <strong>🌟 1. 经典自动掉落（推荐） <span>默认</span></strong>
-          <p>云朵嘴边会准备好一颗彩色糖果，倒计时结束自动落下！你也可以对准同色区域后按【空格/放糖果】立刻落入。</p>
+          <p>云朵嘴边会含着一颗彩色糖果，倒计时结束自动落下！对准下方的同色柱子按【放糖果/空格】即可提前落入。</p>
         </div>
         <div class="mode-item" data-mode="rain">
           <strong>🍬 2. 彩虹连连掉（快节奏） <span>挑战</span></strong>
-          <p>云朵会每隔一小会儿自动吐出糖果！快速左右滑动云朵，让每一颗糖果都掉进下方的同色跑道里。</p>
+          <p>云朵会快速接连吐出糖果！手疾眼快滑动云朵，让每颗糖果稳稳滑进同色柱子。</p>
         </div>
         <div class="mode-item" data-mode="kids">
           <strong>🎈 3. 轻松宝宝模式（对准即掉） <span>无压力</span></strong>
-          <p>没有倒计时压力！把云朵移到对应的颜色上方停稳（或点一下）就会开心落入糖果，非常适合小朋友自由玩耍。</p>
+          <p>没有倒计时压力！移到对应颜色的柱子上方稍微停稳就会自动开心落入，特别适合小朋友玩耍。</p>
         </div>
       </div>
       <div style="margin-top: 14px; display:flex; justify-content:space-between; align-items:center;">
-        <button class="btn-cute" id="btn-reset-game">🔄 清空重玩</button>
-        <button class="btn-cute active-mode" id="btn-start-play" style="padding: 7px 18px; font-size:15px;">✨ 开始玩吧！</button>
+        <button class="btn-cute" id="btn-reset-game">🔄 重置游戏</button>
+        <button class="btn-cute active-mode" id="btn-start-play" style="padding: 7px 18px; font-size:15px;">✨ 开始挑战！</button>
       </div>
     </div>
   </div>
@@ -447,7 +599,7 @@
         游戏完整还原了画作里的每一个细节：<br/>
         • 顶部的 <strong>绿十字星、双色爱心、蓝顶紫莓心</strong> 与右上角日期<br/>
         • 中间黄绿边框、粉脸蛋的 <strong>微笑云朵横条</strong><br/>
-        • 下方从左到右一模一样的 <strong>红、粉、绿、紫、深蓝、橙、天蓝</strong> 7条彩虹色带！
+        • 下方从左到右一模一样的 <strong>草莓红、蜜桃粉、苹果绿、葡萄紫、蓝莓蓝、甜橙橘、苏打天蓝</strong> 7色彩虹柱子！
       </p>
       <div class="art-preview-box">
         <img src="artwork.jpg" alt="女儿的手绘游戏设计原图" onerror="this.parentElement.innerHTML='<div style=\'padding:24px;color:#666;\'>本地单文件模式下未找到原图文件 artwork.jpg</div>'" />
@@ -457,18 +609,23 @@
 
   <script>
     (() => {
+      // 7 Rainbow Colors exactly matching original hand drawing
       const COLOR_COLUMNS = [
-        { id: 'red',     name: '草莓红',   hex: '#cf2027', lightHex: '#ff6b72', darkHex: '#9e1318', weight: 1.05, noteFreq: 261.63 },
-        { id: 'pink',    name: '蜜桃粉',   hex: '#f39bc3', lightHex: '#ffd0e6', darkHex: '#d46b9b', weight: 1.05, noteFreq: 293.66 },
-        { id: 'green',   name: '苹果绿',   hex: '#1d8f24', lightHex: '#5cd664', darkHex: '#116316', weight: 1.32, noteFreq: 329.63 },
-        { id: 'purple',  name: '葡萄紫',   hex: '#5d4b86', lightHex: '#9b86cc', darkHex: '#3f3161', weight: 0.68, noteFreq: 349.23 },
-        { id: 'blue',    name: '蓝莓蓝',   hex: '#4650b0', lightHex: '#828cf2', darkHex: '#2b3380', weight: 1.25, noteFreq: 392.00 },
-        { id: 'orange',  name: '甜橙橘',   hex: '#e36517', lightHex: '#ffa063', darkHex: '#ab4507', weight: 1.30, noteFreq: 440.00 },
-        { id: 'skyblue', name: '苏打天蓝', hex: '#298cd4', lightHex: '#73c6ff', darkHex: '#186299', weight: 0.78, noteFreq: 493.88 }
+        { id: 'red',     name: '草莓红',   hex: '#cf2027', lightHex: '#ff6b72', darkHex: '#9e1318', noteFreq: 261.63 },
+        { id: 'pink',    name: '蜜桃粉',   hex: '#f39bc3', lightHex: '#ffd0e6', darkHex: '#d46b9b', noteFreq: 293.66 },
+        { id: 'green',   name: '苹果绿',   hex: '#1d8f24', lightHex: '#5cd664', darkHex: '#116316', noteFreq: 329.63 },
+        { id: 'purple',  name: '葡萄紫',   hex: '#5d4b86', lightHex: '#9b86cc', darkHex: '#3f3161', noteFreq: 349.23 },
+        { id: 'blue',    name: '蓝莓蓝',   hex: '#4650b0', lightHex: '#828cf2', darkHex: '#2b3380', noteFreq: 392.00 },
+        { id: 'orange',  name: '甜橙橘',   hex: '#e36517', lightHex: '#ffa063', darkHex: '#ab4507', noteFreq: 440.00 },
+        { id: 'skyblue', name: '苏打天蓝', hex: '#298cd4', lightHex: '#73c6ff', darkHex: '#186299', noteFreq: 493.88 }
       ];
 
+      const TARGET_PER_TUBE = 10;
+      const TOTAL_TUBES = COLOR_COLUMNS.length; // 7
+      const TOTAL_TARGET = TOTAL_TUBES * TARGET_PER_TUBE; // 70
       const CANDY_SHAPES = ['wrapped', 'heart', 'berry', 'star', 'round'];
 
+      // Web Audio Synthesizer
       class SoundFX {
         constructor() {
           this.enabled = true;
@@ -541,16 +698,31 @@
           this.playTone(165, 0.25, 'triangle', 0.11, 0.12);
         }
 
-        playRainbowFanfare() {
-          const notes = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25];
+        playTubeComplete() {
+          const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
           notes.forEach((n, idx) => {
-            this.playTone(n, 0.28, 'triangle', 0.2, idx * 0.065);
+            this.playTone(n, 0.3, 'triangle', 0.24, idx * 0.08);
+          });
+        }
+
+        playVictory() {
+          const fanfare = [
+            { f: 523.25, d: 0.18, t: 0 },
+            { f: 659.25, d: 0.18, t: 0.12 },
+            { f: 783.99, d: 0.24, t: 0.24 },
+            { f: 1046.5, d: 0.55, t: 0.40 },
+            { f: 880.00, d: 0.20, t: 0.75 },
+            { f: 987.77, d: 0.20, t: 0.90 },
+            { f: 1046.5, d: 0.70, t: 1.05 }
+          ];
+          fanfare.forEach(item => {
+            this.playTone(item.f, item.d, 'triangle', 0.28, item.t);
+            this.playTone(item.f * 1.5, item.d * 0.8, 'sine', 0.16, item.t + 0.02);
           });
         }
       }
 
       const sfx = new SoundFX();
-
       const canvas = document.getElementById('game-canvas');
       const ctx = canvas.getContext('2d');
 
@@ -561,11 +733,14 @@
         mode: 'classic',
         score: 0,
         combo: 0,
-        rainbowCount: 0,
-        collectedInCycle: new Set(),
+        maxCombo: 0,
+        totalCollected: 0,
+        gameStartTime: Date.now(),
+        isWon: false,
         columnCounts: [0, 0, 0, 0, 0, 0, 0],
-        columnStacks: [[], [], [], [], [], [], []],
+        columnStacks: [[], [], [], [], [], [], []], // each item: { radius, colorIdx, shape, isRainbow, rotation, squish }
         columnHighlight: [0, 0, 0, 0, 0, 0, 0],
+        columnFullGlow: [0, 0, 0, 0, 0, 0, 0],
         cloud: {
           x: 300,
           targetX: 300,
@@ -582,6 +757,7 @@
         nextCandy: null,
         fallingCandies: [],
         particles: [],
+        confetti: [],
         floatingTexts: [],
         topIconBounce: [0, 0, 0, 0, 0, 0],
         keys: { left: false, right: false },
@@ -591,18 +767,23 @@
           topIconsY: 46,
           cloudY: 128,
           columnsTopY: 225,
+          slotHeight: 40,
+          candyRadius: 19,
+          storageTopY: 285,
+          storageBottomY: 780,
           columns: []
         }
       };
 
+      // Marker strokes texture for authentic hand-drawn feel
       const markerStrokes = COLOR_COLUMNS.map(() => {
         const strokes = [];
-        for (let i = 0; i < 18; i++) {
+        for (let i = 0; i < 22; i++) {
           strokes.push({
             rx: Math.random(),
             ry: Math.random(),
             rw: 0.08 + Math.random() * 0.18,
-            rh: 0.15 + Math.random() * 0.45,
+            rh: 0.12 + Math.random() * 0.40,
             alpha: 0.05 + Math.random() * 0.08,
             light: Math.random() > 0.45
           });
@@ -614,7 +795,7 @@
         const rect = canvas.parentElement.getBoundingClientRect();
         state.dpr = Math.min(window.devicePixelRatio || 1, 2);
         state.width = Math.max(300, rect.width);
-        state.height = Math.max(400, rect.height);
+        state.height = Math.max(440, rect.height);
 
         canvas.width = Math.round(state.width * state.dpr);
         canvas.height = Math.round(state.height * state.dpr);
@@ -622,21 +803,22 @@
         const W = state.width;
         const H = state.height;
 
-        state.layout.topIconsY = Math.max(34, H * 0.068);
-        state.cloud.width = Math.min(Math.max(W * 0.42, 168), 320);
-        state.cloud.height = Math.min(Math.max(H * 0.078, 44), 64);
-        state.layout.cloudY = state.layout.topIconsY + state.cloud.height * 0.85 + 22;
+        state.layout.topIconsY = Math.max(32, H * 0.055);
+        state.cloud.width = Math.min(Math.max(W * 0.38, 160), 280);
+        state.cloud.height = Math.min(Math.max(H * 0.075, 42), 56);
+        state.layout.cloudY = state.layout.topIconsY + state.cloud.height * 0.82 + 20;
         state.cloud.y = state.layout.cloudY;
-        state.layout.columnsTopY = state.layout.cloudY + state.cloud.height * 0.5 + Math.max(38, H * 0.075);
+        state.layout.columnsTopY = state.layout.cloudY + state.cloud.height * 0.5 + Math.max(40, H * 0.065);
 
-        const totalWeight = COLOR_COLUMNS.reduce((acc, c) => acc + c.weight, 0);
+        // 7 columns: contiguous, equal width for visual harmony and fairness
+        const numCols = COLOR_COLUMNS.length; // 7
         const sideMargin = Math.max(4, W * 0.012);
         const usableW = W - sideMargin * 2;
+        const colW = usableW / numCols;
 
         let curX = sideMargin;
         state.layout.columns = COLOR_COLUMNS.map((col, idx) => {
-          const colW = (col.weight / totalWeight) * usableW;
-          const topWave = Math.sin(idx * 1.7) * 4;
+          const topWave = Math.sin(idx * 1.7) * 3;
           const colRect = {
             index: idx,
             x: curX,
@@ -647,6 +829,18 @@
           curX += colW;
           return colRect;
         });
+
+        // Candy vertical stacking area:
+        // Top header area is between columnsTopY and columnsTopY + 54 (holds title & progress badge)
+        state.layout.storageTopY = state.layout.columnsTopY + 58;
+        state.layout.storageBottomY = H - 18;
+        const storageH = state.layout.storageBottomY - state.layout.storageTopY;
+
+        // Exactly 10 slots fit the vertical height from bottom to top header
+        state.layout.slotHeight = (storageH - 8) / TARGET_PER_TUBE;
+
+        // Big, clear, and plump candy radius
+        state.layout.candyRadius = Math.max(15, Math.min(colW * 0.38, state.layout.slotHeight * 0.44, 25));
 
         clampCloudX();
       }
@@ -668,34 +862,59 @@
         return cols.length - 1;
       }
 
+      // Slot 0 is at the bottom base, Slot 9 is right under the column header
+      function getSlotCenterY(slotIndex) {
+        const base = state.layout.storageBottomY - state.layout.candyRadius;
+        return base - slotIndex * state.layout.slotHeight;
+      }
+
+      function countFullTubes() {
+        return state.columnCounts.filter(c => c >= TARGET_PER_TUBE).length;
+      }
+
       function createRandomCandy() {
-        const uncollected = [];
+        // Collect columns that have not yet reached 10 candies
+        const neededColors = [];
         for (let i = 0; i < COLOR_COLUMNS.length; i++) {
-          if (!state.collectedInCycle.has(i)) uncollected.push(i);
+          if (state.columnCounts[i] < TARGET_PER_TUBE) {
+            neededColors.push(i);
+          }
         }
 
         let colorIdx;
-        if (uncollected.length > 0 && Math.random() < 0.68) {
-          colorIdx = uncollected[Math.floor(Math.random() * uncollected.length)];
+        if (neededColors.length > 0) {
+          // 95% chance to prioritize colors the player still needs!
+          if (Math.random() < 0.95) {
+            colorIdx = neededColors[Math.floor(Math.random() * neededColors.length)];
+          } else {
+            colorIdx = Math.floor(Math.random() * COLOR_COLUMNS.length);
+          }
         } else {
           colorIdx = Math.floor(Math.random() * COLOR_COLUMNS.length);
         }
 
-        const isRainbow = state.score >= 5 && Math.random() < 0.07;
-        const shape = isRainbow
-          ? 'star'
-          : CANDY_SHAPES[Math.floor(Math.random() * CANDY_SHAPES.length)];
+        // Rainbow star candy chance ~7%
+        const isRainbow = Math.random() < 0.07;
+        const shape = isRainbow ? 'star' : CANDY_SHAPES[Math.floor(Math.random() * CANDY_SHAPES.length)];
 
         let maxTimer = 3.2;
         if (state.mode === 'classic') {
-          maxTimer = Math.max(1.8, 3.3 - Math.min(state.score * 0.02, 1.1));
+          maxTimer = Math.max(1.8, 3.2 - Math.min(state.score * 0.015, 1.0));
         } else if (state.mode === 'rain') {
           maxTimer = Math.max(1.15, 1.85 - Math.min(state.score * 0.015, 0.55));
         } else if (state.mode === 'kids') {
           maxTimer = 999999;
         }
 
-        return { colorIdx, shape, timer: maxTimer, maxTimer, alignTime: 0, isRainbow, scale: 0.1 };
+        return {
+          colorIdx,
+          shape,
+          timer: maxTimer,
+          maxTimer,
+          alignTime: 0,
+          isRainbow,
+          scale: 0.1
+        };
       }
 
       function spawnNextCandyOnCloud() {
@@ -705,7 +924,7 @@
       }
 
       function dropActiveCandy() {
-        if (!state.activeCandy || state.fallingCandies.length >= 4) return;
+        if (!state.activeCandy || state.isWon || state.fallingCandies.length >= 4) return;
         const c = state.activeCandy;
         const dropX = state.cloud.x;
         const dropY = state.cloud.y + state.cloud.height * 0.48;
@@ -716,7 +935,7 @@
           vx: state.cloud.vx * 0.08,
           vy: 140,
           gravity: 680,
-          radius: Math.max(15, Math.min(state.width * 0.032, 22)),
+          radius: state.layout.candyRadius,
           colorIdx: c.colorIdx,
           shape: c.shape,
           isRainbow: c.isRainbow,
@@ -748,20 +967,90 @@
         }
       }
 
+      function spawnVictoryConfetti() {
+        const colors = COLOR_COLUMNS.map(c => c.hex).concat(['#ffd700', '#ff69b4', '#00ffff']);
+        for (let i = 0; i < 40; i++) {
+          state.confetti.push({
+            x: Math.random() * state.width,
+            y: -10 - Math.random() * 80,
+            vx: (Math.random() - 0.5) * 120,
+            vy: 100 + Math.random() * 220,
+            w: 8 + Math.random() * 8,
+            h: 5 + Math.random() * 6,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            rotation: Math.random() * Math.PI,
+            vRot: (Math.random() - 0.5) * 8,
+            alpha: 1
+          });
+        }
+      }
+
       function addFloatingText(x, y, text, color = '#282a24', scale = 1) {
-        state.floatingTexts.push({ x, y, text, color, scale, alpha: 1, vy: -55, life: 1.0 });
+        state.floatingTexts.push({ x, y, text, color, scale, alpha: 1, vy: -55, life: 1.1 });
       }
 
       function updateHUD() {
-        document.getElementById('score-val').textContent = state.score;
+        const fullCount = countFullTubes();
+        document.getElementById('full-tubes-val').textContent = `${fullCount}/${TOTAL_TUBES}`;
+        document.getElementById('total-val').textContent = `${state.totalCollected}/${TOTAL_TARGET}`;
         document.getElementById('combo-val').textContent = state.combo;
-        document.getElementById('rainbow-val').textContent = `${state.collectedInCycle.size}/7`;
+        document.getElementById('score-val').textContent = state.score;
+      }
+
+      function formatTime(totalSeconds) {
+        const m = Math.floor(totalSeconds / 60);
+        const s = Math.floor(totalSeconds % 60);
+        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      }
+
+      function triggerVictory() {
+        if (state.isWon) return;
+        state.isWon = true;
+        sfx.playVictory();
+
+        const elapsed = (Date.now() - state.gameStartTime) / 1000;
+        document.getElementById('win-candies').textContent = `${state.totalCollected} / ${TOTAL_TARGET}`;
+        document.getElementById('win-time').textContent = formatTime(elapsed);
+        document.getElementById('win-combo').textContent = state.maxCombo;
+        document.getElementById('win-score').textContent = state.score;
+
+        spawnVictoryConfetti();
+
+        setTimeout(() => {
+          document.getElementById('victory-modal').classList.add('open');
+        }, 650);
+      }
+
+      function resetGame() {
+        state.score = 0;
+        state.combo = 0;
+        state.maxCombo = 0;
+        state.totalCollected = 0;
+        state.isWon = false;
+        state.gameStartTime = Date.now();
+        state.columnCounts = [0, 0, 0, 0, 0, 0, 0];
+        state.columnStacks = [[], [], [], [], [], [], []];
+        state.columnFullGlow = [0, 0, 0, 0, 0, 0, 0];
+        state.fallingCandies = [];
+        state.confetti = [];
+        state.activeCandy = null;
+        spawnNextCandyOnCloud();
+        updateHUD();
+        document.getElementById('victory-modal').classList.remove('open');
       }
 
       function update(dt) {
         const cols = state.layout.columns;
         if (!cols.length) return;
 
+        // Victory celebration state updates
+        if (state.isWon) {
+          if (Math.random() < 0.15) spawnVictoryConfetti();
+          state.cloud.bounceY = Math.sin(performance.now() * 0.008) * 6;
+          state.cloud.mood = 'joy';
+        }
+
+        // Horizontal cloud motion
         const moveSpeed = state.width * 0.78;
         if (state.keys.left) state.cloud.targetX -= moveSpeed * dt;
         if (state.keys.right) state.cloud.targetX += moveSpeed * dt;
@@ -775,10 +1064,12 @@
         const targetEyeOffset = Math.max(-5, Math.min(5, state.cloud.vx * 0.015));
         state.cloud.eyeOffsetX += (targetEyeOffset - state.cloud.eyeOffsetX) * Math.min(1, 10 * dt);
 
-        state.cloud.bounceY *= Math.pow(0.08, dt);
+        if (!state.isWon) {
+          state.cloud.bounceY *= Math.pow(0.08, dt);
+        }
         if (state.cloud.moodTimer > 0) {
           state.cloud.moodTimer -= dt;
-          if (state.cloud.moodTimer <= 0) state.cloud.mood = 'happy';
+          if (state.cloud.moodTimer <= 0 && !state.isWon) state.cloud.mood = 'happy';
         }
 
         for (let i = 0; i < state.topIconBounce.length; i++) {
@@ -789,31 +1080,47 @@
         for (let i = 0; i < cols.length; i++) {
           const targetGlow = i === currentHoverCol ? 1 : 0;
           state.columnHighlight[i] += (targetGlow - state.columnHighlight[i]) * Math.min(1, 10 * dt);
-        }
-
-        if (!state.activeCandy) {
-          spawnNextCandyOnCloud();
-        } else {
-          const ac = state.activeCandy;
-          ac.scale = Math.min(1, ac.scale + dt * 5);
-
-          const isOverMatchingCol = ac.isRainbow || currentHoverCol === ac.colorIdx;
-          const isCloudSteady = Math.abs(state.cloud.vx) < 35;
-
-          if (state.mode === 'kids') {
-            if (isOverMatchingCol && isCloudSteady) {
-              ac.alignTime += dt;
-              if (ac.alignTime >= 0.45) dropActiveCandy();
-            } else {
-              ac.alignTime = Math.max(0, ac.alignTime - dt * 2);
-            }
-          } else {
-            ac.timer -= dt;
-            if (ac.timer <= 0) dropActiveCandy();
+          if (state.columnCounts[i] >= TARGET_PER_TUBE) {
+            state.columnFullGlow[i] = Math.min(1, state.columnFullGlow[i] + dt * 2);
           }
         }
 
-        const floorBaseY = state.height - 18;
+        // Active Candy Countdown or Align
+        if (!state.isWon) {
+          if (!state.activeCandy) {
+            spawnNextCandyOnCloud();
+          } else {
+            const ac = state.activeCandy;
+            ac.scale = Math.min(1, ac.scale + dt * 5);
+
+            const isOverMatchingCol = ac.isRainbow || currentHoverCol === ac.colorIdx;
+            const isCloudSteady = Math.abs(state.cloud.vx) < 35;
+
+            if (state.mode === 'kids') {
+              if (isOverMatchingCol && isCloudSteady) {
+                ac.alignTime += dt;
+                if (ac.alignTime >= 0.45) dropActiveCandy();
+              } else {
+                ac.alignTime = Math.max(0, ac.alignTime - dt * 2);
+              }
+            } else {
+              ac.timer -= dt;
+              if (ac.timer <= 0) dropActiveCandy();
+            }
+          }
+        }
+
+        // Update Squish Animation in stacked candies
+        for (let c = 0; c < state.columnStacks.length; c++) {
+          const stack = state.columnStacks[c];
+          for (let s = 0; s < stack.length; s++) {
+            if (stack[s].squish && stack[s].squish !== 1) {
+              stack[s].squish += (1 - stack[s].squish) * Math.min(1, 12 * dt);
+            }
+          }
+        }
+
+        // Falling Candies physics & landing
         for (let i = state.fallingCandies.length - 1; i >= 0; i--) {
           const fc = state.fallingCandies[i];
           fc.vy += fc.gravity * dt;
@@ -824,73 +1131,79 @@
           const colIdx = getColumnIndexAtX(fc.x);
           const col = cols[colIdx];
 
-          const stackCount = state.columnStacks[colIdx].length;
-          const stackHeight = Math.min(stackCount * 12, (state.height - col.topY) * 0.55);
-          const landingY = floorBaseY - stackHeight - fc.radius;
+          const currentCount = state.columnCounts[colIdx];
+          const targetSlot = Math.min(TARGET_PER_TUBE - 1, currentCount);
+          const landingY = getSlotCenterY(targetSlot);
 
-          if (fc.y >= Math.max(col.topY + 26, landingY)) {
+          if (fc.y >= Math.max(col.topY + 20, landingY)) {
             const matched = fc.isRainbow || colIdx === fc.colorIdx;
 
             if (matched) {
               state.combo += 1;
+              if (state.combo > state.maxCombo) state.maxCombo = state.combo;
+
               const points = fc.isRainbow ? 5 : (1 + Math.min(state.combo - 1, 5));
               state.score += points;
 
-              const creditCol = colIdx;
-              state.columnCounts[creditCol] += 1;
-              state.collectedInCycle.add(creditCol);
+              if (currentCount < TARGET_PER_TUBE) {
+                state.totalCollected += 1;
+                state.columnCounts[colIdx] += 1;
 
-              if (state.columnStacks[creditCol].length < 18) {
-                const offsetX = (Math.random() - 0.5) * Math.max(8, col.width - fc.radius * 2.2);
-                state.columnStacks[creditCol].push({
-                  offsetX,
-                  radius: fc.radius * 0.85,
-                  colorIdx: creditCol,
+                state.columnStacks[colIdx].push({
+                  radius: state.layout.candyRadius,
+                  colorIdx: colIdx,
                   shape: fc.shape,
                   isRainbow: fc.isRainbow,
-                  rotation: (Math.random() - 0.5) * 0.5
+                  rotation: (Math.random() - 0.5) * 0.18,
+                  squish: 1.35
                 });
-              }
 
-              state.cloud.mood = 'joy';
-              state.cloud.moodTimer = 0.7;
-              state.cloud.bounceY = -10;
-              state.topIconBounce[creditCol % 6] = 10;
+                state.cloud.mood = 'joy';
+                state.cloud.moodTimer = 0.7;
+                state.cloud.bounceY = -10;
+                state.topIconBounce[colIdx % 6] = 10;
 
-              sfx.playMatch(creditCol, state.combo);
-              spawnBurstParticles(fc.x, fc.y, COLOR_COLUMNS[creditCol].lightHex, 20, fc.isRainbow);
-              addFloatingText(
-                col.centerX,
-                Math.min(fc.y - 15, state.layout.columnsTopY + 40),
-                state.combo > 1 ? `+${points} 连击x${state.combo}!` : `+${points} 好棒!`,
-                '#fff',
-                1.15
-              );
+                // Check if this column just completed 10 candies!
+                if (state.columnCounts[colIdx] === TARGET_PER_TUBE) {
+                  sfx.playTubeComplete();
+                  spawnBurstParticles(col.centerX, col.topY + 30, '#ffd700', 26, true);
+                  addFloatingText(col.centerX, col.topY - 14, `🎉 ${COLOR_COLUMNS[colIdx].name}柱集满10颗!`, '#1d8f24', 1.35);
 
-              if (state.collectedInCycle.size >= 7) {
-                state.rainbowCount += 1;
-                state.score += 10;
-                state.collectedInCycle.clear();
-                sfx.playRainbowFanfare();
-                for (let k = 0; k < 6; k++) state.topIconBounce[k] = 16;
-                for (let cIdx = 0; cIdx < cols.length; cIdx++) {
-                  spawnBurstParticles(cols[cIdx].centerX, cols[cIdx].topY + 40, COLOR_COLUMNS[cIdx].lightHex, 12, true);
+                  // Check overall victory: all 7 columns full!
+                  if (countFullTubes() >= TOTAL_TUBES) {
+                    triggerVictory();
+                  }
+                } else {
+                  sfx.playMatch(colIdx, state.combo);
+                  spawnBurstParticles(fc.x, landingY, COLOR_COLUMNS[colIdx].lightHex, 18, fc.isRainbow);
+                  const progressStr = `${state.columnCounts[colIdx]}/${TARGET_PER_TUBE}`;
+                  addFloatingText(
+                    col.centerX,
+                    landingY - 18,
+                    state.combo > 1 ? `+${points} (${progressStr}) x${state.combo}!` : `+${points} (${progressStr})`,
+                    '#fff',
+                    1.15
+                  );
                 }
-                addFloatingText(state.width / 2, state.layout.columnsTopY - 10, '🌈 集齐七彩糖果！奖励 +10 🍬', '#d62828', 1.45);
+              } else {
+                // Column is already at 10: bonus points
+                sfx.playMatch(colIdx, 1);
+                spawnBurstParticles(fc.x, landingY, '#ffd700', 12, true);
+                addFloatingText(col.centerX, landingY - 18, `满柱奖励 +5! ⭐`, '#ffd700', 1.15);
               }
 
               updateHUD();
             } else {
+              // Mismatch
               state.combo = 0;
               state.cloud.mood = 'oops';
               state.cloud.moodTimer = 0.75;
               sfx.playMismatch();
 
-              const targetCol = cols[fc.colorIdx];
               const targetName = COLOR_COLUMNS[fc.colorIdx].name;
-              spawnBurstParticles(fc.x, fc.y, '#cccccc', 8, false);
-              addFloatingText(fc.x, Math.min(fc.y - 10, state.layout.columnsTopY + 50), `哎呀！我是${targetName}哦~`, COLOR_COLUMNS[fc.colorIdx].hex, 1.0);
-              if (targetCol) state.columnHighlight[fc.colorIdx] = 1.6;
+              spawnBurstParticles(fc.x, fc.y, '#cccccc', 10, false);
+              addFloatingText(fc.x, Math.min(fc.y - 10, state.layout.columnsTopY + 50), `哎呀！我是${targetName}哦~`, COLOR_COLUMNS[fc.colorIdx].hex, 1.05);
+              state.columnHighlight[fc.colorIdx] = 1.8;
               updateHUD();
             }
 
@@ -898,6 +1211,7 @@
           }
         }
 
+        // Particles
         for (let i = state.particles.length - 1; i >= 0; i--) {
           const p = state.particles[i];
           p.vy += 320 * dt;
@@ -908,6 +1222,18 @@
           if (p.life <= 0) state.particles.splice(i, 1);
         }
 
+        // Victory Confetti
+        for (let i = state.confetti.length - 1; i >= 0; i--) {
+          const cf = state.confetti[i];
+          cf.y += cf.vy * dt;
+          cf.x += cf.vx * dt + Math.sin(cf.y * 0.05) * 30 * dt;
+          cf.rotation += cf.vRot * dt;
+          if (cf.y > state.height + 40) {
+            state.confetti.splice(i, 1);
+          }
+        }
+
+        // Floating texts
         for (let i = state.floatingTexts.length - 1; i >= 0; i--) {
           const ft = state.floatingTexts[i];
           ft.y += ft.vy * dt;
@@ -916,6 +1242,8 @@
           if (ft.life <= 0) state.floatingTexts.splice(i, 1);
         }
       }
+
+      /* ---------------- Drawing functions ---------------- */
 
       function drawGreenStarIcon(ctx, cx, cy, size) {
         ctx.save();
@@ -1011,19 +1339,19 @@
       function drawTopHeaderDecorations(ctx) {
         const W = state.width;
         const y = state.layout.topIconsY;
-        const iconSize = Math.min(Math.max(W * 0.036, 16), 26);
+        const iconSize = Math.min(Math.max(W * 0.034, 15), 24);
 
         ctx.save();
-        ctx.font = `600 ${Math.max(12, Math.min(15, W * 0.025))}px "Comic Sans MS", "KaiTi", cursive, sans-serif`;
+        ctx.font = `600 ${Math.max(12, Math.min(14, W * 0.024))}px "Comic Sans MS", "KaiTi", cursive, sans-serif`;
         ctx.fillStyle = '#4f5d75';
         ctx.textAlign = 'right';
-        ctx.translate(W - 14, 20);
+        ctx.translate(W - 12, 18);
         ctx.rotate(0.02);
         ctx.fillText('2026年11月1日', 0, 0);
         ctx.restore();
 
-        const startX = W * 0.15;
-        const endX = W * 0.85;
+        const startX = W * 0.14;
+        const endX = W * 0.86;
         const step = (endX - startX) / 5;
 
         for (let i = 0; i < 6; i++) {
@@ -1041,11 +1369,19 @@
         }
       }
 
-      function drawCandy(ctx, x, y, radius, colorIdx, shape, isRainbow = false, rotation = 0) {
+      function drawCandy(ctx, x, y, radius, colorIdx, shape, isRainbow = false, rotation = 0, squish = 1) {
         const col = COLOR_COLUMNS[colorIdx] || COLOR_COLUMNS[0];
         ctx.save();
         ctx.translate(x, y);
         ctx.rotate(rotation);
+        if (squish && squish !== 1) {
+          ctx.scale(squish, 1 / squish);
+        }
+
+        // Soft candy drop shadow so it pops clearly from the colored column
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.28)';
+        ctx.shadowBlur = 5;
+        ctx.shadowOffsetY = 2.5;
 
         let fillStyle = col.hex;
         if (isRainbow) {
@@ -1060,10 +1396,11 @@
         }
 
         ctx.strokeStyle = '#282a24';
-        ctx.lineWidth = 2.4;
+        ctx.lineWidth = 2.6;
         ctx.lineJoin = 'round';
 
         if (shape === 'wrapped') {
+          // Wrapped candy wings
           ctx.fillStyle = fillStyle;
           ctx.beginPath();
           ctx.moveTo(-radius * 0.65, 0);
@@ -1083,15 +1420,18 @@
           ctx.fill();
           ctx.stroke();
 
+          // Main candy center
           ctx.beginPath();
-          ctx.arc(0, 0, radius * 0.82, 0, Math.PI * 2);
+          ctx.arc(0, 0, radius * 0.86, 0, Math.PI * 2);
           ctx.fillStyle = fillStyle;
           ctx.fill();
           ctx.stroke();
 
+          // Glossy highlight
+          ctx.shadowColor = 'transparent';
           ctx.beginPath();
-          ctx.arc(-radius * 0.22, -radius * 0.22, radius * 0.24, 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(255,255,255,0.65)';
+          ctx.arc(-radius * 0.24, -radius * 0.24, radius * 0.28, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255,255,255,0.75)';
           ctx.fill();
         } else if (shape === 'heart') {
           const s = radius * 1.05;
@@ -1103,9 +1443,15 @@
           ctx.fillStyle = fillStyle;
           ctx.fill();
           ctx.stroke();
+
+          ctx.shadowColor = 'transparent';
+          ctx.beginPath();
+          ctx.arc(-s * 0.35, -s * 0.2, s * 0.22, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255,255,255,0.65)';
+          ctx.fill();
         } else if (shape === 'star') {
           const spikes = 5;
-          const outerR = radius * 1.08;
+          const outerR = radius * 1.1;
           const innerR = radius * 0.52;
           ctx.beginPath();
           for (let i = 0; i < spikes * 2; i++) {
@@ -1120,8 +1466,14 @@
           ctx.fillStyle = fillStyle;
           ctx.fill();
           ctx.stroke();
+
+          ctx.shadowColor = 'transparent';
+          ctx.beginPath();
+          ctx.arc(-outerR * 0.2, -outerR * 0.2, innerR * 0.38, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255,255,255,0.78)';
+          ctx.fill();
         } else if (shape === 'berry') {
-          const s = radius * 0.98;
+          const s = radius * 1.0;
           ctx.beginPath();
           ctx.moveTo(-s * 0.78, -s * 0.1);
           ctx.quadraticCurveTo(-s * 0.55, s * 0.65, 0, s * 0.92);
@@ -1131,6 +1483,7 @@
           ctx.fill();
           ctx.stroke();
 
+          ctx.shadowColor = 'transparent';
           ctx.beginPath();
           ctx.arc(-s * 0.38, -s * 0.22, s * 0.28, Math.PI * 0.8, Math.PI * 2.2);
           ctx.arc(0, -s * 0.3, s * 0.32, Math.PI * 0.9, Math.PI * 2.1);
@@ -1140,16 +1493,18 @@
           ctx.fill();
           ctx.stroke();
         } else {
+          // Glossy round candy
           ctx.beginPath();
-          ctx.arc(0, 0, radius * 0.92, 0, Math.PI * 2);
+          ctx.arc(0, 0, radius * 0.94, 0, Math.PI * 2);
           ctx.fillStyle = fillStyle;
           ctx.fill();
           ctx.stroke();
 
+          ctx.shadowColor = 'transparent';
           ctx.beginPath();
-          ctx.arc(0, 0, radius * 0.52, 0, Math.PI * 1.35);
-          ctx.strokeStyle = 'rgba(255,255,255,0.75)';
-          ctx.lineWidth = 2.5;
+          ctx.arc(0, 0, radius * 0.58, 0, Math.PI * 1.35);
+          ctx.strokeStyle = 'rgba(255,255,255,0.82)';
+          ctx.lineWidth = 3.2;
           ctx.stroke();
         }
 
@@ -1165,11 +1520,13 @@
         ctx.save();
         ctx.translate(x, cy);
 
+        // Shadow
         ctx.fillStyle = 'rgba(40, 42, 36, 0.14)';
         ctx.beginPath();
         ctx.roundRect(-halfW + 3, -halfH + 5, width, height, 8);
         ctx.fill();
 
+        // Yellow-green outer border (from artwork)
         ctx.fillStyle = '#cfd428';
         ctx.strokeStyle = '#282a24';
         ctx.lineWidth = 3.2;
@@ -1178,6 +1535,7 @@
         ctx.fill();
         ctx.stroke();
 
+        // White cloud body
         const cloudW = width - 16;
         const cloudH = height - 14;
         const cLeft = -cloudW / 2;
@@ -1220,6 +1578,7 @@
         ctx.fill();
         ctx.stroke();
 
+        // Cheeks
         const eyeX = cloudW * 0.25;
         const cheekX = cloudW * 0.35;
 
@@ -1229,15 +1588,16 @@
         ctx.ellipse(cheekX, 3, 9, 4.5, 0, 0, Math.PI * 2);
         ctx.fill();
 
+        // Eyes
         ctx.strokeStyle = '#282a24';
         ctx.fillStyle = '#282a24';
         ctx.lineWidth = 3;
         if (mood === 'joy') {
           ctx.beginPath();
-          ctx.arc(-eyeX + eyeOffsetX, 0, 5, Math.PI * 1.1, Math.PI * 1.9);
+          ctx.arc(-eyeX + eyeOffsetX, 0, 5.5, Math.PI * 1.1, Math.PI * 1.9);
           ctx.stroke();
           ctx.beginPath();
-          ctx.arc(eyeX + eyeOffsetX, 0, 5, Math.PI * 1.1, Math.PI * 1.9);
+          ctx.arc(eyeX + eyeOffsetX, 0, 5.5, Math.PI * 1.1, Math.PI * 1.9);
           ctx.stroke();
         } else {
           ctx.beginPath();
@@ -1246,6 +1606,7 @@
           ctx.fill();
         }
 
+        // Mouth
         ctx.beginPath();
         if (mood === 'oops') {
           ctx.arc(0, 4, 4, 0, Math.PI * 2);
@@ -1256,37 +1617,40 @@
           ctx.stroke();
         }
 
+        // Preview next candy
         if (state.nextCandy) {
           const nc = state.nextCandy;
-          const bx = halfW - 18;
+          const bx = halfW - 20;
           const by = -halfH - 12;
           ctx.fillStyle = 'rgba(255,255,255,0.92)';
           ctx.strokeStyle = '#282a24';
           ctx.lineWidth = 1.8;
           ctx.beginPath();
-          ctx.roundRect(bx - 34, by - 11, 54, 22, 11);
+          ctx.roundRect(bx - 36, by - 12, 58, 24, 12);
           ctx.fill();
           ctx.stroke();
 
-          ctx.fillStyle = '#444';
-          ctx.font = 'bold 10px sans-serif';
+          ctx.fillStyle = '#555';
+          ctx.font = 'bold 11px sans-serif';
           ctx.textAlign = 'left';
-          ctx.fillText('下一颗', bx - 30, by + 3.5);
-          drawCandy(ctx, bx + 10, by, 6.5, nc.colorIdx, nc.shape, nc.isRainbow, 0);
+          ctx.fillText('下颗', bx - 30, by + 4);
+          drawCandy(ctx, bx + 10, by, 7.5, nc.colorIdx, nc.shape, nc.isRainbow, 0);
         }
 
         ctx.restore();
 
+        // Active Candy Under Cloud
         if (state.activeCandy) {
           const ac = state.activeCandy;
-          const candyR = Math.max(15, Math.min(state.width * 0.032, 22)) * ac.scale;
+          const candyR = state.layout.candyRadius * ac.scale;
           const candyX = x;
-          const candyY = cy + halfH + candyR * 0.85 + 4;
+          const candyY = cy + halfH + candyR * 0.95 + 6;
           const colInfo = COLOR_COLUMNS[ac.colorIdx];
 
           const hoverIdx = getColumnIndexAtX(candyX);
           const isMatch = ac.isRainbow || hoverIdx === ac.colorIdx;
 
+          // Alignment laser / guide line
           ctx.save();
           ctx.beginPath();
           ctx.setLineDash([6, 6]);
@@ -1297,6 +1661,7 @@
           ctx.stroke();
           ctx.restore();
 
+          // Progress Ring around active candy
           ctx.save();
           ctx.beginPath();
           let progress = 1;
@@ -1314,17 +1679,20 @@
 
           drawCandy(ctx, candyX, candyY, candyR, ac.colorIdx, ac.shape, ac.isRainbow, Math.sin(performance.now() * 0.005) * 0.12);
 
+          // Indicator badge
           if (isMatch) {
             ctx.save();
             ctx.font = 'bold 12px sans-serif';
             ctx.textAlign = 'center';
             ctx.fillStyle = '#1d8f24';
-            ctx.fillText(ac.isRainbow ? '✨ 彩虹糖!' : `✓ 对准${colInfo.name}`, candyX, candyY + candyR + 18);
+            const colFull = state.columnCounts[hoverIdx] >= TARGET_PER_TUBE;
+            ctx.fillText(colFull ? '⭐ 该柱已满10颗!' : (ac.isRainbow ? '✨ 彩虹百搭糖!' : `✓ 对准${colInfo.name}`), candyX, candyY + candyR + 18);
             ctx.restore();
           }
         }
       }
 
+      /* Draw the 7 Solid Colored Rainbow Columns (100% preserving original vibrant colors) */
       function drawRainbowColumns(ctx) {
         const cols = state.layout.columns;
         const H = state.height;
@@ -1333,11 +1701,13 @@
           const colRect = cols[i];
           const colDef = COLOR_COLUMNS[i];
           const glow = state.columnHighlight[i];
+          const isFull = state.columnCounts[i] >= TARGET_PER_TUBE;
           const topY = colRect.topY - glow * 6;
           const colH = H - topY;
 
           ctx.save();
 
+          // 1. Column path: wavy hand-drawn top line and solid body down to H
           ctx.beginPath();
           ctx.moveTo(colRect.x, H);
           ctx.lineTo(colRect.x, topY + 3);
@@ -1350,9 +1720,11 @@
           ctx.lineTo(colRect.x + colRect.width, H);
           ctx.closePath();
 
+          // 2. Solid Authentic Marker Color Fill!
           ctx.fillStyle = colDef.hex;
           ctx.fill();
 
+          // 3. Hand-drawn marker stroke texture!
           ctx.save();
           ctx.clip();
           const strokes = markerStrokes[i];
@@ -1364,6 +1736,24 @@
           }
           ctx.restore();
 
+          // 4. Subtle 10-level measurement notches along inner edges of the column
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+          ctx.lineWidth = 1.6;
+          for (let s = 0; s < TARGET_PER_TUBE; s++) {
+            const tickY = getSlotCenterY(s);
+            // Left tick
+            ctx.beginPath();
+            ctx.moveTo(colRect.x + 1, tickY);
+            ctx.lineTo(colRect.x + ((s === 4 || s === 9) ? 7 : 4), tickY);
+            ctx.stroke();
+            // Right tick
+            ctx.beginPath();
+            ctx.moveTo(colRect.x + colRect.width - 1, tickY);
+            ctx.lineTo(colRect.x + colRect.width - ((s === 4 || s === 9) ? 7 : 4), tickY);
+            ctx.stroke();
+          }
+
+          // 5. Glow when cloud is hovering over this column
           if (glow > 0.05) {
             ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(0.28, glow * 0.22)})`;
             ctx.fill();
@@ -1372,7 +1762,7 @@
             ctx.strokeStyle = '#282a24';
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.arc(colRect.centerX, topY + 18, 11, 0, Math.PI * 2);
+            ctx.arc(colRect.centerX, topY - 14, 10, 0, Math.PI * 2);
             ctx.fill();
             ctx.stroke();
 
@@ -1380,46 +1770,79 @@
             ctx.font = 'bold 12px sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText('▼', colRect.centerX, topY + 19);
+            ctx.fillText('▼', colRect.centerX, topY - 13);
           }
 
+          // 6. Dividing vertical lines between columns
           ctx.strokeStyle = 'rgba(40, 42, 36, 0.65)';
-          ctx.lineWidth = 2.2;
+          ctx.lineWidth = 2.4;
           ctx.beginPath();
           ctx.moveTo(colRect.x, topY);
           ctx.lineTo(colRect.x, H);
           ctx.stroke();
 
-          ctx.strokeStyle = colDef.darkHex;
-          ctx.lineWidth = 3;
+          // Top edge line
+          ctx.strokeStyle = isFull ? '#ffd700' : colDef.darkHex;
+          ctx.lineWidth = isFull ? 4 : 3;
           ctx.beginPath();
           ctx.moveTo(colRect.x, topY + 2);
           ctx.lineTo(colRect.x + colRect.width, topY + 2);
           ctx.stroke();
 
-          const isCollected = state.collectedInCycle.has(i);
+          // 7. Column Header: Name & Progress Badge (0/10 ~ 10/10)
+          const count = state.columnCounts[i];
           ctx.save();
-          ctx.font = 'bold 13px sans-serif';
+
+          // Column index / Name
+          ctx.font = 'bold 12px "PingFang SC", sans-serif';
           ctx.textAlign = 'center';
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
-          ctx.fillText(isCollected ? '⭐' : `${i + 1}`, colRect.centerX, topY + 38);
-          if (state.columnCounts[i] > 0) {
-            ctx.font = 'bold 11px sans-serif';
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-            ctx.fillText(`×${state.columnCounts[i]}`, colRect.centerX, topY + 54);
-          }
+          ctx.fillStyle = '#ffffff';
+          ctx.shadowColor = 'rgba(0,0,0,0.45)';
+          ctx.shadowBlur = 3;
+          ctx.fillText(colDef.name, colRect.centerX, topY + 20);
+
+          // Progress Badge Pill
+          const pillY = topY + 38;
+          const pillW = Math.min(colRect.width * 0.85, 48);
+          const pillH = 18;
+
+          ctx.shadowColor = 'rgba(0,0,0,0.2)';
+          ctx.shadowBlur = 3;
+          ctx.beginPath();
+          ctx.roundRect(colRect.centerX - pillW / 2, pillY - pillH / 2, pillW, pillH, 9);
+          ctx.fillStyle = isFull ? '#fff8d6' : 'rgba(255, 255, 255, 0.95)';
+          ctx.fill();
+          ctx.strokeStyle = isFull ? '#b8860b' : '#282a24';
+          ctx.lineWidth = 1.6;
+          ctx.stroke();
+
+          ctx.shadowColor = 'transparent';
+          ctx.font = `bold ${isFull ? 11 : 10.5}px monospace`;
+          ctx.fillStyle = isFull ? '#b8860b' : '#282a24';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(isFull ? '10 满⭐' : `${count}/10`, colRect.centerX, pillY);
           ctx.restore();
 
+          // 8. Candies inside the column: exactly 10 slots stacked from bottom to top!
           const stack = state.columnStacks[i];
-          const baseFloor = H - 18;
           for (let sIdx = 0; sIdx < stack.length; sIdx++) {
             const sc = stack[sIdx];
-            const sx = colRect.centerX + sc.offsetX;
-            const sy = baseFloor - sIdx * 12;
-            drawCandy(ctx, sx, sy, sc.radius, sc.colorIdx, sc.shape, sc.isRainbow, sc.rotation);
+            const sy = getSlotCenterY(sIdx);
+            drawCandy(ctx, colRect.centerX, sy, sc.radius || state.layout.candyRadius, sc.colorIdx, sc.shape, sc.isRainbow, sc.rotation, sc.squish || 1);
           }
 
           ctx.restore();
+        }
+
+        // Rightmost boundary line
+        if (cols.length) {
+          const lastCol = cols[cols.length - 1];
+          ctx.strokeStyle = 'rgba(40, 42, 36, 0.65)';
+          ctx.lineWidth = 2.4;
+          ctx.beginPath();
+          ctx.moveTo(lastCol.x + lastCol.width, lastCol.topY);
+          ctx.lineTo(lastCol.x + lastCol.width, H);
+          ctx.stroke();
         }
       }
 
@@ -1427,12 +1850,14 @@
         ctx.save();
         ctx.scale(state.dpr, state.dpr);
 
+        // Drawing paper background
         ctx.fillStyle = '#fbf9f4';
         ctx.fillRect(0, 0, state.width, state.height);
 
         drawTopHeaderDecorations(ctx);
         drawRainbowColumns(ctx);
 
+        // Falling Candies
         for (let i = 0; i < state.fallingCandies.length; i++) {
           const fc = state.fallingCandies[i];
           drawCandy(ctx, fc.x, fc.y, fc.radius, fc.colorIdx, fc.shape, fc.isRainbow, fc.rotation);
@@ -1440,6 +1865,7 @@
 
         drawCloudBar(ctx);
 
+        // Particles
         for (let i = 0; i < state.particles.length; i++) {
           const p = state.particles[i];
           ctx.save();
@@ -1454,11 +1880,26 @@
           ctx.restore();
         }
 
+        // Victory Confetti
+        for (let i = 0; i < state.confetti.length; i++) {
+          const cf = state.confetti[i];
+          ctx.save();
+          ctx.translate(cf.x, cf.y);
+          ctx.rotate(cf.rotation);
+          ctx.fillStyle = cf.color;
+          ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+          ctx.lineWidth = 1;
+          ctx.fillRect(-cf.w / 2, -cf.h / 2, cf.w, cf.h);
+          ctx.strokeRect(-cf.w / 2, -cf.h / 2, cf.w, cf.h);
+          ctx.restore();
+        }
+
+        // Floating Scores and Texts
         for (let i = 0; i < state.floatingTexts.length; i++) {
           const ft = state.floatingTexts[i];
           ctx.save();
           ctx.globalAlpha = ft.alpha;
-          ctx.font = `900 ${Math.round(16 * ft.scale)}px "PingFang SC", "Microsoft YaHei", sans-serif`;
+          ctx.font = `900 ${Math.round(15 * ft.scale)}px "PingFang SC", "Microsoft YaHei", sans-serif`;
           ctx.textAlign = 'center';
           ctx.lineWidth = 4;
           ctx.strokeStyle = '#282a24';
@@ -1470,6 +1911,8 @@
 
         ctx.restore();
       }
+
+      /* ---------------- Input Handling ---------------- */
 
       function getCanvasX(clientX) {
         return clientX - canvas.getBoundingClientRect().left;
@@ -1616,8 +2059,10 @@
         }, 4500);
       }
 
+      // UI Modals
       const modeModal = document.getElementById('mode-modal');
       const artModal = document.getElementById('art-modal');
+      const victoryModal = document.getElementById('victory-modal');
       const modeLabel = document.getElementById('mode-label');
 
       const MODE_NAMES = {
@@ -1645,20 +2090,23 @@
       });
 
       document.getElementById('btn-reset-game').addEventListener('click', () => {
-        state.score = 0;
-        state.combo = 0;
-        state.rainbowCount = 0;
-        state.collectedInCycle.clear();
-        state.columnCounts = [0, 0, 0, 0, 0, 0, 0];
-        state.columnStacks = [[], [], [], [], [], [], []];
-        state.fallingCandies = [];
-        state.activeCandy = null;
-        spawnNextCandyOnCloud();
-        updateHUD();
+        resetGame();
         modeModal.classList.remove('open');
       });
 
+      document.getElementById('btn-quick-reset').addEventListener('click', () => {
+        resetGame();
+      });
+
+      document.getElementById('btn-win-replay').addEventListener('click', () => {
+        resetGame();
+      });
+
       document.getElementById('btn-art').addEventListener('click', () => artModal.classList.add('open'));
+      document.getElementById('btn-win-art').addEventListener('click', () => {
+        victoryModal.classList.remove('open');
+        artModal.classList.add('open');
+      });
       document.getElementById('close-art-modal').addEventListener('click', () => artModal.classList.remove('open'));
 
       const btnSound = document.getElementById('btn-sound');
