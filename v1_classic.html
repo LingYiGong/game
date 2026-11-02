@@ -54,8 +54,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: space-between;
-      padding: env(safe-area-inset-top, 6px) 8px env(safe-area-inset-bottom, 8px);
+      justify-content: flex-start;
+      padding: env(safe-area-inset-top, 6px) 8px max(8px, env(safe-area-inset-bottom, 8px));
     }
 
     /* Top HUD Bar */
@@ -65,41 +65,52 @@
       align-items: center;
       justify-content: space-between;
       gap: 6px;
-      padding: 6px 10px;
-      background: rgba(255, 252, 245, 0.95);
+      padding: 5px 8px;
+      background: rgba(255, 252, 245, 0.96);
       border: 2.5px solid var(--ink-dark);
       border-radius: 16px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
       z-index: 20;
       flex-shrink: 0;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
     .hud-stats {
       display: flex;
       align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
+      gap: 5px;
+      flex-wrap: nowrap;
+      min-width: 0;
+    }
+
+    .hud-actions {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: nowrap;
+      min-width: 0;
     }
 
     .stat-pill {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
       background: #fff;
       border: 2px solid var(--ink-dark);
       border-radius: 999px;
-      padding: 3px 9px;
+      padding: 3px 8px;
       font-weight: 800;
-      font-size: 13.5px;
+      font-size: 13px;
       color: var(--ink-dark);
-      box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
+      box-shadow: 1.5px 1.5px 0 rgba(0,0,0,0.12);
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .stat-pill span.val {
       color: #d62828;
-      font-size: 15px;
-      min-width: 18px;
+      font-size: 14.5px;
+      min-width: 16px;
       text-align: center;
     }
 
@@ -112,13 +123,6 @@
       color: #b25900;
     }
 
-    .hud-actions {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
     .btn-cute {
       appearance: none;
       border: 2px solid var(--ink-dark);
@@ -126,16 +130,18 @@
       color: var(--ink-dark);
       font-weight: 800;
       font-size: 13px;
-      padding: 5px 9px;
+      padding: 4px 8px;
       border-radius: 12px;
       cursor: pointer;
       box-shadow: 2px 2px 0 var(--ink-dark);
       transition: transform 0.1s, background 0.15s;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      justify-content: center;
+      gap: 3px;
       white-space: nowrap;
       text-decoration: none;
+      flex-shrink: 0;
     }
 
     .btn-cute:hover {
@@ -151,6 +157,13 @@
       background: #d4f5b4;
     }
 
+    .mode-long {
+      display: inline;
+    }
+    .mode-short {
+      display: none;
+    }
+
     /* Main Drawing Paper Game Canvas */
     #paper-stage {
       position: relative;
@@ -158,7 +171,7 @@
       flex: 1;
       min-height: 0;
       background: var(--paper-bg);
-      border-radius: 12px;
+      border-radius: 14px;
       box-shadow:
         0 10px 30px rgba(0, 0, 0, 0.45),
         inset 0 0 40px rgba(210, 195, 165, 0.25);
@@ -177,53 +190,6 @@
 
     #game-canvas:active {
       cursor: grabbing;
-    }
-
-    /* Bottom Touch & Quick Control Bar */
-    .control-bar {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding-top: 6px;
-      flex-shrink: 0;
-      z-index: 20;
-    }
-
-    .touch-btn {
-      flex: 1;
-      height: 48px;
-      border: 2.5px solid var(--ink-dark);
-      border-radius: 14px;
-      background: #fffdf6;
-      color: var(--ink-dark);
-      font-size: 16px;
-      font-weight: 900;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      box-shadow: 0 4px 0 var(--ink-dark);
-      cursor: pointer;
-      transition: transform 0.08s, box-shadow 0.08s, background 0.15s;
-      touch-action: manipulation;
-    }
-
-    .touch-btn:active, .touch-btn.pressed {
-      transform: translateY(3px);
-      box-shadow: 0 1px 0 var(--ink-dark);
-      background: #f0edd8;
-    }
-
-    .touch-btn.drop-btn {
-      flex: 1.4;
-      background: linear-gradient(180deg, #ffe66d 0%, #ffd13b 100%);
-      font-size: 17px;
-    }
-
-    .touch-btn.drop-btn:active, .touch-btn.drop-btn.pressed {
-      background: #f5c227;
     }
 
     /* Modals */
@@ -427,41 +393,69 @@
       box-shadow: 0 1px 0 var(--ink-dark);
     }
 
-    .hint-toast {
-      position: absolute;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(40, 42, 36, 0.88);
-      color: #fff;
-      padding: 6px 14px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 700;
-      pointer-events: none;
-      white-space: nowrap;
-      z-index: 15;
-      transition: opacity 0.4s;
-    }
-
-    @media (max-width: 540px) {
+    /* iPad and Tablet responsive optimization (601px ~ 860px) */
+    @media (max-width: 860px) {
+      .hud-bar {
+        padding: 4px 8px;
+        gap: 4px;
+      }
+      .hud-stats {
+        gap: 4px;
+      }
+      .hud-actions {
+        gap: 4px;
+      }
       .stat-pill {
+        padding: 2.5px 6px;
         font-size: 12px;
-        padding: 2px 7px;
+      }
+      .stat-pill .label-text {
+        display: none;
       }
       .stat-pill span.val {
         font-size: 13px;
       }
       .btn-cute {
+        padding: 4px 6px;
         font-size: 12px;
-        padding: 4px 7px;
       }
-      .touch-btn {
-        height: 44px;
-        font-size: 15px;
+      .mode-long {
+        display: none;
+      }
+      .mode-short {
+        display: inline;
+      }
+    }
+
+    /* Mobile phone optimization (<= 600px) */
+    @media (max-width: 600px) {
+      .hud-bar {
+        flex-direction: column;
+        gap: 5px;
+        padding: 5px 7px;
+      }
+      .hud-stats {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .hud-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .hud-actions .btn-cute {
+        flex: 1;
+        padding: 4px 2px;
+        font-size: 11.5px;
+      }
+      .stat-pill {
+        padding: 2px 4px;
+        font-size: 11.5px;
+      }
+      .stat-pill span.val {
+        font-size: 12px;
       }
       .victory-title {
-        font-size: 22px;
+        font-size: 21px;
       }
     }
   </style>
@@ -473,22 +467,22 @@
       <div class="hud-stats">
         <a class="btn-cute" href="index.html" title="返回版本选择大厅">🏠 换版本</a>
         <div class="stat-pill pill-target" title="胜利目标：7个彩色柱子各装满10颗糖果">
-          🏆 满柱 <span class="val" id="full-tubes-val">0/7</span>
+          🏆<span class="label-text"> 满柱</span> <span class="val" id="full-tubes-val">0/7</span>
         </div>
         <div class="stat-pill" title="收集到的糖果总数 (目标 70 颗)">
-          🍬 收集 <span class="val" id="total-val">0/70</span>
+          🍬<span class="label-text"> 收集</span> <span class="val" id="total-val">0/70</span>
         </div>
         <div class="stat-pill" title="连续投进同色柱子的连击加成">
-          🔥 连击 <span class="val" id="combo-val">0</span>
+          🔥<span class="label-text"> 连击</span> <span class="val" id="combo-val">0</span>
         </div>
         <div class="stat-pill" title="总得分">
-          ⭐ 分数 <span class="val" id="score-val">0</span>
+          ⭐<span class="label-text"> 分数</span> <span class="val" id="score-val">0</span>
         </div>
       </div>
 
       <div class="hud-actions">
         <button class="btn-cute active-mode" id="btn-mode" title="切换游戏玩法模式">
-          🎮 <span id="mode-label">经典自动掉</span>
+          🎮 <span class="mode-long" id="mode-label-long">经典自动掉</span><span class="mode-short" id="mode-label-short">经典</span>
         </button>
         <button class="btn-cute" id="btn-art" title="查看女儿的手绘原作">
           🎨 原作
@@ -502,25 +496,9 @@
       </div>
     </div>
 
-    <!-- Main Drawing Paper Game Canvas -->
+    <!-- Main Drawing Paper Game Canvas (Clean, intuitive touch & drag) -->
     <div id="paper-stage">
       <canvas id="game-canvas"></canvas>
-      <div class="hint-toast" id="hint-toast">
-        🎯 胜利目标：7种颜色各收集满 10 颗糖果！左右移动云朵对准放糖吧~
-      </div>
-    </div>
-
-    <!-- Bottom Touch & Quick Control Bar -->
-    <div class="control-bar">
-      <button class="touch-btn" id="btn-left" aria-label="向左移动">
-        ⬅️ 左移
-      </button>
-      <button class="touch-btn drop-btn" id="btn-drop" aria-label="立即掉落糖果">
-        🍬 放糖果 (空格)
-      </button>
-      <button class="touch-btn" id="btn-right" aria-label="向右移动">
-        右移 ➡️
-      </button>
     </div>
   </div>
 
@@ -570,7 +548,7 @@
       <div class="mode-grid">
         <div class="mode-item selected" data-mode="classic">
           <strong>🌟 1. 经典自动掉落（推荐） <span>默认</span></strong>
-          <p>云朵嘴边会含着一颗彩色糖果，倒计时结束自动落下！对准下方的同色柱子按【放糖果/空格】即可提前落入。</p>
+          <p>云朵嘴边会含着一颗彩色糖果，倒计时结束自动落下！对准下方的同色柱子轻点一下或按空格即可提前落入。</p>
         </div>
         <div class="mode-item" data-mode="rain">
           <strong>🍬 2. 彩虹连连掉（快节奏） <span>挑战</span></strong>
@@ -738,7 +716,7 @@
         gameStartTime: Date.now(),
         isWon: false,
         columnCounts: [0, 0, 0, 0, 0, 0, 0],
-        columnStacks: [[], [], [], [], [], [], []], // each item: { radius, colorIdx, shape, isRainbow, rotation, squish }
+        columnStacks: [[], [], [], [], [], [], []],
         columnHighlight: [0, 0, 0, 0, 0, 0, 0],
         columnFullGlow: [0, 0, 0, 0, 0, 0, 0],
         cloud: {
@@ -794,8 +772,8 @@
       function computeLayout() {
         const rect = canvas.parentElement.getBoundingClientRect();
         state.dpr = Math.min(window.devicePixelRatio || 1, 2);
-        state.width = Math.max(300, rect.width);
-        state.height = Math.max(440, rect.height);
+        state.width = Math.round(rect.width) || 600;
+        state.height = Math.round(rect.height) || 600;
 
         canvas.width = Math.round(state.width * state.dpr);
         canvas.height = Math.round(state.height * state.dpr);
@@ -803,12 +781,12 @@
         const W = state.width;
         const H = state.height;
 
-        state.layout.topIconsY = Math.max(32, H * 0.055);
+        state.layout.topIconsY = Math.max(28, H * 0.052);
         state.cloud.width = Math.min(Math.max(W * 0.38, 160), 280);
         state.cloud.height = Math.min(Math.max(H * 0.075, 42), 56);
-        state.layout.cloudY = state.layout.topIconsY + state.cloud.height * 0.82 + 20;
+        state.layout.cloudY = state.layout.topIconsY + state.cloud.height * 0.82 + 18;
         state.cloud.y = state.layout.cloudY;
-        state.layout.columnsTopY = state.layout.cloudY + state.cloud.height * 0.5 + Math.max(40, H * 0.065);
+        state.layout.columnsTopY = state.layout.cloudY + state.cloud.height * 0.5 + Math.max(38, H * 0.062);
 
         // 7 columns: contiguous, equal width for visual harmony and fairness
         const numCols = COLOR_COLUMNS.length; // 7
@@ -831,16 +809,15 @@
         });
 
         // Candy vertical stacking area:
-        // Top header area is between columnsTopY and columnsTopY + 54 (holds title & progress badge)
-        state.layout.storageTopY = state.layout.columnsTopY + 58;
+        state.layout.storageTopY = state.layout.columnsTopY + 54;
         state.layout.storageBottomY = H - 18;
         const storageH = state.layout.storageBottomY - state.layout.storageTopY;
 
         // Exactly 10 slots fit the vertical height from bottom to top header
-        state.layout.slotHeight = (storageH - 8) / TARGET_PER_TUBE;
+        state.layout.slotHeight = (storageH - 6) / TARGET_PER_TUBE;
 
         // Big, clear, and plump candy radius
-        state.layout.candyRadius = Math.max(15, Math.min(colW * 0.38, state.layout.slotHeight * 0.44, 25));
+        state.layout.candyRadius = Math.max(15, Math.min(colW * 0.38, state.layout.slotHeight * 0.44, 26));
 
         clampCloudX();
       }
@@ -1912,7 +1889,7 @@
         ctx.restore();
       }
 
-      /* ---------------- Input Handling ---------------- */
+      /* ---------------- Direct Intuitive Touch, Click & Keyboard Controls ---------------- */
 
       function getCanvasX(clientX) {
         return clientX - canvas.getBoundingClientRect().left;
@@ -1925,23 +1902,14 @@
       canvas.addEventListener('pointerdown', (e) => {
         e.preventDefault();
         sfx.init();
-        hideToastSoon();
 
         const px = getCanvasX(e.clientX);
         const py = getCanvasY(e.clientY);
 
-        const distToCloud = Math.hypot(px - state.cloud.x, py - (state.cloud.y + state.cloud.height * 0.5));
-        if (distToCloud < 42 && !state.isDragging) {
-          state.isDragging = true;
-          state.dragOffsetX = 0;
-          state.TapStartTime = performance.now();
-          state.TapStartX = px;
-          return;
-        }
-
         state.isDragging = true;
         state.TapStartTime = performance.now();
         state.TapStartX = px;
+        state.TapStartY = py;
 
         if (Math.abs(px - state.cloud.x) < state.cloud.width * 0.6 && py < state.layout.columnsTopY + 40) {
           state.dragOffsetX = state.cloud.x - px;
@@ -1963,13 +1931,16 @@
         if (!state.isDragging) return;
         state.isDragging = false;
         const px = getCanvasX(e.clientX);
+        const py = getCanvasY(e.clientY);
         const elapsed = performance.now() - (state.TapStartTime || 0);
-        const moved = Math.abs(px - (state.TapStartX || px));
+        const moved = Math.hypot(px - (state.TapStartX || px), py - (state.TapStartY || py));
 
-        if (elapsed < 240 && moved < 12) {
+        // Quick tap: intuitive drop or column alignment
+        if (elapsed < 300 && moved < 16) {
           const tappedCol = getColumnIndexAtX(px);
           const currentCol = getColumnIndexAtX(state.cloud.x);
-          if (tappedCol === currentCol) {
+
+          if (tappedCol === currentCol || Math.abs(px - state.cloud.x) < state.cloud.width * 0.45) {
             dropActiveCandy();
           } else if (state.layout.columns[tappedCol]) {
             state.cloud.targetX = state.layout.columns[tappedCol].centerX;
@@ -1978,22 +1949,19 @@
         }
       });
 
+      // Keyboard support for desktop players
       window.addEventListener('keydown', (e) => {
         sfx.init();
-        hideToastSoon();
 
         if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
           e.preventDefault();
           state.keys.left = true;
-          document.getElementById('btn-left').classList.add('pressed');
         } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
           e.preventDefault();
           state.keys.right = true;
-          document.getElementById('btn-right').classList.add('pressed');
         } else if (e.key === ' ' || e.key === 'ArrowDown' || e.key === 'Enter' || e.key === 's' || e.key === 'S') {
           e.preventDefault();
           dropActiveCandy();
-          document.getElementById('btn-drop').classList.add('pressed');
         } else if (e.key >= '1' && e.key <= '7') {
           const idx = parseInt(e.key, 10) - 1;
           if (state.layout.columns[idx]) {
@@ -2006,74 +1974,33 @@
       window.addEventListener('keyup', (e) => {
         if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
           state.keys.left = false;
-          document.getElementById('btn-left').classList.remove('pressed');
         } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
           state.keys.right = false;
-          document.getElementById('btn-right').classList.remove('pressed');
-        } else if (e.key === ' ' || e.key === 'ArrowDown' || e.key === 'Enter' || e.key === 's' || e.key === 'S') {
-          document.getElementById('btn-drop').classList.remove('pressed');
         }
       });
-
-      const btnLeft = document.getElementById('btn-left');
-      const btnRight = document.getElementById('btn-right');
-      const btnDrop = document.getElementById('btn-drop');
-
-      function bindHoldButton(btn, dir) {
-        const start = (e) => {
-          e.preventDefault();
-          sfx.init();
-          hideToastSoon();
-          if (dir === 'left') state.keys.left = true;
-          if (dir === 'right') state.keys.right = true;
-          btn.classList.add('pressed');
-        };
-        const end = () => {
-          if (dir === 'left') state.keys.left = false;
-          if (dir === 'right') state.keys.right = false;
-          btn.classList.remove('pressed');
-        };
-        btn.addEventListener('pointerdown', start);
-        btn.addEventListener('pointerup', end);
-        btn.addEventListener('pointerleave', end);
-        btn.addEventListener('pointercancel', end);
-      }
-
-      bindHoldButton(btnLeft, 'left');
-      bindHoldButton(btnRight, 'right');
-
-      btnDrop.addEventListener('pointerdown', (e) => {
-        e.preventDefault();
-        sfx.init();
-        hideToastSoon();
-        dropActiveCandy();
-      });
-
-      let toastHidden = false;
-      function hideToastSoon() {
-        if (toastHidden) return;
-        toastHidden = true;
-        setTimeout(() => {
-          const toast = document.getElementById('hint-toast');
-          if (toast) toast.style.opacity = '0';
-        }, 4500);
-      }
 
       // UI Modals
       const modeModal = document.getElementById('mode-modal');
       const artModal = document.getElementById('art-modal');
       const victoryModal = document.getElementById('victory-modal');
-      const modeLabel = document.getElementById('mode-label');
 
       const MODE_NAMES = {
         classic: '经典自动掉',
         rain: '彩虹连连掉',
         kids: '轻松宝宝玩'
       };
+      const MODE_SHORT_NAMES = {
+        classic: '经典',
+        rain: '连掉',
+        kids: '宝宝'
+      };
 
       function setGameMode(newMode) {
         state.mode = newMode;
-        modeLabel.textContent = MODE_NAMES[newMode] || '经典自动掉';
+        const longEl = document.getElementById('mode-label-long');
+        const shortEl = document.getElementById('mode-label-short');
+        if (longEl) longEl.textContent = MODE_NAMES[newMode] || '经典自动掉';
+        if (shortEl) shortEl.textContent = MODE_SHORT_NAMES[newMode] || '经典';
         document.querySelectorAll('.mode-item').forEach((el) => {
           el.classList.toggle('selected', el.dataset.mode === newMode);
         });
