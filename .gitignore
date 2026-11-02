@@ -1,0 +1,19 @@
+# IDE & Editors
+.idea/
+.vscode/
+*.sublime-workspace
+*.swp
+
+# OS generated
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Logs & temp
+*.log
+__pycache__/
+*.tmp
+
+# Sensitive credentials & environment
+.env*
+*.local

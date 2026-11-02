@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="description" content="第1版：经典单颗掉落版 — 云朵彩虹糖果" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍬</text></svg>" />
+  <title>第1版：经典单颗掉落版 — 云朵彩虹糖果</title>
+  <style>
+    :root {
+      --paper-bg: #fbf9f4;
+      --ink-dark: #282a24;
+      --cloud-frame: #cfd428;
+      --cloud-frame-shade: #b9be1c;
+      --col-red: #ce2026;
+      --col-pink: #f39bc3;
+      --col-green: #1d8f24;
+      --col-purple: #5d4b86;
+      --col-blue: #454ea8;
+      --col-orange: #e36517;
+      --col-skyblue: #298cd4;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      background: #2c241d radial-gradient(circle at center, #4a3b2f 0%, #231c15 100%);
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Comic Sans MS", cursive, sans-serif;
+      touch-action: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #app-shell {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: env(safe-area-inset-top, 6px) 8px env(safe-area-inset-bottom, 8px);
+    }
+
+    .hud-bar {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 6px 10px;
+      background: rgba(255, 252, 245, 0.94);
+      border: 2.5px solid var(--ink-dark);
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+      z-index: 20;
+      flex-shrink: 0;
+      margin-bottom: 6px;
+    }
+
+    .hud-stats {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .stat-pill {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #fff;
+      border: 2px solid var(--ink-dark);
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-weight: 800;
+      font-size: 14px;
+      color: var(--ink-dark);
+      box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
+    }
+
+    .stat-pill span.val {
+      color: #d62828;
+      font-size: 16px;
+      min-width: 20px;
+      text-align: center;
+    }
+
+    .hud-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .btn-cute {
+      appearance: none;
+      border: 2px solid var(--ink-dark);
+      background: #fff8d6;
+      color: var(--ink-dark);
+      font-weight: 800;
+      font-size: 13px;
+      padding: 5px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--ink-dark);
+      transition: transform 0.1s, background 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+
+    .btn-cute:hover {
+      background: #ffef9e;
+    }
+
+    .btn-cute:active {
+      transform: translate(2px, 2px);
+      box-shadow: 0 0 0 var(--ink-dark);
+    }
+
+    .btn-cute.active-mode {
+      background: #d4f5b4;
+    }
+
+    #paper-stage {
+      position: relative;
+      width: 100%;
+      flex: 1;
+      min-height: 0;
+      background: var(--paper-bg);
+      border-radius: 10px;
+      box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.45),
+        inset 0 0 40px rgba(210, 195, 165, 0.25);
+      border: 3px solid #35322c;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #game-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: grab;
+    }
+
+    #game-canvas:active {
+      cursor: grabbing;
+    }
+
+    .control-bar {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding-top: 6px;
+      flex-shrink: 0;
+      z-index: 20;
+    }
+
+    .touch-btn {
+      flex: 1;
+      height: 48px;
+      border: 2.5px solid var(--ink-dark);
+      border-radius: 14px;
+      background: #fffdf6;
+      color: var(--ink-dark);
+      font-size: 16px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 4px 0 var(--ink-dark);
+      cursor: pointer;
+      transition: transform 0.08s, box-shadow 0.08s, background 0.15s;
+      touch-action: manipulation;
+    }
+
+    .touch-btn:active, .touch-btn.pressed {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 var(--ink-dark);
+      background: #f0edd8;
+    }
+
+    .touch-btn.drop-btn {
+      flex: 1.4;
+      background: linear-gradient(180deg, #ffe66d 0%, #ffd13b 100%);
+      font-size: 17px;
+    }
+
+    .touch-btn.drop-btn:active, .touch-btn.drop-btn.pressed {
+      background: #f5c227;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 16, 12, 0.72);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: #fcfaf2;
+      border: 3.5px solid var(--ink-dark);
+      border-radius: 22px;
+      max-width: 520px;
+      width: 100%;
+      max-height: 90dvh;
+      overflow-y: auto;
+      padding: 18px 20px;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+      color: var(--ink-dark);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      border-bottom: 2px dashed #ccc5b4;
+      padding-bottom: 8px;
+    }
+
+    .modal-header h2 {
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .art-preview-box {
+      width: 100%;
+      border-radius: 12px;
+      border: 2.5px solid var(--ink-dark);
+      overflow: hidden;
+      background: #eee;
+      margin: 10px 0;
+      text-align: center;
+    }
+
+    .art-preview-box img {
+      width: 100%;
+      max-height: 52dvh;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .mode-item {
+      border: 2.5px solid var(--ink-dark);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: #fff;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: transform 0.1s, background 0.15s;
+    }
+
+    .mode-item:hover {
+      background: #fffbe6;
+    }
+
+    .mode-item.selected {
+      background: #e2f8c9;
+      border-color: #1d8f24;
+      box-shadow: 0 0 0 2px #1d8f24;
+    }
+
+    .mode-item strong {
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .mode-item p {
+      font-size: 13px;
+      color: #555;
+      line-height: 1.4;
+    }
+
+    .hint-toast {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(40, 42, 36, 0.85);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 15;
+      transition: opacity 0.4s;
+    }
+
+    @media (max-width: 520px) {
+      .stat-pill {
+        font-size: 12px;
+        padding: 2px 8px;
+      }
+      .stat-pill span.val {
+        font-size: 14px;
+      }
+      .btn-cute {
+        font-size: 12px;
+        padding: 4px 8px;
+      }
+      .touch-btn {
+        height: 44px;
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app-shell">
+    <!-- Top HUD Bar -->
+    <div class="hud-bar">
+      <div class="hud-stats">
+        <a class="btn-cute" href="index.html" title="返回版本选择大厅">🏠 换版本</a>
+        <div class="stat-pill" title="接住的同色糖果得分">
+          🍬 糖果 <span class="val" id="score-val">0</span>
+        </div>
+        <div class="stat-pill" title="连续投进正确颜色的连击">
+          🔥 连击 <span class="val" id="combo-val">0</span>
+        </div>
+        <div class="stat-pill" title="集齐全部7种颜色即可召唤一次彩虹大奖">
+          🌈 彩虹 <span class="val" id="rainbow-val">0/7</span>
+        </div>
+      </div>
+
+      <div class="hud-actions">
+        <button class="btn-cute active-mode" id="btn-mode" title="切换游戏玩法模式">
+          🎮 <span id="mode-label">经典自动掉</span>
+        </button>
+        <button class="btn-cute" id="btn-art" title="查看女儿的手绘原作">
+          🎨 原作
+        </button>
+        <button class="btn-cute" id="btn-sound" title="开关声音">
+          🔊 音效
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Drawing Paper Game Canvas -->
+    <div id="paper-stage">
+      <canvas id="game-canvas"></canvas>
+      <div class="hint-toast" id="hint-toast">
+        💻 电脑：左右方向键移动、空格放糖果 ｜ 📱 平板/手机：直接拖动云朵或点颜色列
+      </div>
+    </div>
+
+    <!-- Bottom Touch & Quick Control Bar -->
+    <div class="control-bar">
+      <button class="touch-btn" id="btn-left" aria-label="向左移动">
+        ⬅️ 左移
+      </button>
+      <button class="touch-btn drop-btn" id="btn-drop" aria-label="立即掉落糖果">
+        🍬 放糖果 (空格)
+      </button>
+      <button class="touch-btn" id="btn-right" aria-label="向右移动">
+        右移 ➡️
+      </button>
+    </div>
+  </div>
+
+  <!-- Mode & Rules Modal -->
+  <div class="modal-backdrop" id="mode-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>🌈 第1版：选择糖果掉落节奏</h2>
+        <button class="btn-cute" id="close-mode-modal">✖ 关闭</button>
+      </div>
+      <p style="font-size:14px; color:#444;">
+        根据手绘设计：移动上方的<strong>笑脸云朵横条</strong>，把彩色的糖果送进下方<strong>对应颜色的彩条</strong>里！
+      </p>
+      <div class="mode-grid">
+        <div class="mode-item selected" data-mode="classic">
+          <strong>🌟 1. 经典自动掉落（推荐） <span>默认</span></strong>
+          <p>云朵嘴边会准备好一颗彩色糖果，倒计时结束自动落下！你也可以对准同色区域后按【空格/放糖果】立刻落入。</p>
+        </div>
+        <div class="mode-item" data-mode="rain">
+          <strong>🍬 2. 彩虹连连掉（快节奏） <span>挑战</span></strong>
+          <p>云朵会每隔一小会儿自动吐出糖果！快速左右滑动云朵，让每一颗糖果都掉进下方的同色跑道里。</p>
+        </div>
+        <div class="mode-item" data-mode="kids">
+          <strong>🎈 3. 轻松宝宝模式（对准即掉） <span>无压力</span></strong>
+          <p>没有倒计时压力！把云朵移到对应的颜色上方停稳（或点一下）就会开心落入糖果，非常适合小朋友自由玩耍。</p>
+        </div>
+      </div>
+      <div style="margin-top: 14px; display:flex; justify-content:space-between; align-items:center;">
+        <button class="btn-cute" id="btn-reset-game">🔄 清空重玩</button>
+        <button class="btn-cute active-mode" id="btn-start-play" style="padding: 7px 18px; font-size:15px;">✨ 开始玩吧！</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Original Drawing Modal -->
+  <div class="modal-backdrop" id="art-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>🎨 小设计师的手绘原作 (2026年11月1日)</h2>
+        <button class="btn-cute" id="close-art-modal">✖ 关闭</button>
+      </div>
+      <p style="font-size:13.5px; color:#444; line-height:1.5;">
+        游戏完整还原了画作里的每一个细节：<br/>
+        • 顶部的 <strong>绿十字星、双色爱心、蓝顶紫莓心</strong> 与右上角日期<br/>
+        • 中间黄绿边框、粉脸蛋的 <strong>微笑云朵横条</strong><br/>
+        • 下方从左到右一模一样的 <strong>红、粉、绿、紫、深蓝、橙、天蓝</strong> 7条彩虹色带！
+      </p>
+      <div class="art-preview-box">
+        <img src="artwork.jpg" alt="女儿的手绘游戏设计原图" onerror="this.parentElement.innerHTML='<div style=\'padding:24px;color:#666;\'>本地单文件模式下未找到原图文件 artwork.jpg</div>'" />
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const COLOR_COLUMNS = [
+        { id: 'red',     name: '草莓红',   hex: '#cf2027', lightHex: '#ff6b72', darkHex: '#9e1318', weight: 1.05, noteFreq: 261.63 },
+        { id: 'pink',    name: '蜜桃粉',   hex: '#f39bc3', lightHex: '#ffd0e6', darkHex: '#d46b9b', weight: 1.05, noteFreq: 293.66 },
+        { id: 'green',   name: '苹果绿',   hex: '#1d8f24', lightHex: '#5cd664', darkHex: '#116316', weight: 1.32, noteFreq: 329.63 },
+        { id: 'purple',  name: '葡萄紫',   hex: '#5d4b86', lightHex: '#9b86cc', darkHex: '#3f3161', weight: 0.68, noteFreq: 349.23 },
+        { id: 'blue',    name: '蓝莓蓝',   hex: '#4650b0', lightHex: '#828cf2', darkHex: '#2b3380', weight: 1.25, noteFreq: 392.00 },
+        { id: 'orange',  name: '甜橙橘',   hex: '#e36517', lightHex: '#ffa063', darkHex: '#ab4507', weight: 1.30, noteFreq: 440.00 },
+        { id: 'skyblue', name: '苏打天蓝', hex: '#298cd4', lightHex: '#73c6ff', darkHex: '#186299', weight: 0.78, noteFreq: 493.88 }
+      ];
+
+      const CANDY_SHAPES = ['wrapped', 'heart', 'berry', 'star', 'round'];
+
+      class SoundFX {
+        constructor() {
+          this.enabled = true;
+          this.ctx = null;
+        }
+
+        init() {
+          if (!this.ctx) {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtx) this.ctx = new AudioCtx();
+          }
+          if (this.ctx && this.ctx.state === 'suspended') {
+            this.ctx.resume();
+          }
+        }
+
+        playTone(freq, duration = 0.22, type = 'triangle', volume = 0.18, delay = 0) {
+          if (!this.enabled) return;
+          this.init();
+          if (!this.ctx) return;
+
+          const now = this.ctx.currentTime + delay;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, now);
+
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.linearRampToValueAtTime(volume, now + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(now);
+          osc.stop(now + duration + 0.02);
+        }
+
+        playDrop() {
+          if (!this.enabled) return;
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(520, now);
+          osc.frequency.exponentialRampToValueAtTime(240, now + 0.14);
+          gain.gain.setValueAtTime(0.14, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.16);
+        }
+
+        playMatch(colIndex, combo) {
+          const baseFreq = COLOR_COLUMNS[colIndex]?.noteFreq || 330;
+          this.playTone(baseFreq, 0.25, 'triangle', 0.22, 0);
+          this.playTone(baseFreq * 1.25, 0.25, 'sine', 0.16, 0.07);
+          this.playTone(baseFreq * 1.5, 0.32, 'triangle', 0.18, 0.14);
+          if (combo >= 3) {
+            this.playTone(baseFreq * 2, 0.35, 'sine', 0.15, 0.21);
+          }
+        }
+
+        playMismatch() {
+          this.playTone(210, 0.18, 'sawtooth', 0.09, 0);
+          this.playTone(165, 0.25, 'triangle', 0.11, 0.12);
+        }
+
+        playRainbowFanfare() {
+          const notes = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25];
+          notes.forEach((n, idx) => {
+            this.playTone(n, 0.28, 'triangle', 0.2, idx * 0.065);
+          });
+        }
+      }
+
+      const sfx = new SoundFX();
+
+      const canvas = document.getElementById('game-canvas');
+      const ctx = canvas.getContext('2d');
+
+      const state = {
+        width: 600,
+        height: 800,
+        dpr: 1,
+        mode: 'classic',
+        score: 0,
+        combo: 0,
+        rainbowCount: 0,
+        collectedInCycle: new Set(),
+        columnCounts: [0, 0, 0, 0, 0, 0, 0],
+        columnStacks: [[], [], [], [], [], [], []],
+        columnHighlight: [0, 0, 0, 0, 0, 0, 0],
+        cloud: {
+          x: 300,
+          targetX: 300,
+          y: 165,
+          width: 240,
+          height: 58,
+          vx: 0,
+          eyeOffsetX: 0,
+          mood: 'happy',
+          moodTimer: 0,
+          bounceY: 0
+        },
+        activeCandy: null,
+        nextCandy: null,
+        fallingCandies: [],
+        particles: [],
+        floatingTexts: [],
+        topIconBounce: [0, 0, 0, 0, 0, 0],
+        keys: { left: false, right: false },
+        isDragging: false,
+        dragOffsetX: 0,
+        layout: {
+          topIconsY: 46,
+          cloudY: 128,
+          columnsTopY: 225,
+          columns: []
+        }
+      };
+
+      const markerStrokes = COLOR_COLUMNS.map(() => {
+        const strokes = [];
+        for (let i = 0; i < 18; i++) {
+          strokes.push({
+            rx: Math.random(),
+            ry: Math.random(),
+            rw: 0.08 + Math.random() * 0.18,
+            rh: 0.15 + Math.random() * 0.45,
+            alpha: 0.05 + Math.random() * 0.08,
+            light: Math.random() > 0.45
+          });
+        }
+        return strokes;
+      });
+
+      function computeLayout() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        state.dpr = Math.min(window.devicePixelRatio || 1, 2);
+        state.width = Math.max(300, rect.width);
+        state.height = Math.max(400, rect.height);
+
+        canvas.width = Math.round(state.width * state.dpr);
+        canvas.height = Math.round(state.height * state.dpr);
+
+        const W = state.width;
+        const H = state.height;
+
+        state.layout.topIconsY = Math.max(34, H * 0.068);
+        state.cloud.width = Math.min(Math.max(W * 0.42, 168), 320);
+        state.cloud.height = Math.min(Math.max(H * 0.078, 44), 64);
+        state.layout.cloudY = state.layout.topIconsY + state.cloud.height * 0.85 + 22;
+        state.cloud.y = state.layout.cloudY;
+        state.layout.columnsTopY = state.layout.cloudY + state.cloud.height * 0.5 + Math.max(38, H * 0.075);
+
+        const totalWeight = COLOR_COLUMNS.reduce((acc, c) => acc + c.weight, 0);
+        const sideMargin = Math.max(4, W * 0.012);
+        const usableW = W - sideMargin * 2;
+
+        let curX = sideMargin;
+        state.layout.columns = COLOR_COLUMNS.map((col, idx) => {
+          const colW = (col.weight / totalWeight) * usableW;
+          const topWave = Math.sin(idx * 1.7) * 4;
+          const colRect = {
+            index: idx,
+            x: curX,
+            width: colW,
+            centerX: curX + colW / 2,
+            topY: state.layout.columnsTopY + topWave
+          };
+          curX += colW;
+          return colRect;
+        });
+
+        clampCloudX();
+      }
+
+      function clampCloudX() {
+        if (!state.layout.columns.length) return;
+        const minX = state.layout.columns[0].centerX;
+        const maxX = state.layout.columns[state.layout.columns.length - 1].centerX;
+        state.cloud.x = Math.max(minX, Math.min(maxX, state.cloud.x));
+        state.cloud.targetX = Math.max(minX, Math.min(maxX, state.cloud.targetX));
+      }
+
+      function getColumnIndexAtX(x) {
+        const cols = state.layout.columns;
+        for (let i = 0; i < cols.length; i++) {
+          if (x >= cols[i].x && x <= cols[i].x + cols[i].width) return i;
+        }
+        if (cols.length && x < cols[0].x) return 0;
+        return cols.length - 1;
+      }
+
+      function createRandomCandy() {
+        const uncollected = [];
+        for (let i = 0; i < COLOR_COLUMNS.length; i++) {
+          if (!state.collectedInCycle.has(i)) uncollected.push(i);
+        }
+
+        let colorIdx;
+        if (uncollected.length > 0 && Math.random() < 0.68) {
+          colorIdx = uncollected[Math.floor(Math.random() * uncollected.length)];
+        } else {
+          colorIdx = Math.floor(Math.random() * COLOR_COLUMNS.length);
+        }
+
+        const isRainbow = state.score >= 5 && Math.random() < 0.07;
+        const shape = isRainbow
+          ? 'star'
+          : CANDY_SHAPES[Math.floor(Math.random() * CANDY_SHAPES.length)];
+
+        let maxTimer = 3.2;
+        if (state.mode === 'classic') {
+          maxTimer = Math.max(1.8, 3.3 - Math.min(state.score * 0.02, 1.1));
+        } else if (state.mode === 'rain') {
+          maxTimer = Math.max(1.15, 1.85 - Math.min(state.score * 0.015, 0.55));
+        } else if (state.mode === 'kids') {
+          maxTimer = 999999;
+        }
+
+        return { colorIdx, shape, timer: maxTimer, maxTimer, alignTime: 0, isRainbow, scale: 0.1 };
+      }
+
+      function spawnNextCandyOnCloud() {
+        if (!state.nextCandy) state.nextCandy = createRandomCandy();
+        state.activeCandy = state.nextCandy;
+        state.nextCandy = createRandomCandy();
+      }
+
+      function dropActiveCandy() {
+        if (!state.activeCandy || state.fallingCandies.length >= 4) return;
+        const c = state.activeCandy;
+        const dropX = state.cloud.x;
+        const dropY = state.cloud.y + state.cloud.height * 0.48;
+
+        state.fallingCandies.push({
+          x: dropX,
+          y: dropY,
+          vx: state.cloud.vx * 0.08,
+          vy: 140,
+          gravity: 680,
+          radius: Math.max(15, Math.min(state.width * 0.032, 22)),
+          colorIdx: c.colorIdx,
+          shape: c.shape,
+          isRainbow: c.isRainbow,
+          rotation: (Math.random() - 0.5) * 0.3,
+          vRot: (Math.random() - 0.5) * 2.5
+        });
+
+        state.cloud.bounceY = -6;
+        sfx.playDrop();
+        spawnNextCandyOnCloud();
+      }
+
+      function spawnBurstParticles(x, y, hexColor, count = 18, isRainbow = false) {
+        for (let i = 0; i < count; i++) {
+          const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.4;
+          const speed = 60 + Math.random() * 190;
+          const pColor = isRainbow ? COLOR_COLUMNS[i % COLOR_COLUMNS.length].hex : hexColor;
+          state.particles.push({
+            x,
+            y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed - 60,
+            radius: 4 + Math.random() * 5,
+            color: pColor,
+            alpha: 1,
+            life: 0.55 + Math.random() * 0.35,
+            maxLife: 0.9
+          });
+        }
+      }
+
+      function addFloatingText(x, y, text, color = '#282a24', scale = 1) {
+        state.floatingTexts.push({ x, y, text, color, scale, alpha: 1, vy: -55, life: 1.0 });
+      }
+
+      function updateHUD() {
+        document.getElementById('score-val').textContent = state.score;
+        document.getElementById('combo-val').textContent = state.combo;
+        document.getElementById('rainbow-val').textContent = `${state.collectedInCycle.size}/7`;
+      }
+
+      function update(dt) {
+        const cols = state.layout.columns;
+        if (!cols.length) return;
+
+        const moveSpeed = state.width * 0.78;
+        if (state.keys.left) state.cloud.targetX -= moveSpeed * dt;
+        if (state.keys.right) state.cloud.targetX += moveSpeed * dt;
+        clampCloudX();
+
+        const prevX = state.cloud.x;
+        const lerpFactor = state.isDragging ? 18 : 14;
+        state.cloud.x += (state.cloud.targetX - state.cloud.x) * Math.min(1, lerpFactor * dt);
+        state.cloud.vx = (state.cloud.x - prevX) / Math.max(dt, 0.001);
+
+        const targetEyeOffset = Math.max(-5, Math.min(5, state.cloud.vx * 0.015));
+        state.cloud.eyeOffsetX += (targetEyeOffset - state.cloud.eyeOffsetX) * Math.min(1, 10 * dt);
+
+        state.cloud.bounceY *= Math.pow(0.08, dt);
+        if (state.cloud.moodTimer > 0) {
+          state.cloud.moodTimer -= dt;
+          if (state.cloud.moodTimer <= 0) state.cloud.mood = 'happy';
+        }
+
+        for (let i = 0; i < state.topIconBounce.length; i++) {
+          state.topIconBounce[i] *= Math.pow(0.05, dt);
+        }
+
+        const currentHoverCol = getColumnIndexAtX(state.cloud.x);
+        for (let i = 0; i < cols.length; i++) {
+          const targetGlow = i === currentHoverCol ? 1 : 0;
+          state.columnHighlight[i] += (targetGlow - state.columnHighlight[i]) * Math.min(1, 10 * dt);
+        }
+
+        if (!state.activeCandy) {
+          spawnNextCandyOnCloud();
+        } else {
+          const ac = state.activeCandy;
+          ac.scale = Math.min(1, ac.scale + dt * 5);
+
+          const isOverMatchingCol = ac.isRainbow || currentHoverCol === ac.colorIdx;
+          const isCloudSteady = Math.abs(state.cloud.vx) < 35;
+
+          if (state.mode === 'kids') {
+            if (isOverMatchingCol && isCloudSteady) {
+              ac.alignTime += dt;
+              if (ac.alignTime >= 0.45) dropActiveCandy();
+            } else {
+              ac.alignTime = Math.max(0, ac.alignTime - dt * 2);
+            }
+          } else {
+            ac.timer -= dt;
+            if (ac.timer <= 0) dropActiveCandy();
+          }
+        }
+
+        const floorBaseY = state.height - 18;
+        for (let i = state.fallingCandies.length - 1; i >= 0; i--) {
+          const fc = state.fallingCandies[i];
+          fc.vy += fc.gravity * dt;
+          fc.x += fc.vx * dt;
+          fc.y += fc.vy * dt;
+          fc.rotation += fc.vRot * dt;
+
+          const colIdx = getColumnIndexAtX(fc.x);
+          const col = cols[colIdx];
+
+          const stackCount = state.columnStacks[colIdx].length;
+          const stackHeight = Math.min(stackCount * 12, (state.height - col.topY) * 0.55);
+          const landingY = floorBaseY - stackHeight - fc.radius;
+
+          if (fc.y >= Math.max(col.topY + 26, landingY)) {
+            const matched = fc.isRainbow || colIdx === fc.colorIdx;
+
+            if (matched) {
+              state.combo += 1;
+              const points = fc.isRainbow ? 5 : (1 + Math.min(state.combo - 1, 5));
+              state.score += points;
+
+              const creditCol = colIdx;
+              state.columnCounts[creditCol] += 1;
+              state.collectedInCycle.add(creditCol);
+
+              if (state.columnStacks[creditCol].length < 18) {
+                const offsetX = (Math.random() - 0.5) * Math.max(8, col.width - fc.radius * 2.2);
+                state.columnStacks[creditCol].push({
+                  offsetX,
+                  radius: fc.radius * 0.85,
+                  colorIdx: creditCol,
+                  shape: fc.shape,
+                  isRainbow: fc.isRainbow,
+                  rotation: (Math.random() - 0.5) * 0.5
+                });
+              }
+
+              state.cloud.mood = 'joy';
+              state.cloud.moodTimer = 0.7;
+              state.cloud.bounceY = -10;
+              state.topIconBounce[creditCol % 6] = 10;
+
+              sfx.playMatch(creditCol, state.combo);
+              spawnBurstParticles(fc.x, fc.y, COLOR_COLUMNS[creditCol].lightHex, 20, fc.isRainbow);
+              addFloatingText(
+                col.centerX,
+                Math.min(fc.y - 15, state.layout.columnsTopY + 40),
+                state.combo > 1 ? `+${points} 连击x${state.combo}!` : `+${points} 好棒!`,
+                '#fff',
+                1.15
+              );
+
+              if (state.collectedInCycle.size >= 7) {
+                state.rainbowCount += 1;
+                state.score += 10;
+                state.collectedInCycle.clear();
+                sfx.playRainbowFanfare();
+                for (let k = 0; k < 6; k++) state.topIconBounce[k] = 16;
+                for (let cIdx = 0; cIdx < cols.length; cIdx++) {
+                  spawnBurstParticles(cols[cIdx].centerX, cols[cIdx].topY + 40, COLOR_COLUMNS[cIdx].lightHex, 12, true);
+                }
+                addFloatingText(state.width / 2, state.layout.columnsTopY - 10, '🌈 集齐七彩糖果！奖励 +10 🍬', '#d62828', 1.45);
+              }
+
+              updateHUD();
+            } else {
+              state.combo = 0;
+              state.cloud.mood = 'oops';
+              state.cloud.moodTimer = 0.75;
+              sfx.playMismatch();
+
+              const targetCol = cols[fc.colorIdx];
+              const targetName = COLOR_COLUMNS[fc.colorIdx].name;
+              spawnBurstParticles(fc.x, fc.y, '#cccccc', 8, false);
+              addFloatingText(fc.x, Math.min(fc.y - 10, state.layout.columnsTopY + 50), `哎呀！我是${targetName}哦~`, COLOR_COLUMNS[fc.colorIdx].hex, 1.0);
+              if (targetCol) state.columnHighlight[fc.colorIdx] = 1.6;
+              updateHUD();
+            }
+
+            state.fallingCandies.splice(i, 1);
+          }
+        }
+
+        for (let i = state.particles.length - 1; i >= 0; i--) {
+          const p = state.particles[i];
+          p.vy += 320 * dt;
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+          p.life -= dt;
+          p.alpha = Math.max(0, p.life / p.maxLife);
+          if (p.life <= 0) state.particles.splice(i, 1);
+        }
+
+        for (let i = state.floatingTexts.length - 1; i >= 0; i--) {
+          const ft = state.floatingTexts[i];
+          ft.y += ft.vy * dt;
+          ft.life -= dt;
+          ft.alpha = Math.max(0, Math.min(1, ft.life * 1.5));
+          if (ft.life <= 0) state.floatingTexts.splice(i, 1);
+        }
+      }
+
+      function drawGreenStarIcon(ctx, cx, cy, size) {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.strokeStyle = '#2d6e32';
+        ctx.fillStyle = '#3b8c40';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        ctx.beginPath();
+        ctx.moveTo(-size * 0.2, -size * 0.85);
+        ctx.lineTo(0, -size * 0.15);
+        ctx.lineTo(size * 0.28, -size * 0.65);
+        ctx.lineTo(size * 0.15, -size * 0.05);
+        ctx.lineTo(size * 0.85, 0);
+        ctx.lineTo(size * 0.12, size * 0.16);
+        ctx.lineTo(size * 0.18, size * 0.82);
+        ctx.lineTo(-size * 0.12, size * 0.18);
+        ctx.lineTo(-size * 0.78, size * 0.05);
+        ctx.lineTo(-size * 0.18, -size * 0.12);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function drawSplitHeartIcon(ctx, cx, cy, size, swapColors = false) {
+        ctx.save();
+        ctx.translate(cx, cy);
+        const leftColor = swapColors ? '#edd0b7' : '#96c96a';
+        const rightColor = swapColors ? '#96c96a' : '#edd0b7';
+
+        ctx.beginPath();
+        ctx.moveTo(0, -size * 0.25);
+        ctx.bezierCurveTo(-size * 0.45, -size * 0.9, -size * 1.05, -size * 0.2, 0, size * 0.78);
+        ctx.closePath();
+        ctx.fillStyle = leftColor;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(0, -size * 0.25);
+        ctx.bezierCurveTo(size * 0.45, -size * 0.9, size * 1.05, -size * 0.2, 0, size * 0.78);
+        ctx.closePath();
+        ctx.fillStyle = rightColor;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(0, -size * 0.25);
+        ctx.bezierCurveTo(-size * 0.45, -size * 0.9, -size * 1.05, -size * 0.2, 0, size * 0.78);
+        ctx.bezierCurveTo(size * 1.05, -size * 0.2, size * 0.45, -size * 0.9, 0, -size * 0.25);
+        ctx.strokeStyle = '#5c5346';
+        ctx.lineWidth = 2.2;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(0, -size * 0.25);
+        ctx.lineTo(0, size * 0.76);
+        ctx.strokeStyle = 'rgba(92,83,70,0.45)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function drawBerryHeartIcon(ctx, cx, cy, size) {
+        ctx.save();
+        ctx.translate(cx, cy);
+
+        ctx.beginPath();
+        ctx.moveTo(-size * 0.68, -size * 0.1);
+        ctx.quadraticCurveTo(-size * 0.45, size * 0.45, 0, size * 0.82);
+        ctx.quadraticCurveTo(size * 0.45, size * 0.45, size * 0.68, -size * 0.1);
+        ctx.closePath();
+        ctx.fillStyle = '#7e3f8f';
+        ctx.fill();
+        ctx.strokeStyle = '#4e2759';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(-size * 0.4, -size * 0.18, size * 0.28, Math.PI * 0.85, Math.PI * 2.15);
+        ctx.arc(0, -size * 0.26, size * 0.3, Math.PI * 0.95, Math.PI * 2.05);
+        ctx.arc(size * 0.4, -size * 0.18, size * 0.28, Math.PI * 0.85, Math.PI * 2.15);
+        ctx.closePath();
+        ctx.fillStyle = '#52b8b5';
+        ctx.fill();
+        ctx.strokeStyle = '#387d7a';
+        ctx.lineWidth = 1.8;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function drawTopHeaderDecorations(ctx) {
+        const W = state.width;
+        const y = state.layout.topIconsY;
+        const iconSize = Math.min(Math.max(W * 0.036, 16), 26);
+
+        ctx.save();
+        ctx.font = `600 ${Math.max(12, Math.min(15, W * 0.025))}px "Comic Sans MS", "KaiTi", cursive, sans-serif`;
+        ctx.fillStyle = '#4f5d75';
+        ctx.textAlign = 'right';
+        ctx.translate(W - 14, 20);
+        ctx.rotate(0.02);
+        ctx.fillText('2026年11月1日', 0, 0);
+        ctx.restore();
+
+        const startX = W * 0.15;
+        const endX = W * 0.85;
+        const step = (endX - startX) / 5;
+
+        for (let i = 0; i < 6; i++) {
+          const ix = startX + step * i;
+          const iy = y - state.topIconBounce[i];
+          if (i === 0 || i === 3) {
+            drawGreenStarIcon(ctx, ix, iy, iconSize * 1.15);
+          } else if (i === 1) {
+            drawSplitHeartIcon(ctx, ix, iy, iconSize, false);
+          } else if (i === 4) {
+            drawSplitHeartIcon(ctx, ix, iy, iconSize, true);
+          } else {
+            drawBerryHeartIcon(ctx, ix, iy, iconSize * 0.95);
+          }
+        }
+      }
+
+      function drawCandy(ctx, x, y, radius, colorIdx, shape, isRainbow = false, rotation = 0) {
+        const col = COLOR_COLUMNS[colorIdx] || COLOR_COLUMNS[0];
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(rotation);
+
+        let fillStyle = col.hex;
+        if (isRainbow) {
+          const grad = ctx.createLinearGradient(-radius, -radius, radius, radius);
+          grad.addColorStop(0, '#ce2026');
+          grad.addColorStop(0.2, '#e36517');
+          grad.addColorStop(0.4, '#cfd428');
+          grad.addColorStop(0.6, '#1d8f24');
+          grad.addColorStop(0.8, '#298cd4');
+          grad.addColorStop(1, '#5d4b86');
+          fillStyle = grad;
+        }
+
+        ctx.strokeStyle = '#282a24';
+        ctx.lineWidth = 2.4;
+        ctx.lineJoin = 'round';
+
+        if (shape === 'wrapped') {
+          ctx.fillStyle = fillStyle;
+          ctx.beginPath();
+          ctx.moveTo(-radius * 0.65, 0);
+          ctx.lineTo(-radius * 1.35, -radius * 0.55);
+          ctx.lineTo(-radius * 1.2, 0);
+          ctx.lineTo(-radius * 1.35, radius * 0.55);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(radius * 0.65, 0);
+          ctx.lineTo(radius * 1.35, -radius * 0.55);
+          ctx.lineTo(radius * 1.2, 0);
+          ctx.lineTo(radius * 1.35, radius * 0.55);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.arc(0, 0, radius * 0.82, 0, Math.PI * 2);
+          ctx.fillStyle = fillStyle;
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.arc(-radius * 0.22, -radius * 0.22, radius * 0.24, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255,255,255,0.65)';
+          ctx.fill();
+        } else if (shape === 'heart') {
+          const s = radius * 1.05;
+          ctx.beginPath();
+          ctx.moveTo(0, -s * 0.3);
+          ctx.bezierCurveTo(-s * 0.55, -s * 0.95, -s * 1.2, -s * 0.15, 0, s * 0.85);
+          ctx.bezierCurveTo(s * 1.2, -s * 0.15, s * 0.55, -s * 0.95, 0, -s * 0.3);
+          ctx.closePath();
+          ctx.fillStyle = fillStyle;
+          ctx.fill();
+          ctx.stroke();
+        } else if (shape === 'star') {
+          const spikes = 5;
+          const outerR = radius * 1.08;
+          const innerR = radius * 0.52;
+          ctx.beginPath();
+          for (let i = 0; i < spikes * 2; i++) {
+            const r = i % 2 === 0 ? outerR : innerR;
+            const angle = (i * Math.PI) / spikes - Math.PI / 2;
+            const px = Math.cos(angle) * r;
+            const py = Math.sin(angle) * r;
+            if (i === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+          }
+          ctx.closePath();
+          ctx.fillStyle = fillStyle;
+          ctx.fill();
+          ctx.stroke();
+        } else if (shape === 'berry') {
+          const s = radius * 0.98;
+          ctx.beginPath();
+          ctx.moveTo(-s * 0.78, -s * 0.1);
+          ctx.quadraticCurveTo(-s * 0.55, s * 0.65, 0, s * 0.92);
+          ctx.quadraticCurveTo(s * 0.55, s * 0.65, s * 0.78, -s * 0.1);
+          ctx.closePath();
+          ctx.fillStyle = fillStyle;
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.arc(-s * 0.38, -s * 0.22, s * 0.28, Math.PI * 0.8, Math.PI * 2.2);
+          ctx.arc(0, -s * 0.3, s * 0.32, Math.PI * 0.9, Math.PI * 2.1);
+          ctx.arc(s * 0.38, -s * 0.22, s * 0.28, Math.PI * 0.8, Math.PI * 2.2);
+          ctx.closePath();
+          ctx.fillStyle = '#52b8b5';
+          ctx.fill();
+          ctx.stroke();
+        } else {
+          ctx.beginPath();
+          ctx.arc(0, 0, radius * 0.92, 0, Math.PI * 2);
+          ctx.fillStyle = fillStyle;
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.arc(0, 0, radius * 0.52, 0, Math.PI * 1.35);
+          ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
+        }
+
+        ctx.restore();
+      }
+
+      function drawCloudBar(ctx) {
+        const { x, y, width, height, bounceY, eyeOffsetX, mood } = state.cloud;
+        const cy = y + bounceY;
+        const halfW = width / 2;
+        const halfH = height / 2;
+
+        ctx.save();
+        ctx.translate(x, cy);
+
+        ctx.fillStyle = 'rgba(40, 42, 36, 0.14)';
+        ctx.beginPath();
+        ctx.roundRect(-halfW + 3, -halfH + 5, width, height, 8);
+        ctx.fill();
+
+        ctx.fillStyle = '#cfd428';
+        ctx.strokeStyle = '#282a24';
+        ctx.lineWidth = 3.2;
+        ctx.beginPath();
+        ctx.roundRect(-halfW, -halfH, width, height, 6);
+        ctx.fill();
+        ctx.stroke();
+
+        const cloudW = width - 16;
+        const cloudH = height - 14;
+        const cLeft = -cloudW / 2;
+        const cRight = cloudW / 2;
+        const cTop = -cloudH / 2;
+        const cBot = cloudH / 2;
+
+        ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = '#282a24';
+        ctx.lineWidth = 2.8;
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+
+        ctx.beginPath();
+        const topBumps = 7;
+        ctx.moveTo(cLeft + 6, 0);
+        ctx.quadraticCurveTo(cLeft - 4, cTop * 0.6, cLeft + 8, cTop + 3);
+
+        for (let i = 0; i < topBumps; i++) {
+          const bx1 = cLeft + 8 + i * ((cloudW - 16) / topBumps);
+          const bx2 = cLeft + 8 + (i + 1) * ((cloudW - 16) / topBumps);
+          const midX = (bx1 + bx2) / 2;
+          const peakY = cTop - (i % 2 === 0 ? 4 : 2);
+          ctx.quadraticCurveTo(midX, peakY, bx2, cTop + 3);
+        }
+
+        ctx.quadraticCurveTo(cRight + 4, cTop * 0.6, cRight - 4, 0);
+        ctx.quadraticCurveTo(cRight + 4, cBot * 0.6, cRight - 8, cBot - 3);
+
+        for (let i = topBumps - 1; i >= 0; i--) {
+          const bx1 = cLeft + 8 + i * ((cloudW - 16) / topBumps);
+          const bx2 = cLeft + 8 + (i + 1) * ((cloudW - 16) / topBumps);
+          const midX = (bx1 + bx2) / 2;
+          const peakY = cBot + (i % 2 === 0 ? 4 : 2);
+          ctx.quadraticCurveTo(midX, peakY, bx1, cBot - 3);
+        }
+
+        ctx.quadraticCurveTo(cLeft - 4, cBot * 0.6, cLeft + 6, 0);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        const eyeX = cloudW * 0.25;
+        const cheekX = cloudW * 0.35;
+
+        ctx.fillStyle = '#f79ec6';
+        ctx.beginPath();
+        ctx.ellipse(-cheekX, 3, 9, 4.5, 0, 0, Math.PI * 2);
+        ctx.ellipse(cheekX, 3, 9, 4.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = '#282a24';
+        ctx.fillStyle = '#282a24';
+        ctx.lineWidth = 3;
+        if (mood === 'joy') {
+          ctx.beginPath();
+          ctx.arc(-eyeX + eyeOffsetX, 0, 5, Math.PI * 1.1, Math.PI * 1.9);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(eyeX + eyeOffsetX, 0, 5, Math.PI * 1.1, Math.PI * 1.9);
+          ctx.stroke();
+        } else {
+          ctx.beginPath();
+          ctx.roundRect(-eyeX + eyeOffsetX - 2, -6, 4, 11, 2);
+          ctx.roundRect(eyeX + eyeOffsetX - 2, -6, 4, 11, 2);
+          ctx.fill();
+        }
+
+        ctx.beginPath();
+        if (mood === 'oops') {
+          ctx.arc(0, 4, 4, 0, Math.PI * 2);
+          ctx.stroke();
+        } else {
+          ctx.arc(0, 1, 5.5, 0.15 * Math.PI, 0.85 * Math.PI);
+          ctx.lineWidth = 2.6;
+          ctx.stroke();
+        }
+
+        if (state.nextCandy) {
+          const nc = state.nextCandy;
+          const bx = halfW - 18;
+          const by = -halfH - 12;
+          ctx.fillStyle = 'rgba(255,255,255,0.92)';
+          ctx.strokeStyle = '#282a24';
+          ctx.lineWidth = 1.8;
+          ctx.beginPath();
+          ctx.roundRect(bx - 34, by - 11, 54, 22, 11);
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = '#444';
+          ctx.font = 'bold 10px sans-serif';
+          ctx.textAlign = 'left';
+          ctx.fillText('下一颗', bx - 30, by + 3.5);
+          drawCandy(ctx, bx + 10, by, 6.5, nc.colorIdx, nc.shape, nc.isRainbow, 0);
+        }
+
+        ctx.restore();
+
+        if (state.activeCandy) {
+          const ac = state.activeCandy;
+          const candyR = Math.max(15, Math.min(state.width * 0.032, 22)) * ac.scale;
+          const candyX = x;
+          const candyY = cy + halfH + candyR * 0.85 + 4;
+          const colInfo = COLOR_COLUMNS[ac.colorIdx];
+
+          const hoverIdx = getColumnIndexAtX(candyX);
+          const isMatch = ac.isRainbow || hoverIdx === ac.colorIdx;
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.setLineDash([6, 6]);
+          ctx.moveTo(candyX, candyY + candyR);
+          ctx.lineTo(candyX, state.layout.columnsTopY);
+          ctx.strokeStyle = isMatch ? colInfo.hex : 'rgba(80, 80, 80, 0.35)';
+          ctx.lineWidth = isMatch ? 3.5 : 2;
+          ctx.stroke();
+          ctx.restore();
+
+          ctx.save();
+          ctx.beginPath();
+          let progress = 1;
+          if (state.mode === 'kids') {
+            progress = Math.min(1, ac.alignTime / 0.45);
+          } else {
+            progress = Math.max(0, ac.timer / ac.maxTimer);
+          }
+          ctx.arc(candyX, candyY, candyR + 6, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * progress);
+          ctx.strokeStyle = isMatch ? '#1d8f24' : colInfo.hex;
+          ctx.lineWidth = 3.5;
+          ctx.lineCap = 'round';
+          ctx.stroke();
+          ctx.restore();
+
+          drawCandy(ctx, candyX, candyY, candyR, ac.colorIdx, ac.shape, ac.isRainbow, Math.sin(performance.now() * 0.005) * 0.12);
+
+          if (isMatch) {
+            ctx.save();
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#1d8f24';
+            ctx.fillText(ac.isRainbow ? '✨ 彩虹糖!' : `✓ 对准${colInfo.name}`, candyX, candyY + candyR + 18);
+            ctx.restore();
+          }
+        }
+      }
+
+      function drawRainbowColumns(ctx) {
+        const cols = state.layout.columns;
+        const H = state.height;
+
+        for (let i = 0; i < cols.length; i++) {
+          const colRect = cols[i];
+          const colDef = COLOR_COLUMNS[i];
+          const glow = state.columnHighlight[i];
+          const topY = colRect.topY - glow * 6;
+          const colH = H - topY;
+
+          ctx.save();
+
+          ctx.beginPath();
+          ctx.moveTo(colRect.x, H);
+          ctx.lineTo(colRect.x, topY + 3);
+          const segs = 4;
+          for (let s = 1; s <= segs; s++) {
+            const sx = colRect.x + (colRect.width * s) / segs;
+            const sy = topY + Math.sin(i * 2.3 + s * 1.9) * 3;
+            ctx.lineTo(sx, sy);
+          }
+          ctx.lineTo(colRect.x + colRect.width, H);
+          ctx.closePath();
+
+          ctx.fillStyle = colDef.hex;
+          ctx.fill();
+
+          ctx.save();
+          ctx.clip();
+          const strokes = markerStrokes[i];
+          for (let k = 0; k < strokes.length; k++) {
+            const st = strokes[k];
+            ctx.fillStyle = st.light ? '#ffffff' : '#000000';
+            ctx.globalAlpha = st.alpha;
+            ctx.fillRect(colRect.x + st.rx * colRect.width, topY + st.ry * colH, st.rw * colRect.width, st.rh * colH);
+          }
+          ctx.restore();
+
+          if (glow > 0.05) {
+            ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(0.28, glow * 0.22)})`;
+            ctx.fill();
+
+            ctx.fillStyle = '#fff';
+            ctx.strokeStyle = '#282a24';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(colRect.centerX, topY + 18, 11, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = colDef.hex;
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('▼', colRect.centerX, topY + 19);
+          }
+
+          ctx.strokeStyle = 'rgba(40, 42, 36, 0.65)';
+          ctx.lineWidth = 2.2;
+          ctx.beginPath();
+          ctx.moveTo(colRect.x, topY);
+          ctx.lineTo(colRect.x, H);
+          ctx.stroke();
+
+          ctx.strokeStyle = colDef.darkHex;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(colRect.x, topY + 2);
+          ctx.lineTo(colRect.x + colRect.width, topY + 2);
+          ctx.stroke();
+
+          const isCollected = state.collectedInCycle.has(i);
+          ctx.save();
+          ctx.font = 'bold 13px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+          ctx.fillText(isCollected ? '⭐' : `${i + 1}`, colRect.centerX, topY + 38);
+          if (state.columnCounts[i] > 0) {
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+            ctx.fillText(`×${state.columnCounts[i]}`, colRect.centerX, topY + 54);
+          }
+          ctx.restore();
+
+          const stack = state.columnStacks[i];
+          const baseFloor = H - 18;
+          for (let sIdx = 0; sIdx < stack.length; sIdx++) {
+            const sc = stack[sIdx];
+            const sx = colRect.centerX + sc.offsetX;
+            const sy = baseFloor - sIdx * 12;
+            drawCandy(ctx, sx, sy, sc.radius, sc.colorIdx, sc.shape, sc.isRainbow, sc.rotation);
+          }
+
+          ctx.restore();
+        }
+      }
+
+      function render() {
+        ctx.save();
+        ctx.scale(state.dpr, state.dpr);
+
+        ctx.fillStyle = '#fbf9f4';
+        ctx.fillRect(0, 0, state.width, state.height);
+
+        drawTopHeaderDecorations(ctx);
+        drawRainbowColumns(ctx);
+
+        for (let i = 0; i < state.fallingCandies.length; i++) {
+          const fc = state.fallingCandies[i];
+          drawCandy(ctx, fc.x, fc.y, fc.radius, fc.colorIdx, fc.shape, fc.isRainbow, fc.rotation);
+        }
+
+        drawCloudBar(ctx);
+
+        for (let i = 0; i < state.particles.length; i++) {
+          const p = state.particles[i];
+          ctx.save();
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.color;
+          ctx.strokeStyle = '#282a24';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        for (let i = 0; i < state.floatingTexts.length; i++) {
+          const ft = state.floatingTexts[i];
+          ctx.save();
+          ctx.globalAlpha = ft.alpha;
+          ctx.font = `900 ${Math.round(16 * ft.scale)}px "PingFang SC", "Microsoft YaHei", sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.lineWidth = 4;
+          ctx.strokeStyle = '#282a24';
+          ctx.strokeText(ft.text, ft.x, ft.y);
+          ctx.fillStyle = ft.color;
+          ctx.fillText(ft.text, ft.x, ft.y);
+          ctx.restore();
+        }
+
+        ctx.restore();
+      }
+
+      function getCanvasX(clientX) {
+        return clientX - canvas.getBoundingClientRect().left;
+      }
+
+      function getCanvasY(clientY) {
+        return clientY - canvas.getBoundingClientRect().top;
+      }
+
+      canvas.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        sfx.init();
+        hideToastSoon();
+
+        const px = getCanvasX(e.clientX);
+        const py = getCanvasY(e.clientY);
+
+        const distToCloud = Math.hypot(px - state.cloud.x, py - (state.cloud.y + state.cloud.height * 0.5));
+        if (distToCloud < 42 && !state.isDragging) {
+          state.isDragging = true;
+          state.dragOffsetX = 0;
+          state.TapStartTime = performance.now();
+          state.TapStartX = px;
+          return;
+        }
+
+        state.isDragging = true;
+        state.TapStartTime = performance.now();
+        state.TapStartX = px;
+
+        if (Math.abs(px - state.cloud.x) < state.cloud.width * 0.6 && py < state.layout.columnsTopY + 40) {
+          state.dragOffsetX = state.cloud.x - px;
+        } else {
+          state.dragOffsetX = 0;
+          state.cloud.targetX = px;
+          clampCloudX();
+        }
+      });
+
+      window.addEventListener('pointermove', (e) => {
+        if (!state.isDragging) return;
+        const px = getCanvasX(e.clientX);
+        state.cloud.targetX = px + state.dragOffsetX;
+        clampCloudX();
+      });
+
+      window.addEventListener('pointerup', (e) => {
+        if (!state.isDragging) return;
+        state.isDragging = false;
+        const px = getCanvasX(e.clientX);
+        const elapsed = performance.now() - (state.TapStartTime || 0);
+        const moved = Math.abs(px - (state.TapStartX || px));
+
+        if (elapsed < 240 && moved < 12) {
+          const tappedCol = getColumnIndexAtX(px);
+          const currentCol = getColumnIndexAtX(state.cloud.x);
+          if (tappedCol === currentCol) {
+            dropActiveCandy();
+          } else if (state.layout.columns[tappedCol]) {
+            state.cloud.targetX = state.layout.columns[tappedCol].centerX;
+            clampCloudX();
+          }
+        }
+      });
+
+      window.addEventListener('keydown', (e) => {
+        sfx.init();
+        hideToastSoon();
+
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+          e.preventDefault();
+          state.keys.left = true;
+          document.getElementById('btn-left').classList.add('pressed');
+        } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+          e.preventDefault();
+          state.keys.right = true;
+          document.getElementById('btn-right').classList.add('pressed');
+        } else if (e.key === ' ' || e.key === 'ArrowDown' || e.key === 'Enter' || e.key === 's' || e.key === 'S') {
+          e.preventDefault();
+          dropActiveCandy();
+          document.getElementById('btn-drop').classList.add('pressed');
+        } else if (e.key >= '1' && e.key <= '7') {
+          const idx = parseInt(e.key, 10) - 1;
+          if (state.layout.columns[idx]) {
+            state.cloud.targetX = state.layout.columns[idx].centerX;
+            clampCloudX();
+          }
+        }
+      });
+
+      window.addEventListener('keyup', (e) => {
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+          state.keys.left = false;
+          document.getElementById('btn-left').classList.remove('pressed');
+        } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+          state.keys.right = false;
+          document.getElementById('btn-right').classList.remove('pressed');
+        } else if (e.key === ' ' || e.key === 'ArrowDown' || e.key === 'Enter' || e.key === 's' || e.key === 'S') {
+          document.getElementById('btn-drop').classList.remove('pressed');
+        }
+      });
+
+      const btnLeft = document.getElementById('btn-left');
+      const btnRight = document.getElementById('btn-right');
+      const btnDrop = document.getElementById('btn-drop');
+
+      function bindHoldButton(btn, dir) {
+        const start = (e) => {
+          e.preventDefault();
+          sfx.init();
+          hideToastSoon();
+          if (dir === 'left') state.keys.left = true;
+          if (dir === 'right') state.keys.right = true;
+          btn.classList.add('pressed');
+        };
+        const end = () => {
+          if (dir === 'left') state.keys.left = false;
+          if (dir === 'right') state.keys.right = false;
+          btn.classList.remove('pressed');
+        };
+        btn.addEventListener('pointerdown', start);
+        btn.addEventListener('pointerup', end);
+        btn.addEventListener('pointerleave', end);
+        btn.addEventListener('pointercancel', end);
+      }
+
+      bindHoldButton(btnLeft, 'left');
+      bindHoldButton(btnRight, 'right');
+
+      btnDrop.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        sfx.init();
+        hideToastSoon();
+        dropActiveCandy();
+      });
+
+      let toastHidden = false;
+      function hideToastSoon() {
+        if (toastHidden) return;
+        toastHidden = true;
+        setTimeout(() => {
+          const toast = document.getElementById('hint-toast');
+          if (toast) toast.style.opacity = '0';
+        }, 4500);
+      }
+
+      const modeModal = document.getElementById('mode-modal');
+      const artModal = document.getElementById('art-modal');
+      const modeLabel = document.getElementById('mode-label');
+
+      const MODE_NAMES = {
+        classic: '经典自动掉',
+        rain: '彩虹连连掉',
+        kids: '轻松宝宝玩'
+      };
+
+      function setGameMode(newMode) {
+        state.mode = newMode;
+        modeLabel.textContent = MODE_NAMES[newMode] || '经典自动掉';
+        document.querySelectorAll('.mode-item').forEach((el) => {
+          el.classList.toggle('selected', el.dataset.mode === newMode);
+        });
+        state.activeCandy = null;
+        spawnNextCandyOnCloud();
+      }
+
+      document.getElementById('btn-mode').addEventListener('click', () => modeModal.classList.add('open'));
+      document.getElementById('close-mode-modal').addEventListener('click', () => modeModal.classList.remove('open'));
+      document.getElementById('btn-start-play').addEventListener('click', () => modeModal.classList.remove('open'));
+
+      document.querySelectorAll('.mode-item').forEach((item) => {
+        item.addEventListener('click', () => setGameMode(item.dataset.mode));
+      });
+
+      document.getElementById('btn-reset-game').addEventListener('click', () => {
+        state.score = 0;
+        state.combo = 0;
+        state.rainbowCount = 0;
+        state.collectedInCycle.clear();
+        state.columnCounts = [0, 0, 0, 0, 0, 0, 0];
+        state.columnStacks = [[], [], [], [], [], [], []];
+        state.fallingCandies = [];
+        state.activeCandy = null;
+        spawnNextCandyOnCloud();
+        updateHUD();
+        modeModal.classList.remove('open');
+      });
+
+      document.getElementById('btn-art').addEventListener('click', () => artModal.classList.add('open'));
+      document.getElementById('close-art-modal').addEventListener('click', () => artModal.classList.remove('open'));
+
+      const btnSound = document.getElementById('btn-sound');
+      btnSound.addEventListener('click', () => {
+        sfx.enabled = !sfx.enabled;
+        btnSound.textContent = sfx.enabled ? '🔊 音效' : '🔇 静音';
+        if (sfx.enabled) sfx.playTone(440, 0.15);
+      });
+
+      window.addEventListener('resize', computeLayout);
+      computeLayout();
+      if (state.layout.columns[2]) {
+        state.cloud.x = state.layout.columns[2].centerX;
+        state.cloud.targetX = state.cloud.x;
+      }
+      spawnNextCandyOnCloud();
+      updateHUD();
+
+      let lastTime = performance.now();
+      function loop(now) {
+        const dt = Math.min(0.05, Math.max(0.001, (now - lastTime) / 1000));
+        lastTime = now;
+        update(dt);
+        render();
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+    })();
+  </script>
+</body>
+</html>
