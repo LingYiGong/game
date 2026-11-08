@@ -1,592 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="description" content="彩虹糖下雨（集满10颗胜利版）" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍬</text></svg>" />
-  <title>彩虹糖下雨</title>
-  <style>
-    :root {
-      --paper-bg: #fbf9f4;
-      --ink-dark: #282a24;
-      --cloud-frame: #cfd428;
-      --cloud-frame-shade: #b9be1c;
-      --col-red: #cf2027;
-      --col-pink: #f39bc3;
-      --col-green: #1d8f24;
-      --col-purple: #5d4b86;
-      --col-blue: #4650b0;
-      --col-orange: #e36517;
-      --col-skyblue: #298cd4;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-      -webkit-user-select: none;
-      -webkit-touch-callout: none;
-    }
-
-    html, body {
-      width: 100%;
-      height: 100%;
-      height: 100dvh;
-      overflow: hidden;
-      background: #2c241d radial-gradient(circle at center, #4a3b2f 0%, #231c15 100%);
-      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Comic Sans MS", cursive, sans-serif;
-      touch-action: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    #app-shell {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      max-width: 900px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding: env(safe-area-inset-top, 6px) 8px max(8px, env(safe-area-inset-bottom, 8px));
-    }
-
-    /* Top HUD Bar */
-    .hud-bar {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      padding: 5px 8px;
-      background: rgba(255, 252, 245, 0.96);
-      border: 2.5px solid var(--ink-dark);
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
-      z-index: 20;
-      flex-shrink: 0;
-      margin-bottom: 8px;
-    }
-
-    .hud-stats {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      flex-wrap: nowrap;
-      min-width: 0;
-    }
-
-    .hud-actions {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      flex-wrap: nowrap;
-      min-width: 0;
-    }
-
-    .stat-pill {
-      display: flex;
-      align-items: center;
-      gap: 3px;
-      background: #fff;
-      border: 2px solid var(--ink-dark);
-      border-radius: 999px;
-      padding: 3px 8px;
-      font-weight: 800;
-      font-size: 13px;
-      color: var(--ink-dark);
-      box-shadow: 1.5px 1.5px 0 rgba(0,0,0,0.12);
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .stat-pill span.val {
-      color: #d62828;
-      font-size: 14.5px;
-      min-width: 16px;
-      text-align: center;
-    }
-
-    .stat-pill.pill-target {
-      background: #fdf5d6;
-      border-color: #8c6a08;
-    }
-
-    .stat-pill.pill-target span.val {
-      color: #b25900;
-    }
-
-    .btn-cute {
-      appearance: none;
-      border: 2px solid var(--ink-dark);
-      background: #fff8d6;
-      color: var(--ink-dark);
-      font-weight: 800;
-      font-size: 13px;
-      padding: 4px 8px;
-      border-radius: 12px;
-      cursor: pointer;
-      box-shadow: 2px 2px 0 var(--ink-dark);
-      transition: transform 0.1s, background 0.15s;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-      white-space: nowrap;
-      text-decoration: none;
-      flex-shrink: 0;
-    }
-
-    .btn-cute:hover {
-      background: #ffef9e;
-    }
-
-    .btn-cute:active {
-      transform: translate(2px, 2px);
-      box-shadow: 0 0 0 var(--ink-dark);
-    }
-
-    .btn-cute.active-mode {
-      background: #d4f5b4;
-    }
-
-    .mode-long {
-      display: inline;
-    }
-    .mode-short {
-      display: none;
-    }
-
-    /* Main Drawing Paper Game Canvas */
-    #paper-stage {
-      position: relative;
-      width: 100%;
-      flex: 1;
-      min-height: 0;
-      background: var(--paper-bg);
-      border-radius: 14px;
-      box-shadow:
-        0 10px 30px rgba(0, 0, 0, 0.45),
-        inset 0 0 40px rgba(210, 195, 165, 0.25);
-      border: 3px solid #35322c;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    #game-canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-      cursor: grab;
-    }
-
-    #game-canvas:active {
-      cursor: grabbing;
-    }
-
-    /* Modals */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(20, 16, 12, 0.72);
-      backdrop-filter: blur(4px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      padding: 16px;
-    }
-
-    .modal-backdrop.open {
-      display: flex;
-    }
-
-    .modal-card {
-      background: #fcfaf2;
-      border: 3.5px solid var(--ink-dark);
-      border-radius: 22px;
-      max-width: 520px;
-      width: 100%;
-      max-height: 90dvh;
-      overflow-y: auto;
-      padding: 18px 20px;
-      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
-      color: var(--ink-dark);
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      border-bottom: 2px dashed #ccc5b4;
-      padding-bottom: 8px;
-    }
-
-    .modal-header h2 {
-      font-size: 20px;
-      font-weight: 900;
-    }
-
-    .art-preview-box {
-      width: 100%;
-      border-radius: 12px;
-      border: 2.5px solid var(--ink-dark);
-      overflow: hidden;
-      background: #eee;
-      margin: 10px 0;
-      text-align: center;
-    }
-
-    .art-preview-box img {
-      width: 100%;
-      max-height: 52dvh;
-      object-fit: contain;
-      display: block;
-      margin: 0 auto;
-    }
-
-    .mode-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .mode-item {
-      border: 2.5px solid var(--ink-dark);
-      border-radius: 14px;
-      padding: 10px 12px;
-      background: #fff;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      transition: transform 0.1s, background 0.15s;
-    }
-
-    .mode-item:hover {
-      background: #fffbe6;
-    }
-
-    .mode-item.selected {
-      background: #e2f8c9;
-      border-color: #1d8f24;
-      box-shadow: 0 0 0 2px #1d8f24;
-    }
-
-    .mode-item strong {
-      font-size: 15.5px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .mode-item p {
-      font-size: 13px;
-      color: #555;
-      line-height: 1.4;
-    }
-
-    /* Victory Modal Card */
-    .victory-card {
-      text-align: center;
-      background: linear-gradient(180deg, #fffcf5 0%, #fff6e0 100%);
-      border: 4px solid #332f28;
-      border-radius: 26px;
-      padding: 24px 20px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 0 4px #ffe682;
-      animation: popWin 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    @keyframes popWin {
-      0% { transform: scale(0.65); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    .victory-badge {
-      font-size: 56px;
-      line-height: 1;
-      margin-bottom: 8px;
-      filter: drop-shadow(0 6px 12px rgba(230, 160, 20, 0.4));
-      animation: bounceBadge 1s infinite alternate ease-in-out;
-    }
-
-    @keyframes bounceBadge {
-      from { transform: translateY(0); }
-      to { transform: translateY(-8px); }
-    }
-
-    .victory-title {
-      font-size: 26px;
-      font-weight: 900;
-      color: #ce2026;
-      text-shadow: 2px 2px 0 #fff, 3px 3px 0 rgba(0,0,0,0.15);
-      margin-bottom: 6px;
-    }
-
-    .victory-subtitle {
-      font-size: 14.5px;
-      color: #5d4b86;
-      font-weight: 800;
-      margin-bottom: 18px;
-    }
-
-    .victory-stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin: 16px 0 22px 0;
-    }
-
-    .vstat-box {
-      background: #fff;
-      border: 2px solid var(--ink-dark);
-      border-radius: 14px;
-      padding: 10px 8px;
-      box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
-    }
-
-    .vstat-box .label {
-      font-size: 12px;
-      color: #666;
-      font-weight: 700;
-      margin-bottom: 2px;
-    }
-
-    .vstat-box .num {
-      font-size: 20px;
-      font-weight: 900;
-      color: #ce2026;
-    }
-
-    .victory-actions {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .btn-win-replay {
-      background: linear-gradient(180deg, #6ae070 0%, #2db434 100%);
-      color: #fff;
-      border: 2.5px solid var(--ink-dark);
-      padding: 10px 24px;
-      font-size: 17px;
-      font-weight: 900;
-      border-radius: 16px;
-      cursor: pointer;
-      box-shadow: 0 4px 0 var(--ink-dark);
-      transition: transform 0.1s, box-shadow 0.1s;
-    }
-
-    .btn-win-replay:active {
-      transform: translateY(3px);
-      box-shadow: 0 1px 0 var(--ink-dark);
-    }
-
-    /* iPad and Tablet responsive optimization (601px ~ 860px) */
-    @media (max-width: 860px) {
-      .hud-bar {
-        padding: 4px 8px;
-        gap: 4px;
-      }
-      .hud-stats {
-        gap: 4px;
-      }
-      .hud-actions {
-        gap: 4px;
-      }
-      .stat-pill {
-        padding: 2.5px 6px;
-        font-size: 12px;
-      }
-      .stat-pill .label-text {
-        display: none;
-      }
-      .stat-pill span.val {
-        font-size: 13px;
-      }
-      .btn-cute {
-        padding: 4px 6px;
-        font-size: 12px;
-      }
-      .mode-long {
-        display: none;
-      }
-      .mode-short {
-        display: inline;
-      }
-    }
-
-    /* Mobile phone optimization (<= 600px) */
-    @media (max-width: 600px) {
-      .hud-bar {
-        flex-direction: column;
-        gap: 5px;
-        padding: 5px 7px;
-      }
-      .hud-stats {
-        width: 100%;
-        justify-content: space-between;
-      }
-      .hud-actions {
-        width: 100%;
-        justify-content: space-between;
-      }
-      .hud-actions .btn-cute {
-        flex: 1;
-        padding: 4px 2px;
-        font-size: 11.5px;
-      }
-      .stat-pill {
-        padding: 2px 4px;
-        font-size: 11.5px;
-      }
-      .stat-pill span.val {
-        font-size: 12px;
-      }
-      .victory-title {
-        font-size: 21px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div id="app-shell">
-    <!-- Top HUD Bar -->
-    <div class="hud-bar">
-      <div class="hud-stats">
-        <a class="btn-cute" href="index.html" title="返回游戏大厅">🏠 游戏大厅</a>
-        <div class="stat-pill pill-target" title="胜利目标：7个彩色柱子各装满10颗糖果">
-          🏆<span class="label-text"> 满柱</span> <span class="val" id="full-tubes-val">0/7</span>
-        </div>
-        <div class="stat-pill" title="收集到的糖果总数 (目标 70 颗)">
-          🍬<span class="label-text"> 收集</span> <span class="val" id="total-val">0/70</span>
-        </div>
-        <div class="stat-pill" title="连续投进同色柱子的连击加成">
-          🔥<span class="label-text"> 连击</span> <span class="val" id="combo-val">0</span>
-        </div>
-        <div class="stat-pill" title="总得分">
-          ⭐<span class="label-text"> 分数</span> <span class="val" id="score-val">0</span>
-        </div>
-      </div>
-
-      <div class="hud-actions">
-        <button class="btn-cute active-mode" id="btn-mode" title="切换游戏玩法模式">
-          🎮 <span class="mode-long" id="mode-label-long">经典自动掉</span><span class="mode-short" id="mode-label-short">经典</span>
-        </button>
-        <button class="btn-cute" id="btn-art" title="查看女儿的手绘原作">
-          🎨 原作
-        </button>
-        <button class="btn-cute" id="btn-sound" title="开关声音">
-          🔊 音效
-        </button>
-        <button class="btn-cute" id="btn-quick-reset" title="重新开始本局">
-          🔄 重来
-        </button>
-      </div>
-    </div>
-
-    <!-- Main Drawing Paper Game Canvas (Clean, intuitive touch & drag) -->
-    <div id="paper-stage">
-      <canvas id="game-canvas"></canvas>
-    </div>
-  </div>
-
-  <!-- Victory Celebration Modal -->
-  <div class="modal-backdrop" id="victory-modal">
-    <div class="modal-card victory-card">
-      <div class="victory-badge">🏆</div>
-      <h2 class="victory-title">🎉 恭喜通关！彩虹大圆满！</h2>
-      <p class="victory-subtitle">所有 7 个彩虹柱子都完美装满了 10 颗糖果！太棒了！</p>
-
-      <div class="victory-stats-grid">
-        <div class="vstat-box">
-          <div class="label">🍬 糖果总数</div>
-          <div class="num" id="win-candies">70 / 70</div>
-        </div>
-        <div class="vstat-box">
-          <div class="label">⏱️ 通关用时</div>
-          <div class="num" id="win-time">00:00</div>
-        </div>
-        <div class="vstat-box">
-          <div class="label">🔥 最高连击</div>
-          <div class="num" id="win-combo">0</div>
-        </div>
-        <div class="vstat-box">
-          <div class="label">⭐ 最终得分</div>
-          <div class="num" id="win-score">0</div>
-        </div>
-      </div>
-
-      <div class="victory-actions">
-        <button class="btn-win-replay" id="btn-win-replay">🎈 再玩一局</button>
-        <button class="btn-cute" id="btn-win-art" style="font-size:15px; padding: 10px 18px;">🎨 欣赏原作</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Mode & Rules Modal -->
-  <div class="modal-backdrop" id="mode-modal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h2>🌈 糖果收集规则与模式</h2>
-        <button class="btn-cute" id="close-mode-modal">✖ 关闭</button>
-      </div>
-      <p style="font-size:14px; color:#444; line-height: 1.5;">
-        🎯 <strong>胜利目标：</strong>将掉落的彩色糖果送进下方对应颜色的<strong>彩虹柱</strong>里，<strong>每个柱子刚好装满 10 颗</strong>即可大获全胜！
-      </p>
-      <div class="mode-grid">
-        <div class="mode-item selected" data-mode="classic">
-          <strong>🌟 1. 经典自动掉落（推荐） <span>默认</span></strong>
-          <p>云朵嘴边会含着一颗彩色糖果，倒计时结束自动落下！对准下方的同色柱子轻点一下或按空格即可提前落入。</p>
-        </div>
-        <div class="mode-item" data-mode="rain">
-          <strong>🍬 2. 彩虹连连掉（快节奏） <span>挑战</span></strong>
-          <p>云朵会快速接连吐出糖果！手疾眼快滑动云朵，让每颗糖果稳稳滑进同色柱子。</p>
-        </div>
-        <div class="mode-item" data-mode="kids">
-          <strong>🎈 3. 轻松宝宝模式（对准即掉） <span>无压力</span></strong>
-          <p>没有倒计时压力！移到对应颜色的柱子上方稍微停稳就会自动开心落入，特别适合小朋友玩耍。</p>
-        </div>
-      </div>
-      <div style="margin-top: 14px; display:flex; justify-content:space-between; align-items:center;">
-        <button class="btn-cute" id="btn-reset-game">🔄 重置游戏</button>
-        <button class="btn-cute active-mode" id="btn-start-play" style="padding: 7px 18px; font-size:15px;">✨ 开始挑战！</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Original Drawing Modal -->
-  <div class="modal-backdrop" id="art-modal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h2>🎨 小设计师的手绘原作 (2026年11月1日)</h2>
-        <button class="btn-cute" id="close-art-modal">✖ 关闭</button>
-      </div>
-      <p style="font-size:13.5px; color:#444; line-height:1.5;">
-        游戏完整还原了画作里的每一个细节：<br/>
-        • 顶部的 <strong>绿十字星、双色爱心、蓝顶紫莓心</strong> 与右上角日期<br/>
-        • 中间黄绿边框、粉脸蛋的 <strong>微笑云朵横条</strong><br/>
-        • 下方从左到右一模一样的 <strong>草莓红、蜜桃粉、苹果绿、葡萄紫、蓝莓蓝、甜橙橘、苏打天蓝</strong> 7色彩虹柱子！
-      </p>
-      <div class="art-preview-box">
-        <img src="artwork.jpg" alt="女儿的手绘游戏设计原图" onerror="this.parentElement.innerHTML='<div style=\'padding:24px;color:#666;\'>本地单文件模式下未找到原图文件 artwork.jpg</div>'" />
-      </div>
-    </div>
-  </div>
-
-  <script>
-    (() => {
+(() => {
       // 7 Rainbow Colors exactly matching original hand drawing
       const COLOR_COLUMNS = [
         { id: 'red',     name: '草莓红',   hex: '#cf2027', lightHex: '#ff6b72', darkHex: '#9e1318', noteFreq: 261.63 },
@@ -603,11 +15,26 @@
       const TOTAL_TARGET = TOTAL_TUBES * TARGET_PER_TUBE; // 70
       const CANDY_SHAPES = ['wrapped', 'heart', 'berry', 'star', 'round'];
 
-      // Web Audio Synthesizer
+      // 8 Collectible Hand-drawn Stickers
+      const STICKER_DEFS = [
+        { id: 'first_tube', icon: '🌈', title: '初遇彩虹柱', desc: '首次将任意1根彩虹柱装满10颗糖果' },
+        { id: 'combo_master', icon: '🔥', title: '十连神射手', desc: '单局达成 10 次以上连续精准投进' },
+        { id: 'bubble_split', icon: '🫧', title: '泡泡分裂师', desc: '让落下的糖果穿过空中倍增门实现翻倍' },
+        { id: 'magic_star', icon: '🌟', title: '画作唤醒者', desc: '激活并释放画纸顶部的手绘魔法标志' },
+        { id: 'fever_party', icon: '😎', title: '彩虹暴走王', desc: '集满暴走能量，触发云朵彩虹喷泉狂欢' },
+        { id: 'bomb_hero', icon: '💥', title: '拆弹小卫士', desc: '在半空中点击拍飞坏坏炸弹或赶走贪吃虫' },
+        { id: 'speed_star', icon: '⚡', title: '闪电满星王', desc: '在 75 秒内急速通关并斩获 ⭐⭐⭐ 评价' },
+        { id: 'grand_champion', icon: '👑', title: '彩虹大满贯', desc: '成功集满全部 7 根彩虹柱通关游戏' }
+      ];
+
+      // Web Audio Synthesizer + Music Box BGM
       class SoundFX {
         constructor() {
           this.enabled = true;
+          this.bgmEnabled = false;
           this.ctx = null;
+          this.bgmNoteIdx = 0;
+          this.bgmTimer = 0;
         }
 
         init() {
@@ -643,6 +70,26 @@
           osc.stop(now + duration + 0.02);
         }
 
+        updateBGM(dt, isFever) {
+          if (!this.bgmEnabled || !this.enabled) return;
+          this.init();
+          if (!this.ctx) return;
+
+          const tempo = isFever ? 0.16 : 0.26;
+          this.bgmTimer -= dt;
+          if (this.bgmTimer <= 0) {
+            this.bgmTimer = tempo;
+            // Cheerful pentatonic / music-box melody
+            const melody = [
+              523.25, 659.25, 783.99, 659.25, 880.00, 783.99, 659.25, 587.33,
+              523.25, 587.33, 659.25, 783.99, 1046.5, 880.00, 783.99, 659.25
+            ];
+            const f = melody[this.bgmNoteIdx % melody.length] * (isFever ? 1.122 : 1);
+            this.bgmNoteIdx++;
+            this.playTone(f, tempo * 0.9, 'sine', 0.045, 0);
+          }
+        }
+
         playDrop() {
           if (!this.enabled) return;
           this.init();
@@ -663,12 +110,36 @@
 
         playMatch(colIndex, combo) {
           const baseFreq = COLOR_COLUMNS[colIndex]?.noteFreq || 330;
-          this.playTone(baseFreq, 0.25, 'triangle', 0.22, 0);
-          this.playTone(baseFreq * 1.25, 0.25, 'sine', 0.16, 0.07);
-          this.playTone(baseFreq * 1.5, 0.32, 'triangle', 0.18, 0.14);
+          const pitchBoost = Math.min(combo * 0.03, 0.35);
+          const f = baseFreq * (1 + pitchBoost);
+          this.playTone(f, 0.25, 'triangle', 0.22, 0);
+          this.playTone(f * 1.25, 0.25, 'sine', 0.16, 0.06);
+          this.playTone(f * 1.5, 0.32, 'triangle', 0.18, 0.12);
           if (combo >= 3) {
-            this.playTone(baseFreq * 2, 0.35, 'sine', 0.15, 0.21);
+            this.playTone(f * 2, 0.35, 'sine', 0.15, 0.18);
           }
+        }
+
+        playGateMultiply() {
+          this.playTone(587.33, 0.14, 'sine', 0.2, 0);
+          this.playTone(880.00, 0.22, 'triangle', 0.22, 0.06);
+          this.playTone(1174.66, 0.26, 'sine', 0.18, 0.12);
+        }
+
+        playMagicSkill() {
+          const chord = [523.25, 659.25, 783.99, 1046.5, 1318.5];
+          chord.forEach((n, i) => this.playTone(n, 0.35, 'sine', 0.2, i * 0.055));
+        }
+
+        playSwat() {
+          this.playTone(300, 0.1, 'sawtooth', 0.18, 0);
+          this.playTone(740, 0.2, 'triangle', 0.22, 0.05);
+          this.playTone(987, 0.25, 'sine', 0.18, 0.11);
+        }
+
+        playFeverStart() {
+          const notes = [523.25, 659.25, 783.99, 1046.5, 1318.5, 1567.98];
+          notes.forEach((n, i) => this.playTone(n, 0.28, 'triangle', 0.24, i * 0.06));
         }
 
         playMismatch() {
@@ -715,10 +186,21 @@
         totalCollected: 0,
         gameStartTime: Date.now(),
         isWon: false,
+        screenShake: 0,
+        // Fever Rainbow Mode
+        feverGauge: 0,      // 0..100
+        feverTimer: 0,      // active seconds remaining
+        feverSpawnCd: 0,
+        // Active Magic Buffs from Top 6 Hand-drawn Icons
+        magnetTimer: 0,     // Split-Heart Magic: auto-homing candies!
+        windForce: 0,       // Gentle breeze force in challenge/classic
+        windTimer: 0,
         columnCounts: [0, 0, 0, 0, 0, 0, 0],
         columnStacks: [[], [], [], [], [], [], []],
         columnHighlight: [0, 0, 0, 0, 0, 0, 0],
         columnFullGlow: [0, 0, 0, 0, 0, 0, 0],
+        columnFrozen: [0, 0, 0, 0, 0, 0, 0], // Ice shield on columns (tap or hit to shatter for bonus!)
+        columnBugs: [null, null, null, null, null, null, null], // Mischievous caterpillars sitting on column rim
         cloud: {
           x: 300,
           targetX: 300,
@@ -734,10 +216,17 @@
         activeCandy: null,
         nextCandy: null,
         fallingCandies: [],
+        multiplierGates: [], // Floating x2 / x3 / +2 magic bubbles between cloud and columns
+        gateSpawnTimer: 1.5,
+        hazardSpawnTimer: 8.0,
         particles: [],
         confetti: [],
         floatingTexts: [],
         topIconBounce: [0, 0, 0, 0, 0, 0],
+        topIconCharge: [40, 40, 40, 40, 40, 40], // 0..100 charge for each of the 6 top hand-drawn icons
+        topIconPos: [],
+        unlockedStickers: {},
+        newlyUnlockedThisRun: [],
         keys: { left: false, right: false },
         isDragging: false,
         dragOffsetX: 0,
@@ -849,36 +338,93 @@
         return state.columnCounts.filter(c => c >= TARGET_PER_TUBE).length;
       }
 
-      function createRandomCandy() {
-        // Collect columns that have not yet reached 10 candies
+      // Sticker persistence helpers
+      function loadStickers() {
+        try {
+          const raw = localStorage.getItem('rainbow_candy_stickers_v2');
+          if (raw) state.unlockedStickers = JSON.parse(raw) || {};
+        } catch (e) {
+          state.unlockedStickers = {};
+        }
+      }
+
+      function unlockSticker(id) {
+        if (state.unlockedStickers[id]) return;
+        state.unlockedStickers[id] = true;
+        state.newlyUnlockedThisRun.push(id);
+        try {
+          localStorage.setItem('rainbow_candy_stickers_v2', JSON.stringify(state.unlockedStickers));
+        } catch (e) {}
+        const def = STICKER_DEFS.find(s => s.id === id);
+        if (def) {
+          addFloatingText(state.width / 2, state.cloud.y - 28, `🏅 解锁新贴纸：【${def.icon} ${def.title}】!`, '#d97706', 1.25);
+        }
+      }
+
+      function renderStickerModal() {
+        const container = document.getElementById('sticker-grid-container');
+        const countEl = document.getElementById('sticker-count-label');
+        if (!container) return;
+        let unlockedCount = 0;
+        container.innerHTML = STICKER_DEFS.map(st => {
+          const isUnlocked = !!state.unlockedStickers[st.id];
+          if (isUnlocked) unlockedCount++;
+          return `
+            <div class="sticker-card ${isUnlocked ? 'unlocked' : 'locked'}">
+              <div class="sticker-icon">${isUnlocked ? st.icon : '🔒'}</div>
+              <div class="sticker-info">
+                <h4>${st.title}</h4>
+                <p>${st.desc}</p>
+              </div>
+            </div>
+          `;
+        }).join('');
+        if (countEl) countEl.textContent = `${unlockedCount}/${STICKER_DEFS.length}`;
+      }
+
+      function pickNeededColorIndex() {
         const neededColors = [];
         for (let i = 0; i < COLOR_COLUMNS.length; i++) {
           if (state.columnCounts[i] < TARGET_PER_TUBE) {
             neededColors.push(i);
           }
         }
+        if (neededColors.length > 0 && Math.random() < 0.95) {
+          return neededColors[Math.floor(Math.random() * neededColors.length)];
+        }
+        return Math.floor(Math.random() * COLOR_COLUMNS.length);
+      }
 
-        let colorIdx;
-        if (neededColors.length > 0) {
-          // 95% chance to prioritize colors the player still needs!
-          if (Math.random() < 0.95) {
-            colorIdx = neededColors[Math.floor(Math.random() * neededColors.length)];
-          } else {
-            colorIdx = Math.floor(Math.random() * COLOR_COLUMNS.length);
-          }
-        } else {
-          colorIdx = Math.floor(Math.random() * COLOR_COLUMNS.length);
+      function createRandomCandy() {
+        const colorIdx = pickNeededColorIndex();
+
+        // Roll special candy / troublemaker type
+        const roll = Math.random();
+        let specialType = 'normal'; // 'normal' | 'rainbow' | 'triple' | 'mystery' | 'shower' | 'bomb'
+        let isRainbow = false;
+
+        if (state.mode !== 'kids' && roll < (state.mode === 'rain' ? 0.13 : 0.085)) {
+          specialType = 'bomb';
+        } else if (roll < 0.17) {
+          specialType = 'rainbow';
+          isRainbow = true;
+        } else if (roll < 0.27) {
+          specialType = 'triple';
+        } else if (roll < 0.34) {
+          specialType = 'mystery';
+        } else if (roll < 0.40) {
+          specialType = 'shower';
         }
 
-        // Rainbow star candy chance ~7%
-        const isRainbow = Math.random() < 0.07;
-        const shape = isRainbow ? 'star' : CANDY_SHAPES[Math.floor(Math.random() * CANDY_SHAPES.length)];
+        const shape = isRainbow
+          ? 'star'
+          : CANDY_SHAPES[Math.floor(Math.random() * CANDY_SHAPES.length)];
 
         let maxTimer = 3.2;
         if (state.mode === 'classic') {
-          maxTimer = Math.max(1.8, 3.2 - Math.min(state.score * 0.015, 1.0));
+          maxTimer = Math.max(1.8, 3.2 - Math.min(state.score * 0.01, 1.0));
         } else if (state.mode === 'rain') {
-          maxTimer = Math.max(1.15, 1.85 - Math.min(state.score * 0.015, 0.55));
+          maxTimer = Math.max(1.15, 1.85 - Math.min(state.score * 0.01, 0.55));
         } else if (state.mode === 'kids') {
           maxTimer = 999999;
         }
@@ -886,6 +432,7 @@
         return {
           colorIdx,
           shape,
+          specialType,
           timer: maxTimer,
           maxTimer,
           alignTime: 0,
@@ -900,29 +447,196 @@
         state.nextCandy = createRandomCandy();
       }
 
+      function spawnFallingCandyObj(opts) {
+        state.fallingCandies.push({
+          x: opts.x,
+          y: opts.y,
+          vx: opts.vx || 0,
+          vy: opts.vy || 145,
+          gravity: opts.gravity || 660,
+          radius: state.layout.candyRadius,
+          colorIdx: opts.colorIdx,
+          shape: opts.shape || 'round',
+          specialType: opts.specialType || 'normal',
+          isRainbow: !!opts.isRainbow,
+          homing: !!opts.homing,
+          splitDone: !!opts.splitDone,
+          rotation: (Math.random() - 0.5) * 0.3,
+          vRot: (Math.random() - 0.5) * 2.5
+        });
+      }
+
       function dropActiveCandy() {
-        if (!state.activeCandy || state.isWon || state.fallingCandies.length >= 4) return;
+        if (!state.activeCandy || state.isWon || state.fallingCandies.length >= 16) return;
         const c = state.activeCandy;
         const dropX = state.cloud.x;
         const dropY = state.cloud.y + state.cloud.height * 0.48;
 
-        state.fallingCandies.push({
-          x: dropX,
-          y: dropY,
-          vx: state.cloud.vx * 0.08,
-          vy: 140,
-          gravity: 680,
-          radius: state.layout.candyRadius,
-          colorIdx: c.colorIdx,
-          shape: c.shape,
-          isRainbow: c.isRainbow,
-          rotation: (Math.random() - 0.5) * 0.3,
-          vRot: (Math.random() - 0.5) * 2.5
-        });
+        if (c.specialType === 'triple') {
+          // Triple burst: drops 3 candies of this color in a tight cheerful fan!
+          for (let k = -1; k <= 1; k++) {
+            spawnFallingCandyObj({
+              x: dropX + k * 14,
+              y: dropY - Math.abs(k) * 10,
+              vx: state.cloud.vx * 0.06 + k * 28,
+              vy: 130 + k * 15,
+              colorIdx: c.colorIdx,
+              shape: c.shape,
+              specialType: 'normal',
+              isRainbow: false,
+              homing: state.magnetTimer > 0
+            });
+          }
+          addFloatingText(dropX, dropY + 10, '⚡ 三连爆射糖!', COLOR_COLUMNS[c.colorIdx].hex, 1.15);
+        } else {
+          spawnFallingCandyObj({
+            x: dropX,
+            y: dropY,
+            vx: state.cloud.vx * 0.08,
+            vy: 145,
+            colorIdx: c.colorIdx,
+            shape: c.shape,
+            specialType: c.specialType,
+            isRainbow: c.isRainbow,
+            homing: state.magnetTimer > 0 && c.specialType !== 'bomb'
+          });
+        }
 
         state.cloud.bounceY = -6;
         sfx.playDrop();
         spawnNextCandyOnCloud();
+      }
+
+      function spawnMultiplierGate() {
+        if (state.multiplierGates.length >= 2) return;
+        const minY = state.layout.cloudY + state.cloud.height * 0.5 + 32;
+        const maxY = state.layout.columnsTopY - 34;
+        if (maxY <= minY + 10) return;
+
+        const gateTypes = [
+          { mult: 2, label: '×2 泡泡', color: '#298cd4', bg: 'rgba(115, 198, 255, 0.28)' },
+          { mult: 2, label: '×2 泡泡', color: '#1d8f24', bg: 'rgba(92, 214, 100, 0.28)' },
+          { mult: 3, label: '×3 奇迹圈', color: '#d97706', bg: 'rgba(255, 215, 0, 0.34)' }
+        ];
+        const chosen = gateTypes[Math.floor(Math.random() * gateTypes.length)];
+        const fromLeft = Math.random() < 0.5;
+        state.multiplierGates.push({
+          x: fromLeft ? 40 : state.width - 40,
+          y: minY + Math.random() * (maxY - minY),
+          vx: (fromLeft ? 1 : -1) * (45 + Math.random() * 35),
+          r: 23,
+          mult: chosen.mult,
+          label: chosen.label,
+          color: chosen.color,
+          bg: chosen.bg,
+          phase: Math.random() * Math.PI * 2
+        });
+      }
+
+      function triggerFeverMode() {
+        if (state.feverTimer > 0 || state.isWon) return;
+        state.feverGauge = 100;
+        state.feverTimer = 6.0;
+        state.feverSpawnCd = 0.1;
+        state.screenShake = 8;
+        sfx.playFeverStart();
+        unlockSticker('fever_party');
+        addFloatingText(state.width / 2, state.layout.cloudY + 45, '🌈 彩虹暴走开启！全自动糖果狂欢！', '#ec4899', 1.4);
+      }
+
+      function activateTopIcon(iconIdx) {
+        if (state.isWon || state.topIconCharge[iconIdx] < 100) return false;
+        state.topIconCharge[iconIdx] = 0;
+        state.topIconBounce[iconIdx] = 16;
+        state.screenShake = 6;
+        sfx.playMagicSkill();
+        unlockSticker('magic_star');
+
+        const cols = state.layout.columns;
+        const pos = state.topIconPos[iconIdx] || { x: state.width / 2, y: state.layout.topIconsY };
+        spawnBurstParticles(pos.x, pos.y, '#ffd700', 24, true);
+
+        if (iconIdx === 0 || iconIdx === 3) {
+          // Green Star: Meteor Candy Shower (6 homing candies targeting needed columns!)
+          addFloatingText(pos.x, pos.y + 24, '🌠 绿星魔法：流星糖果雨！', '#1d8f24', 1.3);
+          for (let m = 0; m < 6; m++) {
+            const targetCol = pickNeededColorIndex();
+            const targetX = cols[targetCol] ? cols[targetCol].centerX : state.width / 2;
+            spawnFallingCandyObj({
+              x: targetX + (Math.random() - 0.5) * 30,
+              y: state.layout.topIconsY + 10 - m * 18,
+              vx: 0,
+              vy: 180 + m * 20,
+              colorIdx: targetCol,
+              shape: 'star',
+              specialType: 'normal',
+              isRainbow: false,
+              homing: true,
+              splitDone: false
+            });
+          }
+        } else if (iconIdx === 1 || iconIdx === 4) {
+          // Split Heart: Rainbow Magnet Homing for 8 seconds!
+          state.magnetTimer = 8.0;
+          state.fallingCandies.forEach(fc => {
+            if (fc.specialType !== 'bomb') fc.homing = true;
+          });
+          addFloatingText(pos.x, pos.y + 24, '🧲 爱心魔法：8秒彩虹磁力制导！', '#e36517', 1.3);
+        } else {
+          // Berry Heart: Purify all hazards + instant +2 candies in 3 most-needed columns!
+          state.columnFrozen = [0, 0, 0, 0, 0, 0, 0];
+          state.columnBugs = [null, null, null, null, null, null, null];
+          state.fallingCandies = state.fallingCandies.filter(fc => fc.specialType !== 'bomb');
+          if (state.activeCandy && state.activeCandy.specialType === 'bomb') {
+            state.activeCandy.specialType = 'rainbow';
+            state.activeCandy.isRainbow = true;
+          }
+          addFloatingText(pos.x, pos.y + 24, '🍇 紫莓甘霖：净化全场 + 糖果暴涨！', '#7e3f8f', 1.3);
+
+          // Find up to 3 columns that need candies
+          const indices = [0, 1, 2, 3, 4, 5, 6]
+            .filter(i => state.columnCounts[i] < TARGET_PER_TUBE)
+            .sort((a, b) => state.columnCounts[a] - state.columnCounts[b])
+            .slice(0, 3);
+          indices.forEach(cIdx => {
+            for (let n = 0; n < 2; n++) {
+              addCandyToColumn(cIdx, 'berry', false);
+            }
+          });
+        }
+        updateHUD();
+        return true;
+      }
+
+      function addCandyToColumn(colIdx, shape = 'round', isRainbow = false) {
+        const col = state.layout.columns[colIdx];
+        if (!col) return;
+        if (state.columnCounts[colIdx] < TARGET_PER_TUBE) {
+          state.totalCollected += 1;
+          state.columnCounts[colIdx] += 1;
+          state.columnStacks[colIdx].push({
+            radius: state.layout.candyRadius,
+            colorIdx: colIdx,
+            shape,
+            isRainbow,
+            rotation: (Math.random() - 0.5) * 0.18,
+            squish: 1.35
+          });
+          const slotY = getSlotCenterY(state.columnCounts[colIdx] - 1);
+          spawnBurstParticles(col.centerX, slotY, COLOR_COLUMNS[colIdx].lightHex, 14, isRainbow);
+
+          if (state.columnCounts[colIdx] === TARGET_PER_TUBE) {
+            sfx.playTubeComplete();
+            unlockSticker('first_tube');
+            spawnBurstParticles(col.centerX, col.topY + 30, '#ffd700', 26, true);
+            addFloatingText(col.centerX, col.topY - 14, `🎉 ${COLOR_COLUMNS[colIdx].name}柱集满10颗!`, '#1d8f24', 1.35);
+            if (countFullTubes() >= TOTAL_TUBES) {
+              triggerVictory();
+            }
+          }
+        } else {
+          state.score += 5;
+        }
       }
 
       function spawnBurstParticles(x, y, hexColor, count = 18, isRainbow = false) {
@@ -972,6 +686,19 @@
         document.getElementById('total-val').textContent = `${state.totalCollected}/${TOTAL_TARGET}`;
         document.getElementById('combo-val').textContent = state.combo;
         document.getElementById('score-val').textContent = state.score;
+
+        const feverEl = document.getElementById('fever-val');
+        const feverPill = document.getElementById('fever-pill');
+        if (feverEl && feverPill) {
+          if (state.feverTimer > 0) {
+            feverEl.textContent = `${state.feverTimer.toFixed(1)}s`;
+            feverPill.classList.add('fever-ready');
+          } else {
+            const pct = Math.min(100, Math.floor(state.feverGauge));
+            feverEl.textContent = `${pct}%`;
+            feverPill.classList.toggle('fever-ready', pct >= 100);
+          }
+        }
       }
 
       function formatTime(totalSeconds) {
@@ -986,10 +713,45 @@
         sfx.playVictory();
 
         const elapsed = (Date.now() - state.gameStartTime) / 1000;
+        unlockSticker('grand_champion');
+        if (elapsed <= 75) {
+          unlockSticker('speed_star');
+        }
+
+        // Compute 1~3 Star Rating & Title
+        let stars = '⭐⭐⭐';
+        let rankTitle = '👑 彩虹糖果大魔法师';
+        if (elapsed <= 80 || state.score >= 260) {
+          stars = '⭐⭐⭐';
+          rankTitle = '👑 传奇彩虹大魔法师';
+        } else if (elapsed <= 130 || state.score >= 180) {
+          stars = '⭐⭐';
+          rankTitle = '🌟 彩虹甜心神射手';
+        } else {
+          stars = '⭐';
+          rankTitle = '🍬 快乐糖果收集家';
+        }
+
+        document.getElementById('win-stars').textContent = stars;
+        document.getElementById('win-rank').textContent = rankTitle;
         document.getElementById('win-candies').textContent = `${state.totalCollected} / ${TOTAL_TARGET}`;
         document.getElementById('win-time').textContent = formatTime(elapsed);
         document.getElementById('win-combo').textContent = state.maxCombo;
         document.getElementById('win-score').textContent = state.score;
+
+        const unlockMsgEl = document.getElementById('win-unlock-msg');
+        if (unlockMsgEl) {
+          if (state.newlyUnlockedThisRun.length > 0) {
+            const names = state.newlyUnlockedThisRun
+              .map(id => STICKER_DEFS.find(s => s.id === id))
+              .filter(Boolean)
+              .map(s => `${s.icon}${s.title}`)
+              .join('、');
+            unlockMsgEl.textContent = `🏅 本局新解锁贴纸：${names}！`;
+          } else {
+            unlockMsgEl.textContent = '所有 7 个彩虹柱子都完美装满了 10 颗糖果！太棒了！';
+          }
+        }
 
         spawnVictoryConfetti();
 
@@ -1004,14 +766,28 @@
         state.maxCombo = 0;
         state.totalCollected = 0;
         state.isWon = false;
+        state.screenShake = 0;
+        state.feverGauge = 0;
+        state.feverTimer = 0;
+        state.magnetTimer = 0;
+        state.windForce = 0;
+        state.windTimer = 0;
+        state.newlyUnlockedThisRun = [];
         state.gameStartTime = Date.now();
         state.columnCounts = [0, 0, 0, 0, 0, 0, 0];
         state.columnStacks = [[], [], [], [], [], [], []];
         state.columnFullGlow = [0, 0, 0, 0, 0, 0, 0];
+        state.columnFrozen = [0, 0, 0, 0, 0, 0, 0];
+        state.columnBugs = [null, null, null, null, null, null, null];
+        state.topIconCharge = [40, 40, 40, 40, 40, 40];
         state.fallingCandies = [];
+        state.multiplierGates = [];
+        state.gateSpawnTimer = 1.2;
+        state.hazardSpawnTimer = 7.0;
         state.confetti = [];
         state.activeCandy = null;
         spawnNextCandyOnCloud();
+        spawnMultiplierGate();
         updateHUD();
         document.getElementById('victory-modal').classList.remove('open');
       }
@@ -1020,11 +796,127 @@
         const cols = state.layout.columns;
         if (!cols.length) return;
 
+        // Update Music Box BGM
+        sfx.updateBGM(dt, state.feverTimer > 0);
+
+        if (state.screenShake > 0) {
+          state.screenShake = Math.max(0, state.screenShake - dt * 20);
+        }
+
+        if (state.magnetTimer > 0) {
+          state.magnetTimer = Math.max(0, state.magnetTimer - dt);
+        }
+
         // Victory celebration state updates
         if (state.isWon) {
           if (Math.random() < 0.15) spawnVictoryConfetti();
           state.cloud.bounceY = Math.sin(performance.now() * 0.008) * 6;
           state.cloud.mood = 'joy';
+        }
+
+        // Fever Mode Fountain update
+        if (!state.isWon && state.feverTimer > 0) {
+          state.feverTimer -= dt;
+          state.cloud.mood = 'joy';
+          state.feverSpawnCd -= dt;
+          if (state.feverSpawnCd <= 0) {
+            state.feverSpawnCd = 0.26;
+            const targetCol = pickNeededColorIndex();
+            const cObj = cols[targetCol];
+            if (cObj) {
+              spawnFallingCandyObj({
+                x: state.cloud.x + (Math.random() - 0.5) * 40,
+                y: state.cloud.y + 20,
+                vx: (cObj.centerX - state.cloud.x) * 0.9,
+                vy: 190,
+                colorIdx: targetCol,
+                shape: 'star',
+                specialType: 'normal',
+                isRainbow: Math.random() < 0.35,
+                homing: true
+              });
+              sfx.playDrop();
+            }
+          }
+          if (state.feverTimer <= 0) {
+            state.feverTimer = 0;
+            state.feverGauge = 0;
+          }
+          updateHUD();
+        }
+
+        // Floating Multiplier Gates update & spawn
+        if (!state.isWon) {
+          state.gateSpawnTimer -= dt;
+          if (state.gateSpawnTimer <= 0) {
+            state.gateSpawnTimer = 4.2 + Math.random() * 2.5;
+            spawnMultiplierGate();
+          }
+        }
+        for (let g = state.multiplierGates.length - 1; g >= 0; g--) {
+          const gate = state.multiplierGates[g];
+          gate.x += gate.vx * dt;
+          gate.phase += dt * 3;
+          if (gate.x < 32) {
+            gate.x = 32;
+            gate.vx = Math.abs(gate.vx);
+          } else if (gate.x > state.width - 32) {
+            gate.x = state.width - 32;
+            gate.vx = -Math.abs(gate.vx);
+          }
+        }
+
+        // Troublemaker Events (Caterpillar bugs, Frost, Gentle Wind) in classic & rain modes
+        if (!state.isWon && state.mode !== 'kids') {
+          state.hazardSpawnTimer -= dt;
+          if (state.hazardSpawnTimer <= 0) {
+            state.hazardSpawnTimer = state.mode === 'rain' ? 6.5 : 10.5;
+            const eventRoll = Math.random();
+            const candidateCols = [0, 1, 2, 3, 4, 5, 6].filter(i => state.columnCounts[i] < TARGET_PER_TUBE);
+            if (candidateCols.length > 0) {
+              const cIdx = candidateCols[Math.floor(Math.random() * candidateCols.length)];
+              if (eventRoll < 0.45 && !state.columnBugs[cIdx]) {
+                // Spawn a cute greedy caterpillar on column rim
+                state.columnBugs[cIdx] = { hp: 1, timer: 9.0, phase: 0 };
+                addFloatingText(cols[cIdx].centerX, cols[cIdx].topY - 22, '🐛 贪吃虫来了! 快点它赶跑!', '#d97706', 1.1);
+              } else if (eventRoll < 0.78 && state.columnFrozen[cIdx] <= 0) {
+                state.columnFrozen[cIdx] = 8.0;
+                addFloatingText(cols[cIdx].centerX, cols[cIdx].topY - 22, '❄️ 冰晶护罩! 点击或投糖破冰!', '#298cd4', 1.1);
+              } else {
+                state.windTimer = 5.0;
+                state.windForce = (Math.random() < 0.5 ? -1 : 1) * (state.mode === 'rain' ? 75 : 48);
+                addFloatingText(state.width / 2, state.layout.cloudY + 55, state.windForce > 0 ? '🌬️ 调皮东风吹来啦 ➔' : '🌬️ ⬅ 调皮西风吹来啦', '#0284c7', 1.15);
+              }
+            }
+          }
+        }
+
+        if (state.windTimer > 0) {
+          state.windTimer = Math.max(0, state.windTimer - dt);
+          if (state.windTimer <= 0) state.windForce = 0;
+        }
+
+        // Update column bugs & frozen timers
+        for (let i = 0; i < cols.length; i++) {
+          if (state.columnFrozen[i] > 0) {
+            state.columnFrozen[i] = Math.max(0, state.columnFrozen[i] - dt);
+          }
+          const bug = state.columnBugs[i];
+          if (bug) {
+            bug.phase += dt * 6;
+            bug.timer -= dt;
+            if (bug.timer <= 0) {
+              // Caterpillar nibbles 1 candy if left completely ignored for 9s!
+              if (state.columnCounts[i] > 0 && state.columnCounts[i] < TARGET_PER_TUBE) {
+                state.columnCounts[i] -= 1;
+                state.totalCollected = Math.max(0, state.totalCollected - 1);
+                state.columnStacks[i].pop();
+                addFloatingText(cols[i].centerX, cols[i].topY - 16, '🐛 哎呀被偷吃1颗! 快点虫子!', '#cf2027', 1.1);
+                updateHUD();
+              }
+              state.columnBugs[i] = null;
+            }
+          }
         }
 
         // Horizontal cloud motion
@@ -1070,7 +962,7 @@
             const ac = state.activeCandy;
             ac.scale = Math.min(1, ac.scale + dt * 5);
 
-            const isOverMatchingCol = ac.isRainbow || currentHoverCol === ac.colorIdx;
+            const isOverMatchingCol = ac.isRainbow || ac.specialType === 'mystery' || ac.specialType === 'shower' || currentHoverCol === ac.colorIdx;
             const isCloudSteady = Math.abs(state.cloud.vx) < 35;
 
             if (state.mode === 'kids') {
@@ -1097,13 +989,82 @@
           }
         }
 
-        // Falling Candies physics & landing
+        // Falling Candies physics, gate collisions, mystery bursts & landing
         for (let i = state.fallingCandies.length - 1; i >= 0; i--) {
           const fc = state.fallingCandies[i];
           fc.vy += fc.gravity * dt;
-          fc.x += fc.vx * dt;
+
+          // Magnetic homing or gentle wind
+          if (fc.homing && fc.specialType !== 'bomb') {
+            const targetColObj = cols[fc.colorIdx] || cols[0];
+            const dx = targetColObj.centerX - fc.x;
+            fc.vx += dx * 9.5 * dt;
+            fc.vx *= 0.92;
+          } else if (state.windForce !== 0 && !fc.homing) {
+            fc.vx += state.windForce * dt;
+          }
+
+          fc.x = Math.max(16, Math.min(state.width - 16, fc.x + fc.vx * dt));
           fc.y += fc.vy * dt;
           fc.rotation += fc.vRot * dt;
+
+          // Mystery Gift Box Candy bursts mid-air into 3 needed candies!
+          const midAirY = (state.layout.cloudY + state.layout.columnsTopY) * 0.54;
+          if (fc.specialType === 'mystery' && fc.y >= midAirY) {
+            sfx.playGateMultiply();
+            spawnBurstParticles(fc.x, fc.y, '#ffd700', 22, true);
+            addFloatingText(fc.x, fc.y - 12, '🎁 盲盒大爆发 ×3!', '#d97706', 1.25);
+            for (let m = -1; m <= 1; m++) {
+              const cIdx = pickNeededColorIndex();
+              spawnFallingCandyObj({
+                x: fc.x + m * 18,
+                y: fc.y,
+                vx: m * 55,
+                vy: 120,
+                colorIdx: cIdx,
+                shape: CANDY_SHAPES[Math.floor(Math.random() * CANDY_SHAPES.length)],
+                specialType: 'normal',
+                isRainbow: m === 0,
+                homing: true,
+                splitDone: true
+              });
+            }
+            state.fallingCandies.splice(i, 1);
+            continue;
+          }
+
+          // Check collision with Floating Multiplier Gates!
+          if (!fc.splitDone && fc.specialType !== 'bomb') {
+            for (let g = state.multiplierGates.length - 1; g >= 0; g--) {
+              const gate = state.multiplierGates[g];
+              if (Math.hypot(fc.x - gate.x, fc.y - gate.y) <= gate.r + fc.radius * 0.85) {
+                fc.splitDone = true;
+                sfx.playGateMultiply();
+                unlockSticker('bubble_split');
+                spawnBurstParticles(gate.x, gate.y, gate.color, 18, true);
+                addFloatingText(gate.x, gate.y - 14, `🫧 穿过${gate.label}！分裂×${gate.mult}!`, gate.color, 1.25);
+
+                const extraCount = gate.mult - 1;
+                for (let k = 0; k < extraCount; k++) {
+                  const spread = (k === 0 ? -1 : 1) * 38;
+                  spawnFallingCandyObj({
+                    x: fc.x + (k === 0 ? -10 : 10),
+                    y: fc.y,
+                    vx: fc.vx + spread,
+                    vy: fc.vy * 0.9,
+                    colorIdx: fc.colorIdx,
+                    shape: fc.shape,
+                    specialType: 'normal',
+                    isRainbow: fc.isRainbow,
+                    homing: true, // Split candies auto-home to their matching column for maximum satisfaction!
+                    splitDone: true
+                  });
+                }
+                state.multiplierGates.splice(g, 1);
+                break;
+              }
+            }
+          }
 
           const colIdx = getColumnIndexAtX(fc.x);
           const col = cols[colIdx];
@@ -1113,60 +1074,96 @@
           const landingY = getSlotCenterY(targetSlot);
 
           if (fc.y >= Math.max(col.topY + 20, landingY)) {
-            const matched = fc.isRainbow || colIdx === fc.colorIdx;
+            // 1. Handle Bomb Landing
+            if (fc.specialType === 'bomb') {
+              sfx.playMismatch();
+              state.screenShake = 7;
+              spawnBurstParticles(fc.x, col.topY + 20, '#333333', 20, false);
+              if (state.columnCounts[colIdx] > 0 && state.columnCounts[colIdx] < TARGET_PER_TUBE) {
+                state.columnCounts[colIdx] -= 1;
+                state.totalCollected = Math.max(0, state.totalCollected - 1);
+                state.columnStacks[colIdx].pop();
+                addFloatingText(col.centerX, col.topY - 12, '💣 哎呀炸飞1颗！下次直接点炸弹拍碎它！', '#cf2027', 1.1);
+              } else {
+                addFloatingText(col.centerX, col.topY - 12, '💣 炸弹落空啦！点击炸弹可拆弹拿奖哦~', '#555', 1.05);
+              }
+              state.combo = 0;
+              updateHUD();
+              state.fallingCandies.splice(i, 1);
+              continue;
+            }
+
+            // 2. If column has a greedy bug or ice shield, hitting it clears the hazard & gives bonus!
+            if (state.columnBugs[colIdx]) {
+              state.columnBugs[colIdx] = null;
+              state.score += 12;
+              sfx.playSwat();
+              unlockSticker('bomb_hero');
+              spawnBurstParticles(col.centerX, col.topY, '#5cd664', 18, true);
+              addFloatingText(col.centerX, col.topY - 24, '🐛 砸跑贪吃虫 +12分!', '#1d8f24', 1.2);
+            }
+            if (state.columnFrozen[colIdx] > 0) {
+              state.columnFrozen[colIdx] = 0;
+              state.score += 10;
+              sfx.playSwat();
+              spawnBurstParticles(col.centerX, col.topY, '#73c6ff', 18, false);
+              addFloatingText(col.centerX, col.topY - 24, '❄️ 破冰成功 +10分!', '#298cd4', 1.2);
+            }
+
+            const matched = fc.isRainbow || fc.specialType === 'shower' || colIdx === fc.colorIdx;
 
             if (matched) {
               state.combo += 1;
               if (state.combo > state.maxCombo) state.maxCombo = state.combo;
+              if (state.combo >= 10) unlockSticker('combo_master');
 
-              const points = fc.isRainbow ? 5 : (1 + Math.min(state.combo - 1, 5));
+              const points = fc.isRainbow ? 5 : (1 + Math.min(state.combo - 1, 6));
               state.score += points;
 
-              if (currentCount < TARGET_PER_TUBE) {
-                state.totalCollected += 1;
-                state.columnCounts[colIdx] += 1;
+              // Charge top 6 hand-drawn icons & Fever gauge!
+              const iconSlot = colIdx % 6;
+              state.topIconCharge[iconSlot] = Math.min(100, state.topIconCharge[iconSlot] + 34);
+              // Also slightly charge a neighbor icon so all 6 light up frequently
+              state.topIconCharge[(iconSlot + 3) % 6] = Math.min(100, state.topIconCharge[(iconSlot + 3) % 6] + 18);
 
-                state.columnStacks[colIdx].push({
-                  radius: state.layout.candyRadius,
-                  colorIdx: colIdx,
-                  shape: fc.shape,
-                  isRainbow: fc.isRainbow,
-                  rotation: (Math.random() - 0.5) * 0.18,
-                  squish: 1.35
-                });
+              if (state.feverTimer <= 0) {
+                state.feverGauge = Math.min(100, state.feverGauge + (fc.isRainbow ? 24 : 15));
+                if (state.feverGauge >= 100) {
+                  triggerFeverMode();
+                }
+              }
 
+              // Special Shower Candy: rains 1 matching candy into all 7 columns!
+              if (fc.specialType === 'shower') {
+                sfx.playMagicSkill();
+                addFloatingText(state.width / 2, state.layout.columnsTopY - 24, '🌧️ 七彩甘霖糖！全排7柱齐降糖果！', '#298cd4', 1.35);
+                for (let c = 0; c < TOTAL_TUBES; c++) {
+                  addCandyToColumn(c, 'star', false);
+                }
+              } else if (currentCount < TARGET_PER_TUBE) {
+                addCandyToColumn(colIdx, fc.shape, fc.isRainbow);
                 state.cloud.mood = 'joy';
                 state.cloud.moodTimer = 0.7;
                 state.cloud.bounceY = -10;
                 state.topIconBounce[colIdx % 6] = 10;
 
-                // Check if this column just completed 10 candies!
-                if (state.columnCounts[colIdx] === TARGET_PER_TUBE) {
-                  sfx.playTubeComplete();
-                  spawnBurstParticles(col.centerX, col.topY + 30, '#ffd700', 26, true);
-                  addFloatingText(col.centerX, col.topY - 14, `🎉 ${COLOR_COLUMNS[colIdx].name}柱集满10颗!`, '#1d8f24', 1.35);
-
-                  // Check overall victory: all 7 columns full!
-                  if (countFullTubes() >= TOTAL_TUBES) {
-                    triggerVictory();
-                  }
-                } else {
+                if (state.columnCounts[colIdx] < TARGET_PER_TUBE) {
                   sfx.playMatch(colIdx, state.combo);
-                  spawnBurstParticles(fc.x, landingY, COLOR_COLUMNS[colIdx].lightHex, 18, fc.isRainbow);
                   const progressStr = `${state.columnCounts[colIdx]}/${TARGET_PER_TUBE}`;
                   addFloatingText(
                     col.centerX,
                     landingY - 18,
-                    state.combo > 1 ? `+${points} (${progressStr}) x${state.combo}!` : `+${points} (${progressStr})`,
+                    state.combo > 1 ? `+${points} (${progressStr}) 🔥x${state.combo}!` : `+${points} (${progressStr})`,
                     '#fff',
                     1.15
                   );
                 }
               } else {
-                // Column is already at 10: bonus points
+                // Column is already at 10: bonus points + redirect a homing candy to a needed column!
                 sfx.playMatch(colIdx, 1);
+                state.score += 5;
                 spawnBurstParticles(fc.x, landingY, '#ffd700', 12, true);
-                addFloatingText(col.centerX, landingY - 18, `满柱奖励 +5! ⭐`, '#ffd700', 1.15);
+                addFloatingText(col.centerX, landingY - 18, `满柱弹射支援 +5! ⭐`, '#ffd700', 1.15);
               }
 
               updateHUD();
@@ -1330,10 +1327,29 @@
         const startX = W * 0.14;
         const endX = W * 0.86;
         const step = (endX - startX) / 5;
+        state.topIconPos = [];
 
         for (let i = 0; i < 6; i++) {
           const ix = startX + step * i;
-          const iy = y - state.topIconBounce[i];
+          const charge = state.topIconCharge[i] || 0;
+          const isReady = charge >= 100;
+          const pulse = isReady ? Math.sin(performance.now() * 0.008 + i) * 3 : 0;
+          const iy = y - state.topIconBounce[i] + pulse;
+          state.topIconPos.push({ x: ix, y: iy, r: iconSize * 1.45 });
+
+          // Charge progress ring or golden ready halo
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(ix, iy, iconSize * 1.25, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * Math.min(100, charge)) / 100);
+          ctx.strokeStyle = isReady ? '#f59e0b' : 'rgba(70, 80, 176, 0.28)';
+          ctx.lineWidth = isReady ? 3.5 : 2;
+          if (isReady) {
+            ctx.fillStyle = 'rgba(255, 235, 130, 0.55)';
+            ctx.fill();
+          }
+          ctx.stroke();
+          ctx.restore();
+
           if (i === 0 || i === 3) {
             drawGreenStarIcon(ctx, ix, iy, iconSize * 1.15);
           } else if (i === 1) {
@@ -1343,10 +1359,19 @@
           } else {
             drawBerryHeartIcon(ctx, ix, iy, iconSize * 0.95);
           }
+
+          if (isReady) {
+            ctx.save();
+            ctx.font = 'bold 10px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#b45309';
+            ctx.fillText('✨点击放大招', ix, iy + iconSize * 1.48);
+            ctx.restore();
+          }
         }
       }
 
-      function drawCandy(ctx, x, y, radius, colorIdx, shape, isRainbow = false, rotation = 0, squish = 1) {
+      function drawCandy(ctx, x, y, radius, colorIdx, shape, isRainbow = false, rotation = 0, squish = 1, specialType = 'normal') {
         const col = COLOR_COLUMNS[colorIdx] || COLOR_COLUMNS[0];
         ctx.save();
         ctx.translate(x, y);
@@ -1355,10 +1380,92 @@
           ctx.scale(squish, 1 / squish);
         }
 
-        // Soft candy drop shadow so it pops clearly from the colored column
         ctx.shadowColor = 'rgba(0, 0, 0, 0.28)';
         ctx.shadowBlur = 5;
         ctx.shadowOffsetY = 2.5;
+
+        // 1. Mischievous Bomb Candy
+        if (specialType === 'bomb') {
+          ctx.beginPath();
+          ctx.arc(0, 0, radius * 0.95, 0, Math.PI * 2);
+          ctx.fillStyle = '#2b2d2f';
+          ctx.fill();
+          ctx.lineWidth = 2.5;
+          ctx.strokeStyle = '#ff4d4f';
+          ctx.stroke();
+
+          // Fuse & spark
+          ctx.beginPath();
+          ctx.moveTo(0, -radius * 0.9);
+          ctx.quadraticCurveTo(radius * 0.4, -radius * 1.35, radius * 0.65, -radius * 1.15);
+          ctx.strokeStyle = '#d97706';
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
+
+          const sparkR = 3.5 + Math.sin(performance.now() * 0.025) * 2;
+          ctx.beginPath();
+          ctx.arc(radius * 0.65, -radius * 1.15, sparkR, 0, Math.PI * 2);
+          ctx.fillStyle = '#fde047';
+          ctx.fill();
+
+          ctx.shadowColor = 'transparent';
+          ctx.fillStyle = '#fff';
+          ctx.font = `bold ${Math.round(radius * 0.85)}px sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('💣', 0, 1);
+          ctx.restore();
+          return;
+        }
+
+        // 2. Mystery Gift Box Candy
+        if (specialType === 'mystery') {
+          const s = radius * 0.92;
+          ctx.fillStyle = '#f59e0b';
+          ctx.strokeStyle = '#282a24';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.roundRect(-s, -s, s * 2, s * 2, 6);
+          ctx.fill();
+          ctx.stroke();
+
+          // Ribbon cross
+          ctx.fillStyle = '#ef4444';
+          ctx.fillRect(-s * 0.24, -s, s * 0.48, s * 2);
+          ctx.fillRect(-s, -s * 0.24, s * 2, s * 0.48);
+
+          ctx.shadowColor = 'transparent';
+          ctx.fillStyle = '#fff';
+          ctx.font = `bold ${Math.round(radius * 0.95)}px sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('?', 0, 1);
+          ctx.restore();
+          return;
+        }
+
+        // 3. Rainbow Shower Candy (rains into all 7 columns)
+        if (specialType === 'shower') {
+          const grad = ctx.createLinearGradient(-radius, -radius, radius, radius);
+          grad.addColorStop(0, '#38bdf8');
+          grad.addColorStop(0.5, '#a855f7');
+          grad.addColorStop(1, '#f43f5e');
+          ctx.beginPath();
+          ctx.arc(0, 0, radius * 1.04, 0, Math.PI * 2);
+          ctx.fillStyle = grad;
+          ctx.fill();
+          ctx.lineWidth = 2.6;
+          ctx.strokeStyle = '#fff';
+          ctx.stroke();
+
+          ctx.shadowColor = 'transparent';
+          ctx.font = `bold ${Math.round(radius * 0.95)}px sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('🌧️', 0, 1);
+          ctx.restore();
+          return;
+        }
 
         let fillStyle = col.hex;
         if (isRainbow) {
@@ -1377,7 +1484,6 @@
         ctx.lineJoin = 'round';
 
         if (shape === 'wrapped') {
-          // Wrapped candy wings
           ctx.fillStyle = fillStyle;
           ctx.beginPath();
           ctx.moveTo(-radius * 0.65, 0);
@@ -1397,14 +1503,12 @@
           ctx.fill();
           ctx.stroke();
 
-          // Main candy center
           ctx.beginPath();
           ctx.arc(0, 0, radius * 0.86, 0, Math.PI * 2);
           ctx.fillStyle = fillStyle;
           ctx.fill();
           ctx.stroke();
 
-          // Glossy highlight
           ctx.shadowColor = 'transparent';
           ctx.beginPath();
           ctx.arc(-radius * 0.24, -radius * 0.24, radius * 0.28, 0, Math.PI * 2);
@@ -1470,7 +1574,6 @@
           ctx.fill();
           ctx.stroke();
         } else {
-          // Glossy round candy
           ctx.beginPath();
           ctx.arc(0, 0, radius * 0.94, 0, Math.PI * 2);
           ctx.fillStyle = fillStyle;
@@ -1485,7 +1588,62 @@
           ctx.stroke();
         }
 
+        // Triple candy badge overlay
+        if (specialType === 'triple') {
+          ctx.shadowColor = 'transparent';
+          ctx.fillStyle = '#fff8d6';
+          ctx.strokeStyle = '#282a24';
+          ctx.lineWidth = 1.8;
+          ctx.beginPath();
+          ctx.roundRect(-13, -radius - 8, 26, 15, 7);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = '#d97706';
+          ctx.font = 'bold 10px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('×3连', 0, -radius - 0.5);
+        }
+
         ctx.restore();
+      }
+
+      function drawMultiplierGates(ctx) {
+        for (let i = 0; i < state.multiplierGates.length; i++) {
+          const g = state.multiplierGates[i];
+          const bobY = g.y + Math.sin(g.phase) * 4;
+          ctx.save();
+          ctx.translate(g.x, bobY);
+
+          // Outer bubble ring
+          ctx.beginPath();
+          ctx.arc(0, 0, g.r, 0, Math.PI * 2);
+          ctx.fillStyle = g.bg;
+          ctx.fill();
+          ctx.lineWidth = 2.8;
+          ctx.strokeStyle = g.color;
+          ctx.setLineDash([5, 3]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          // Glossy bubble shine
+          ctx.beginPath();
+          ctx.arc(-g.r * 0.35, -g.r * 0.35, g.r * 0.22, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255,255,255,0.75)';
+          ctx.fill();
+
+          // Multiplier text
+          ctx.font = '900 15px "PingFang SC", sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 3.5;
+          ctx.strokeText(`×${g.mult}`, 0, 1);
+          ctx.fillStyle = g.color;
+          ctx.fillText(`×${g.mult}`, 0, 1);
+
+          ctx.restore();
+        }
       }
 
       function drawCloudBar(ctx) {
@@ -1493,9 +1651,22 @@
         const cy = y + bounceY;
         const halfW = width / 2;
         const halfH = height / 2;
+        const isFever = state.feverTimer > 0;
 
         ctx.save();
         ctx.translate(x, cy);
+
+        // Fever Rainbow Aura or Magnet Halo around cloud
+        if (isFever || state.magnetTimer > 0) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.roundRect(-halfW - 6, -halfH - 6, width + 12, height + 12, 12);
+          ctx.strokeStyle = isFever ? '#ec4899' : '#38bdf8';
+          ctx.lineWidth = 4;
+          ctx.setLineDash([8, 5]);
+          ctx.stroke();
+          ctx.restore();
+        }
 
         // Shadow
         ctx.fillStyle = 'rgba(40, 42, 36, 0.14)';
@@ -1504,7 +1675,7 @@
         ctx.fill();
 
         // Yellow-green outer border (from artwork)
-        ctx.fillStyle = '#cfd428';
+        ctx.fillStyle = isFever ? '#fde047' : '#cfd428';
         ctx.strokeStyle = '#282a24';
         ctx.lineWidth = 3.2;
         ctx.beginPath();
@@ -1565,11 +1736,20 @@
         ctx.ellipse(cheekX, 3, 9, 4.5, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // Eyes
+        // Eyes (or cool sunglasses during Fever Mode!)
         ctx.strokeStyle = '#282a24';
         ctx.fillStyle = '#282a24';
         ctx.lineWidth = 3;
-        if (mood === 'joy') {
+        if (isFever) {
+          // Cool Star Sunglasses
+          ctx.fillStyle = '#1e1b4b';
+          ctx.fillRect(-eyeX - 10, -7, 18, 10);
+          ctx.fillRect(eyeX - 8, -7, 18, 10);
+          ctx.beginPath();
+          ctx.moveTo(-eyeX + 8, -3);
+          ctx.lineTo(eyeX - 8, -3);
+          ctx.stroke();
+        } else if (mood === 'joy') {
           ctx.beginPath();
           ctx.arc(-eyeX + eyeOffsetX, 0, 5.5, Math.PI * 1.1, Math.PI * 1.9);
           ctx.stroke();
@@ -1594,6 +1774,25 @@
           ctx.stroke();
         }
 
+        // Active Buff Indicator on Left of Cloud
+        if (state.magnetTimer > 0 || state.windTimer > 0) {
+          ctx.fillStyle = 'rgba(255,255,255,0.94)';
+          ctx.strokeStyle = '#282a24';
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          ctx.roundRect(-halfW - 4, -halfH - 12, 82, 22, 11);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = state.magnetTimer > 0 ? '#d97706' : '#0284c7';
+          ctx.font = 'bold 10.5px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(
+            state.magnetTimer > 0 ? `🧲磁力 ${state.magnetTimer.toFixed(0)}s` : (state.windForce > 0 ? '🌬️东风吹➔' : '🌬️⬅西风吹'),
+            -halfW + 37,
+            -halfH + 2
+          );
+        }
+
         // Preview next candy
         if (state.nextCandy) {
           const nc = state.nextCandy;
@@ -1611,7 +1810,7 @@
           ctx.font = 'bold 11px sans-serif';
           ctx.textAlign = 'left';
           ctx.fillText('下颗', bx - 30, by + 4);
-          drawCandy(ctx, bx + 10, by, 7.5, nc.colorIdx, nc.shape, nc.isRainbow, 0);
+          drawCandy(ctx, bx + 10, by, 7.5, nc.colorIdx, nc.shape, nc.isRainbow, 0, 1, nc.specialType);
         }
 
         ctx.restore();
@@ -1625,7 +1824,7 @@
           const colInfo = COLOR_COLUMNS[ac.colorIdx];
 
           const hoverIdx = getColumnIndexAtX(candyX);
-          const isMatch = ac.isRainbow || hoverIdx === ac.colorIdx;
+          const isMatch = ac.specialType !== 'bomb' && (ac.isRainbow || ac.specialType === 'mystery' || ac.specialType === 'shower' || hoverIdx === ac.colorIdx);
 
           // Alignment laser / guide line
           ctx.save();
@@ -1633,7 +1832,7 @@
           ctx.setLineDash([6, 6]);
           ctx.moveTo(candyX, candyY + candyR);
           ctx.lineTo(candyX, state.layout.columnsTopY);
-          ctx.strokeStyle = isMatch ? colInfo.hex : 'rgba(80, 80, 80, 0.35)';
+          ctx.strokeStyle = ac.specialType === 'bomb' ? '#ef4444' : (isMatch ? colInfo.hex : 'rgba(80, 80, 80, 0.35)');
           ctx.lineWidth = isMatch ? 3.5 : 2;
           ctx.stroke();
           ctx.restore();
@@ -1648,24 +1847,33 @@
             progress = Math.max(0, ac.timer / ac.maxTimer);
           }
           ctx.arc(candyX, candyY, candyR + 6, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * progress);
-          ctx.strokeStyle = isMatch ? '#1d8f24' : colInfo.hex;
+          ctx.strokeStyle = ac.specialType === 'bomb' ? '#ef4444' : (isMatch ? '#1d8f24' : colInfo.hex);
           ctx.lineWidth = 3.5;
           ctx.lineCap = 'round';
           ctx.stroke();
           ctx.restore();
 
-          drawCandy(ctx, candyX, candyY, candyR, ac.colorIdx, ac.shape, ac.isRainbow, Math.sin(performance.now() * 0.005) * 0.12);
+          drawCandy(ctx, candyX, candyY, candyR, ac.colorIdx, ac.shape, ac.isRainbow, Math.sin(performance.now() * 0.005) * 0.12, 1, ac.specialType);
 
           // Indicator badge
-          if (isMatch) {
-            ctx.save();
-            ctx.font = 'bold 12px sans-serif';
-            ctx.textAlign = 'center';
+          ctx.save();
+          ctx.font = 'bold 12px sans-serif';
+          ctx.textAlign = 'center';
+          if (ac.specialType === 'bomb') {
+            ctx.fillStyle = '#dc2626';
+            ctx.fillText('💣 坏坏炸弹！快点我直接拍飞拆弹！', candyX, candyY + candyR + 18);
+          } else if (ac.specialType === 'mystery') {
+            ctx.fillStyle = '#d97706';
+            ctx.fillText('🎁 惊喜盲盒糖（半空分裂3颗）', candyX, candyY + candyR + 18);
+          } else if (ac.specialType === 'shower') {
+            ctx.fillStyle = '#0284c7';
+            ctx.fillText('🌧️ 七彩甘霖糖（全排7柱齐加1）', candyX, candyY + candyR + 18);
+          } else if (isMatch) {
             ctx.fillStyle = '#1d8f24';
             const colFull = state.columnCounts[hoverIdx] >= TARGET_PER_TUBE;
             ctx.fillText(colFull ? '⭐ 该柱已满10颗!' : (ac.isRainbow ? '✨ 彩虹百搭糖!' : `✓ 对准${colInfo.name}`), candyX, candyY + candyR + 18);
-            ctx.restore();
           }
+          ctx.restore();
         }
       }
 
@@ -1808,6 +2016,48 @@
             drawCandy(ctx, colRect.centerX, sy, sc.radius || state.layout.candyRadius, sc.colorIdx, sc.shape, sc.isRainbow, sc.rotation, sc.squish || 1);
           }
 
+          // 9. Frost overlay if column is frozen
+          if (state.columnFrozen[i] > 0) {
+            ctx.save();
+            ctx.fillStyle = 'rgba(186, 230, 253, 0.58)';
+            ctx.strokeStyle = '#0284c7';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.roundRect(colRect.x + 3, topY + 2, colRect.width - 6, 48, 8);
+            ctx.fill();
+            ctx.stroke();
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillStyle = '#0369a1';
+            ctx.textAlign = 'center';
+            ctx.fillText('❄️点我破冰', colRect.centerX, topY + 28);
+            ctx.restore();
+          }
+
+          // 10. Mischievous Caterpillar Bug on column rim
+          const bug = state.columnBugs[i];
+          if (bug) {
+            const bx = colRect.centerX + Math.sin(bug.phase) * 5;
+            const by = topY - 4;
+            ctx.save();
+            ctx.translate(bx, by);
+            // Caterpillar segments
+            const segColors = ['#a3e635', '#65a30d', '#84cc16'];
+            for (let b = -1; b <= 1; b++) {
+              ctx.beginPath();
+              ctx.arc(b * 9, Math.abs(b) * 2, 8, 0, Math.PI * 2);
+              ctx.fillStyle = segColors[b + 1];
+              ctx.fill();
+              ctx.strokeStyle = '#282a24';
+              ctx.lineWidth = 1.8;
+              ctx.stroke();
+            }
+            ctx.font = 'bold 10px sans-serif';
+            ctx.fillStyle = '#b91c1c';
+            ctx.textAlign = 'center';
+            ctx.fillText('🐛点我!', 0, -13);
+            ctx.restore();
+          }
+
           ctx.restore();
         }
 
@@ -1827,17 +2077,24 @@
         ctx.save();
         ctx.scale(state.dpr, state.dpr);
 
+        if (state.screenShake > 0.2) {
+          const sx = (Math.random() - 0.5) * state.screenShake;
+          const sy = (Math.random() - 0.5) * state.screenShake;
+          ctx.translate(sx, sy);
+        }
+
         // Drawing paper background
-        ctx.fillStyle = '#fbf9f4';
+        ctx.fillStyle = state.feverTimer > 0 ? '#fff9fb' : '#fbf9f4';
         ctx.fillRect(0, 0, state.width, state.height);
 
         drawTopHeaderDecorations(ctx);
         drawRainbowColumns(ctx);
+        drawMultiplierGates(ctx);
 
         // Falling Candies
         for (let i = 0; i < state.fallingCandies.length; i++) {
           const fc = state.fallingCandies[i];
-          drawCandy(ctx, fc.x, fc.y, fc.radius, fc.colorIdx, fc.shape, fc.isRainbow, fc.rotation);
+          drawCandy(ctx, fc.x, fc.y, fc.radius, fc.colorIdx, fc.shape, fc.isRainbow, fc.rotation, 1, fc.specialType);
         }
 
         drawCloudBar(ctx);
@@ -1899,12 +2156,99 @@
         return clientY - canvas.getBoundingClientRect().top;
       }
 
+      function trySwatInteractiveTargets(px, py) {
+        // 1. Check click on Top 6 Hand-drawn Magic Icons
+        for (let i = 0; i < state.topIconPos.length; i++) {
+          const pos = state.topIconPos[i];
+          if (Math.hypot(px - pos.x, py - pos.y) <= pos.r + 10) {
+            if (state.topIconCharge[i] >= 100) {
+              activateTopIcon(i);
+              return true;
+            } else {
+              state.topIconBounce[i] = 8;
+              sfx.playTone(440 + i * 50, 0.12);
+              addFloatingText(pos.x, pos.y + 20, `⚡ 能量 ${Math.floor(state.topIconCharge[i])}% (满100%可放大招)`, '#4f5d75', 0.95);
+              return true;
+            }
+          }
+        }
+
+        // 2. Check swatting a falling Bomb in mid-air!
+        for (let i = state.fallingCandies.length - 1; i >= 0; i--) {
+          const fc = state.fallingCandies[i];
+          if (fc.specialType === 'bomb' && Math.hypot(px - fc.x, py - fc.y) <= fc.radius * 2.1) {
+            sfx.playSwat();
+            unlockSticker('bomb_hero');
+            state.score += 15;
+            state.screenShake = 6;
+            spawnBurstParticles(fc.x, fc.y, '#fde047', 24, true);
+            addFloatingText(fc.x, fc.y - 12, '💥 空中拆弹成功 +15分!', '#1d8f24', 1.3);
+            state.fallingCandies.splice(i, 1);
+            updateHUD();
+            return true;
+          }
+        }
+
+        // 3. Check swatting an active Bomb held under the cloud!
+        if (state.activeCandy && state.activeCandy.specialType === 'bomb') {
+          const candyX = state.cloud.x;
+          const candyY = state.cloud.y + state.cloud.height * 0.5 + state.layout.candyRadius + 6;
+          if (Math.hypot(px - candyX, py - candyY) <= state.layout.candyRadius * 2.2) {
+            sfx.playSwat();
+            unlockSticker('bomb_hero');
+            state.score += 15;
+            state.screenShake = 5;
+            spawnBurstParticles(candyX, candyY, '#fde047', 22, true);
+            addFloatingText(candyX, candyY - 10, '💥 拍飞坏炸弹 +15分！变彩虹糖！', '#1d8f24', 1.25);
+            state.activeCandy.specialType = 'rainbow';
+            state.activeCandy.isRainbow = true;
+            state.activeCandy.shape = 'star';
+            updateHUD();
+            return true;
+          }
+        }
+
+        // 4. Check clicking on a Caterpillar Bug or Frozen Column Rim
+        const cols = state.layout.columns;
+        for (let i = 0; i < cols.length; i++) {
+          const col = cols[i];
+          if (Math.abs(px - col.centerX) <= col.width * 0.65 && Math.abs(py - col.topY) <= 46) {
+            if (state.columnBugs[i]) {
+              state.columnBugs[i] = null;
+              state.score += 12;
+              sfx.playSwat();
+              unlockSticker('bomb_hero');
+              spawnBurstParticles(col.centerX, col.topY, '#84cc16', 20, true);
+              addFloatingText(col.centerX, col.topY - 18, '🐛 赶走贪吃虫 +12分！送1颗糖！', '#1d8f24', 1.2);
+              addCandyToColumn(i, 'heart', false);
+              updateHUD();
+              return true;
+            }
+            if (state.columnFrozen[i] > 0) {
+              state.columnFrozen[i] = 0;
+              state.score += 10;
+              sfx.playSwat();
+              spawnBurstParticles(col.centerX, col.topY, '#38bdf8', 18, false);
+              addFloatingText(col.centerX, col.topY - 18, '❄️ 咔嚓破冰 +10分！', '#0284c7', 1.2);
+              updateHUD();
+              return true;
+            }
+          }
+        }
+
+        return false;
+      }
+
       canvas.addEventListener('pointerdown', (e) => {
         e.preventDefault();
         sfx.init();
 
         const px = getCanvasX(e.clientX);
         const py = getCanvasY(e.clientY);
+
+        if (trySwatInteractiveTargets(px, py)) {
+          return;
+        }
 
         state.isDragging = true;
         state.TapStartTime = performance.now();
@@ -1961,7 +2305,20 @@
           state.keys.right = true;
         } else if (e.key === ' ' || e.key === 'ArrowDown' || e.key === 'Enter' || e.key === 's' || e.key === 'S') {
           e.preventDefault();
-          dropActiveCandy();
+          // If holding a bomb, Space/Enter swats it into a Rainbow Star!
+          if (state.activeCandy && state.activeCandy.specialType === 'bomb') {
+            const candyX = state.cloud.x;
+            const candyY = state.cloud.y + state.cloud.height * 0.5 + state.layout.candyRadius + 6;
+            trySwatInteractiveTargets(candyX, candyY);
+          } else {
+            dropActiveCandy();
+          }
+        } else if (e.key === 'q' || e.key === 'Q') {
+          if (!activateTopIcon(0)) activateTopIcon(3);
+        } else if (e.key === 'w' || e.key === 'W') {
+          if (!activateTopIcon(1)) activateTopIcon(4);
+        } else if (e.key === 'e' || e.key === 'E') {
+          if (!activateTopIcon(2)) activateTopIcon(5);
         } else if (e.key >= '1' && e.key <= '7') {
           const idx = parseInt(e.key, 10) - 1;
           if (state.layout.columns[idx]) {
@@ -1983,15 +2340,16 @@
       const modeModal = document.getElementById('mode-modal');
       const artModal = document.getElementById('art-modal');
       const victoryModal = document.getElementById('victory-modal');
+      const stickerModal = document.getElementById('sticker-modal');
 
       const MODE_NAMES = {
-        classic: '经典自动掉',
-        rain: '彩虹连连掉',
+        classic: '奇幻魔法版',
+        rain: '刺激挑战版',
         kids: '轻松宝宝玩'
       };
       const MODE_SHORT_NAMES = {
-        classic: '经典',
-        rain: '连掉',
+        classic: '奇幻',
+        rain: '挑战',
         kids: '宝宝'
       };
 
@@ -1999,11 +2357,16 @@
         state.mode = newMode;
         const longEl = document.getElementById('mode-label-long');
         const shortEl = document.getElementById('mode-label-short');
-        if (longEl) longEl.textContent = MODE_NAMES[newMode] || '经典自动掉';
-        if (shortEl) shortEl.textContent = MODE_SHORT_NAMES[newMode] || '经典';
+        if (longEl) longEl.textContent = MODE_NAMES[newMode] || '奇幻魔法版';
+        if (shortEl) shortEl.textContent = MODE_SHORT_NAMES[newMode] || '奇幻';
         document.querySelectorAll('.mode-item').forEach((el) => {
           el.classList.toggle('selected', el.dataset.mode === newMode);
         });
+        if (newMode === 'kids') {
+          state.columnBugs = [null, null, null, null, null, null, null];
+          state.columnFrozen = [0, 0, 0, 0, 0, 0, 0];
+          state.windForce = 0;
+        }
         state.activeCandy = null;
         spawnNextCandyOnCloud();
       }
@@ -2036,13 +2399,46 @@
       });
       document.getElementById('close-art-modal').addEventListener('click', () => artModal.classList.remove('open'));
 
+      // Sticker Book Modal events
+      document.getElementById('btn-stickers').addEventListener('click', () => {
+        renderStickerModal();
+        stickerModal.classList.add('open');
+      });
+      document.getElementById('btn-win-stickers').addEventListener('click', () => {
+        victoryModal.classList.remove('open');
+        renderStickerModal();
+        stickerModal.classList.add('open');
+      });
+      document.getElementById('close-sticker-modal').addEventListener('click', () => {
+        stickerModal.classList.remove('open');
+      });
+
+      // Fever Pill click
+      document.getElementById('fever-pill').addEventListener('click', () => {
+        if (state.feverGauge >= 100 && state.feverTimer <= 0) {
+          triggerFeverMode();
+        } else {
+          addFloatingText(state.width / 2, state.layout.cloudY - 15, `🌈 连续接准糖果攒满100%即可触发彩虹暴走！`, '#7c3aed', 1.0);
+        }
+      });
+
+      // Music Box BGM toggle
+      const btnBgm = document.getElementById('btn-bgm');
+      btnBgm.addEventListener('click', () => {
+        sfx.init();
+        sfx.bgmEnabled = !sfx.bgmEnabled;
+        btnBgm.classList.toggle('active-mode', sfx.bgmEnabled);
+        btnBgm.innerHTML = sfx.bgmEnabled ? '🎵 <span class="mode-long">音乐开</span>' : '🎵 <span class="mode-long">音乐</span>';
+      });
+
       const btnSound = document.getElementById('btn-sound');
       btnSound.addEventListener('click', () => {
         sfx.enabled = !sfx.enabled;
-        btnSound.textContent = sfx.enabled ? '🔊 音效' : '🔇 静音';
+        btnSound.textContent = sfx.enabled ? '🔊' : '🔇';
         if (sfx.enabled) sfx.playTone(440, 0.15);
       });
 
+      loadStickers();
       window.addEventListener('resize', computeLayout);
       computeLayout();
       if (state.layout.columns[2]) {
@@ -2050,6 +2446,7 @@
         state.cloud.targetX = state.cloud.x;
       }
       spawnNextCandyOnCloud();
+      spawnMultiplierGate();
       updateHUD();
 
       let lastTime = performance.now();
@@ -2062,6 +2459,3 @@
       }
       requestAnimationFrame(loop);
     })();
-  </script>
-</body>
-</html>

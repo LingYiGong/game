@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="description" content="彩虹糖下雨（集满10颗胜利版）" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍬</text></svg>" />
+  <title>彩虹糖下雨</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app-shell">
+    <!-- Top HUD Bar -->
+    <div class="hud-bar">
+      <div class="hud-stats">
+        <a class="btn-cute" href="../index.html" title="返回游戏大厅">🏠<span class="label-text"> 大厅</span></a>
+        <div class="stat-pill pill-target" title="胜利目标：7个彩色柱子各装满10颗糖果">
+          🏆<span class="label-text"> 满柱</span> <span class="val" id="full-tubes-val">0/7</span>
+        </div>
+        <div class="stat-pill" title="收集到的糖果总数 (目标 70 颗)">
+          🍬<span class="label-text"> 收集</span> <span class="val" id="total-val">0/70</span>
+        </div>
+        <div class="stat-pill" title="连续投进同色柱子的连击加成">
+          🔥<span class="label-text"> 连击</span> <span class="val" id="combo-val">0</span>
+        </div>
+        <div class="stat-pill pill-fever" id="fever-pill" title="彩虹暴走能量！满100%触发全自动彩虹狂欢喷泉">
+          🌈<span class="label-text"> 暴走</span> <span class="val" id="fever-val">0%</span>
+        </div>
+        <div class="stat-pill" title="总得分">
+          ⭐<span class="label-text"> 分数</span> <span class="val" id="score-val">0</span>
+        </div>
+      </div>
+
+      <div class="hud-actions">
+        <button class="btn-cute active-mode" id="btn-mode" title="切换游戏玩法模式">
+          🎮 <span class="mode-long" id="mode-label-long">奇幻魔法版</span><span class="mode-short" id="mode-label-short">奇幻</span>
+        </button>
+        <button class="btn-cute" id="btn-stickers" title="查看贴纸收集册">
+          🏅 <span class="mode-long">贴纸</span><span class="mode-short">贴纸</span>
+        </button>
+        <button class="btn-cute" id="btn-art" title="查看女儿的手绘原作">
+          🎨 <span class="mode-long">原作</span><span class="mode-short">画作</span>
+        </button>
+        <button class="btn-cute" id="btn-bgm" title="开关欢快八音盒背景音乐">
+          🎵 <span class="mode-long">音乐</span>
+        </button>
+        <button class="btn-cute" id="btn-sound" title="开关音效">
+          🔊
+        </button>
+        <button class="btn-cute" id="btn-quick-reset" title="重新开始本局">
+          🔄
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Drawing Paper Game Canvas (Clean, intuitive touch & drag) -->
+    <div id="paper-stage">
+      <canvas id="game-canvas"></canvas>
+    </div>
+  </div>
+
+  <!-- Victory Celebration Modal -->
+  <div class="modal-backdrop" id="victory-modal">
+    <div class="modal-card victory-card">
+      <div class="victory-badge">🏆</div>
+      <h2 class="victory-title">🎉 恭喜通关！彩虹大圆满！</h2>
+      <div class="victory-stars" id="win-stars">⭐⭐⭐</div>
+      <div class="victory-rank" id="win-rank">👑 彩虹糖果大魔法师</div>
+      <p class="victory-subtitle" id="win-unlock-msg">所有 7 个彩虹柱子都完美装满了 10 颗糖果！太棒了！</p>
+
+      <div class="victory-stats-grid">
+        <div class="vstat-box">
+          <div class="label">🍬 糖果总数</div>
+          <div class="num" id="win-candies">70 / 70</div>
+        </div>
+        <div class="vstat-box">
+          <div class="label">⏱️ 通关用时</div>
+          <div class="num" id="win-time">00:00</div>
+        </div>
+        <div class="vstat-box">
+          <div class="label">🔥 最高连击</div>
+          <div class="num" id="win-combo">0</div>
+        </div>
+        <div class="vstat-box">
+          <div class="label">⭐ 最终得分</div>
+          <div class="num" id="win-score">0</div>
+        </div>
+      </div>
+
+      <div class="victory-actions">
+        <button class="btn-win-replay" id="btn-win-replay">🎈 再玩一局</button>
+        <button class="btn-cute" id="btn-win-stickers" style="font-size:15px; padding: 10px 16px;">🏅 贴纸册</button>
+        <button class="btn-cute" id="btn-win-art" style="font-size:15px; padding: 10px 16px;">🎨 欣赏原作</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mode & Rules Modal -->
+  <div class="modal-backdrop" id="mode-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>🌈 糖果魔法规则与模式</h2>
+        <button class="btn-cute" id="close-mode-modal">✖ 关闭</button>
+      </div>
+      <p style="font-size:13.5px; color:#444; line-height: 1.5;">
+        🎯 <strong>胜利目标：</strong>将彩色糖果投进下方对应颜色的<strong>7根彩虹柱</strong>，每根集满 <strong>10 颗</strong>即可通关！<br/>
+        ✨ <strong>全新趣味玩法：</strong><br/>
+        • 🫧 <strong>空中倍增门：</strong>让糖果穿过飘动的 <code>×2</code> / <code>×3</code> 泡泡圈，糖果瞬间分裂翻倍！<br/>
+        • 🌟 <strong>画作顶部6大魔法图标：</strong>接糖果充能发光后<strong>直接点击顶部图标</strong>（或按 <code>Q/W/E</code>）释放<strong>流星雨、全屏磁铁、紫莓甘霖</strong>！<br/>
+        • 🎁 <strong>惊喜特殊糖 & 彩虹暴走：</strong>惊喜盲盒糖、三连爆射糖、七彩甘霖糖，连击集满触发<strong>彩虹暴走喷泉</strong>！<br/>
+        • 💣 <strong>调皮捣蛋鬼：</strong>遇到坏坏炸弹或贪吃小毛虫，<strong>直接点击它们</strong>就能拍飞拆弹拿大奖！
+      </p>
+      <div class="mode-grid">
+        <div class="mode-item selected" data-mode="classic">
+          <strong>🌟 1. 奇幻魔法标准版（推荐） <span>最好玩</span></strong>
+          <p>包含全部倍增泡泡、顶部6大魔法技能、特殊糖果、彩虹暴走，以及适度有趣的捣蛋炸弹与贪吃虫互动！</p>
+        </div>
+        <div class="mode-item" data-mode="rain">
+          <strong>🔥 2. 刺激街机挑战版（快节奏） <span>高手向</span></strong>
+          <p>糖果倒计时更快，更多捣蛋炸弹、微风气旋、冰封柱子与贪吃虫来袭，倍增泡泡也更多，挑战手速极限！</p>
+        </div>
+        <div class="mode-item" data-mode="kids">
+          <strong>🎈 3. 轻松宝宝乐园（对准即掉+无捣蛋鬼） <span>零压力</span></strong>
+          <p>没有倒计时压力、没有炸弹和害虫！对准同色柱子自动落入，保留所有倍增泡泡、特殊糖果与顶部魔法技能！</p>
+        </div>
+      </div>
+      <div style="margin-top: 14px; display:flex; justify-content:space-between; align-items:center;">
+        <button class="btn-cute" id="btn-reset-game">🔄 重置本局</button>
+        <button class="btn-cute active-mode" id="btn-start-play" style="padding: 7px 18px; font-size:15px;">✨ 开始狂欢！</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sticker Collection Modal -->
+  <div class="modal-backdrop" id="sticker-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>🏅 彩虹贴纸收集册 (<span id="sticker-count-label">0/8</span>)</h2>
+        <button class="btn-cute" id="close-sticker-modal">✖ 关闭</button>
+      </div>
+      <p style="font-size:13px; color:#555; line-height:1.4;">
+        在游戏里完成奇妙操作即可点亮专属手绘贴纸（自动保存在浏览器中）：
+      </p>
+      <div class="sticker-grid" id="sticker-grid-container"></div>
+    </div>
+  </div>
+
+  <!-- Original Drawing Modal -->
+  <div class="modal-backdrop" id="art-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>🎨 小设计师的手绘原作 (2026年11月1日)</h2>
+        <button class="btn-cute" id="close-art-modal">✖ 关闭</button>
+      </div>
+      <p style="font-size:13.5px; color:#444; line-height:1.5;">
+        游戏完整还原了画作里的每一个细节：<br/>
+        • 顶部的 <strong>绿十字星、双色爱心、蓝顶紫莓心</strong> 与右上角日期<br/>
+        • 中间黄绿边框、粉脸蛋的 <strong>微笑云朵横条</strong><br/>
+        • 下方从左到右一模一样的 <strong>草莓红、蜜桃粉、苹果绿、葡萄紫、蓝莓蓝、甜橙橘、苏打天蓝</strong> 7色彩虹柱子！
+      </p>
+      <div class="art-preview-box">
+        <img src="../artwork.jpg" alt="女儿的手绘游戏设计原图" onerror="this.parentElement.innerHTML='<div style=\'padding:24px;color:#666;\'>本地单文件模式下未找到原图文件 artwork.jpg</div>'" />
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

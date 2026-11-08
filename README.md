@@ -39,12 +39,12 @@
 
 ## 🎮 游戏体验
 
-仓库提供游戏大厅 `index.html` 以及经典单颗掉落版游戏 `v1_classic.html`：
+仓库提供游戏大厅 `index.html` 以及彩虹糖下雨游戏 `rainbow_candy_rain/index.html`：
 
 | 体验文件 | 名称 | 核心机制 | 适合人群 |
 | :--- | :--- | :--- | :--- |
 | **[index.html](index.html)** | **游戏大厅入口** | 精美卡片大厅导航，汇聚游戏入口并支持未来新游戏扩展 | 默认主页入口 |
-| **[v1_classic.html](v1_classic.html)** | **彩虹糖下雨（经典版）** | 云朵嘴边挂着 1 颗饱满的彩色糖果，对准下方 7 个专属糖果管落入；**每个管子刚好装满 10 颗糖果即可胜利通关**！糖果饱满立体，视觉比例和谐，支持经典、快节奏、宝宝对准即落 3 种模式。 | 慢节奏对准、低龄启蒙 |
+| **[rainbow_candy_rain/index.html](rainbow_candy_rain/index.html)** | **彩虹糖下雨（奇幻魔法版）** | 云朵嘴边挂着饱满彩色糖果，穿过 **×2/×3 倍增泡泡**、激活顶部 **6 大手绘魔法图标**（流星雨/彩虹磁铁/紫莓甘霖）、触发 **连击彩虹暴走喷泉**，拍飞坏炸弹与贪吃虫，收集 **8 枚贴纸徽章**，**7 个管子各装满 10 颗即可三星通关**！支持奇幻标准、刺激挑战、轻松宝宝 3 种模式。 | 全年龄段、亲子互动 |
 
 ---
 
@@ -67,9 +67,12 @@
 ## 📂 项目结构 (Project Structure)
 
 ```text
-├── index.html          # 游戏大厅入口 (Game Hub)
-├── v1_classic.html     # 彩虹糖下雨 (经典版游戏)
-├── artwork.jpg         # 女儿于 2026-11-01 创作的手绘原作 (已完全脱敏 EXIF)
+├── index.html                   # 游戏大厅入口 (Game Hub)
+├── rainbow_candy_rain/          # 彩虹糖下雨 游戏目录 (Rainbow Candy Rain)
+│   ├── index.html               # 游戏页面
+│   ├── style.css                # 游戏样式表
+│   └── game.js                  # 游戏主逻辑与音效合成引擎
+├── artwork.jpg                  # 女儿于 2026-11-01 创作的手绘原作 (已完全脱敏 EXIF)
 ├── README.md           # 项目完整文档
 ├── LICENSE             # MIT 开源许可证 & 艺术版权声明
 ├── CONTRIBUTING.md      # 开源贡献指南
