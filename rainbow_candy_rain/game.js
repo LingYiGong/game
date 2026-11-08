@@ -21,10 +21,11 @@
       id: 1,
       title: '初识彩虹',
       subtitle: '基础操作与色彩对应教学',
-      tip: '滑动云朵对齐同色跑道，轻点屏幕或按空格放下糖果！',
-      tags: ['新手教学', '双色体验', '无倒计时压力'],
+      tip: '注意：放错跑道会扣除 1 颗生命红心！对准同色跑道再轻点放下！',
+      tags: ['新手教学', '双色体验', '生命红心机制'],
       activeCols: [0, 6], // Strawberry Red (0) and Soda Sky Blue (6)
       targetPerTube: 3,   // 3 candies per column (total 6)
+      maxHearts: 5,       // 5 Hearts for beginner learning
       features: {
         tutorial: true,
         combo: false,
@@ -36,17 +37,18 @@
         fever: false
       },
       allowedSpecials: ['normal'],
-      candyTimer: 999999, // Relaxed/infinite drop timer for beginners
+      candyTimer: 7.5,    // Clear drop timer
       starConditions: { star3Combo: 1, star3Time: 40, star2Time: 75 }
     },
     {
       id: 2,
       title: '连击练习',
       subtitle: '红绿蓝三色与连击节奏',
-      tip: '连续投准同色跑道可累积连击（Combo 🔥），连击越高得分成倍翻倍！',
-      tags: ['连击进阶', '三色跑道', '节奏掌握'],
+      tip: '失误放错会扣除红心！连续放对 5 次可恢复 1 颗红心（Combo 救命）！',
+      tags: ['连击进阶', '三色跑道', '连击回血'],
       activeCols: [0, 2, 6], // Red, Green, Sky Blue
       targetPerTube: 4,      // 4 candies per column (total 12)
+      maxHearts: 4,
       features: {
         tutorial: false,
         combo: true,
@@ -58,17 +60,18 @@
         fever: false
       },
       allowedSpecials: ['normal'],
-      candyTimer: 5.2,
+      candyTimer: 5.5,
       starConditions: { star3Combo: 3, star3Time: 55, star2Time: 95 }
     },
     {
       id: 3,
       title: '五彩斑斓',
       subtitle: '五色跑道与百搭彩虹糖',
-      tip: '遇到闪闪发光的【彩虹百搭星糖 🌟】，投进任意一根跑道都算正确匹配！',
-      tags: ['五色彩虹', '百搭彩虹糖', '眼手协调'],
+      tip: '五色跑道开始守护 3 颗心！遇到百搭彩虹糖投进任意跑道都安全！',
+      tags: ['五色彩虹', '3心挑战', '百搭彩虹糖'],
       activeCols: [0, 1, 2, 4, 6], // Red, Pink, Green, Blue, Sky Blue
       targetPerTube: 4,            // 4 candies per column (total 20)
+      maxHearts: 3,
       features: {
         tutorial: false,
         combo: true,
@@ -80,17 +83,18 @@
         fever: false
       },
       allowedSpecials: ['normal', 'rainbow'],
-      candyTimer: 4.5,
+      candyTimer: 4.8,
       starConditions: { star3Combo: 4, star3Time: 70, star2Time: 110 }
     },
     {
       id: 4,
       title: '空中奇迹',
       subtitle: '倍增泡泡分裂与三连爆射',
-      tip: '算好提前量！让糖果穿过漂浮的【×2 / ×3 泡泡门 🫧】，糖果会瞬间分裂翻倍！',
-      tags: ['倍增泡泡门', '三连糖', '分裂狂欢'],
+      tip: '空中倍增门分裂糖果！注意：未对准跑道掉落依然会扣除红心！',
+      tags: ['倍增泡泡门', '分裂翻倍', '轨迹预判'],
       activeCols: [0, 1, 2, 3, 4, 6], // 6 columns
       targetPerTube: 5,               // 5 candies per column (total 30)
+      maxHearts: 3,
       features: {
         tutorial: false,
         combo: true,
@@ -102,17 +106,18 @@
         fever: false
       },
       allowedSpecials: ['normal', 'rainbow', 'triple'],
-      candyTimer: 3.8,
+      candyTimer: 4.0,
       starConditions: { star3Combo: 6, star3Time: 85, star2Time: 130 }
     },
     {
       id: 5,
       title: '画纸苏醒',
       subtitle: '释放顶部 6 大手绘魔法技能',
-      tip: '投进糖果给顶部手绘图标充能，满 100% 后直接点击图标释放全屏魔法大招！',
-      tags: ['全部7色彩虹', '手绘大招', '盲盒惊喜'],
+      tip: '顶部 6 大魔法觉醒！紫莓甘霖大招可救急补充糖果并净化全场！',
+      tags: ['7色全开', '手绘大招', '盲盒惊喜'],
       activeCols: [0, 1, 2, 3, 4, 5, 6], // All 7 columns
       targetPerTube: 5,                  // 5 candies per column (total 35)
+      maxHearts: 3,
       features: {
         tutorial: false,
         combo: true,
@@ -124,17 +129,18 @@
         fever: false
       },
       allowedSpecials: ['normal', 'rainbow', 'triple', 'mystery'],
-      candyTimer: 3.5,
+      candyTimer: 3.6,
       starConditions: { star3Combo: 7, star3Time: 95, star2Time: 145 }
     },
     {
       id: 6,
       title: '调皮捣蛋鬼',
       subtitle: '除虫破冰与跑道保卫战',
-      tip: '跑道被【冰霜 ❄️】封住或出现【贪吃虫 🐛】？直接点击跑道除虫破冰拿大奖！',
-      tags: ['除虫破冰', '快速互动', '七彩甘霖'],
+      tip: '调皮捣蛋鬼来袭！8 秒内点击赶跑贪吃虫（否则咬碎红心）并轻点破冰！',
+      tags: ['除虫防偷心', '破冰保卫', '互动障碍'],
       activeCols: [0, 1, 2, 3, 4, 5, 6],
       targetPerTube: 6,                  // 6 candies per column (total 42)
+      maxHearts: 3,
       features: {
         tutorial: false,
         combo: true,
@@ -154,33 +160,11 @@
       id: 7,
       title: '拆弹大师',
       subtitle: '空中拦截炸弹与微风挑战',
-      tip: '注意黑色【坏坏炸弹 💣】！千万别让它落进柱子，在空中直接点击它拆弹！',
-      tags: ['空中拆弹', '调皮微风', '暴走积蓄'],
+      tip: '坏坏炸弹掉入跑道会引爆并直接扣 1 心！空中点击炸弹进行拆弹！',
+      tags: ['炸弹扣心', '空中拆弹', '调皮微风'],
       activeCols: [0, 1, 2, 3, 4, 5, 6],
       targetPerTube: 7,                  // 7 candies per column (total 49)
-      features: {
-        tutorial: false,
-        combo: true,
-        rainbowCandy: true,
-        multiplierGates: true,
-        topMagic: true,
-        hazards: true,
-        hazardTypes: ['ice', 'bug', 'wind'],
-        bombs: true,
-        fever: true
-      },
-      allowedSpecials: ['normal', 'rainbow', 'triple', 'mystery', 'shower', 'bomb'],
-      candyTimer: 3.0,
-      starConditions: { star3Combo: 9, star3Time: 125, star2Time: 185 }
-    },
-    {
-      id: 8,
-      title: '彩虹大圆满',
-      subtitle: '终极盛宴！7 柱各 10 颗集满 70 颗糖果',
-      tip: '全要素全机制盛大狂欢！连击攒满 100% 触发彩虹暴走喷泉，赢取大魔法师金杯！',
-      tags: ['终极考验', '彩虹暴走喷泉', '70颗大圆满'],
-      activeCols: [0, 1, 2, 3, 4, 5, 6],
-      targetPerTube: 10,                 // 10 candies per column (total 70)
+      maxHearts: 3,
       features: {
         tutorial: false,
         combo: true,
@@ -194,6 +178,30 @@
       },
       allowedSpecials: ['normal', 'rainbow', 'triple', 'mystery', 'shower', 'bomb'],
       candyTimer: 2.8,
+      starConditions: { star3Combo: 9, star3Time: 125, star2Time: 185 }
+    },
+    {
+      id: 8,
+      title: '彩虹大圆满',
+      subtitle: '终极盛宴！7 柱各 10 颗集满 70 颗糖果',
+      tip: '终极大决战！微风、炸弹、快速糖果全开，守护 3 颗心冲刺 70 颗大圆满！',
+      tags: ['终极大考验', '守护3心', '70颗大圆满'],
+      activeCols: [0, 1, 2, 3, 4, 5, 6],
+      targetPerTube: 10,                 // 10 candies per column (total 70)
+      maxHearts: 3,
+      features: {
+        tutorial: false,
+        combo: true,
+        rainbowCandy: true,
+        multiplierGates: true,
+        topMagic: true,
+        hazards: true,
+        hazardTypes: ['ice', 'bug', 'wind'],
+        bombs: true,
+        fever: true
+      },
+      allowedSpecials: ['normal', 'rainbow', 'triple', 'mystery', 'shower', 'bomb'],
+      candyTimer: 2.5,
       starConditions: { star3Combo: 10, star3Time: 160, star2Time: 240 }
     }
   ];
@@ -329,6 +337,18 @@
       this.playTone(165, 0.25, 'triangle', 0.11, 0.12);
     }
 
+    playHeartLost() {
+      this.playTone(320, 0.15, 'sawtooth', 0.22, 0);
+      this.playTone(196, 0.28, 'triangle', 0.25, 0.08);
+    }
+
+    playDefeat() {
+      const notes = [440, 392, 349.23, 293.66];
+      notes.forEach((n, idx) => {
+        this.playTone(n, 0.38, 'sawtooth', 0.18, idx * 0.16);
+      });
+    }
+
     playTubeComplete() {
       const notes = [523.25, 659.25, 783.99, 1046.5];
       notes.forEach((n, idx) => {
@@ -385,12 +405,18 @@
     score: 0,
     combo: 0,
     maxCombo: 0,
+    hearts: 5,
+    maxHearts: 5,
     levelCollected: 0,
     totalCollectedAllLevels: 0,
     levelStartTime: Date.now(),
     isLevelCleared: false,
+    isLevelFailed: false,
     isGrandFinale: false,
     screenShake: 0,
+    errorFlashTimer: 0,
+    errorShockwaves: [],
+    errorHeartPrompt: null,
     // Fever Rainbow Mode
     feverGauge: 0,
     feverTimer: 0,
@@ -754,6 +780,7 @@
 
   function dropActiveCandy() {
     if (!state.activeCandy || state.isLevelCleared || state.fallingCandies.length >= 16) return;
+    hideLevelIntroToast();
     const c = state.activeCandy;
     const dropX = state.cloud.x;
     const dropY = state.cloud.y + state.cloud.height * 0.48;
@@ -1007,6 +1034,16 @@
     document.getElementById('combo-val').textContent = state.combo;
     document.getElementById('score-val').textContent = state.score;
 
+    // Hearts Pill
+    const heartsEl = document.getElementById('hearts-val');
+    if (heartsEl) {
+      let heartStr = '';
+      for (let h = 0; h < state.maxHearts; h++) {
+        heartStr += (h < state.hearts ? '❤️' : '🖤');
+      }
+      heartsEl.textContent = heartStr;
+    }
+
     const feverEl = document.getElementById('fever-val');
     const feverPill = document.getElementById('fever-pill');
     if (feverEl && feverPill) {
@@ -1032,7 +1069,13 @@
     return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   }
 
+  let introToastTimer = null;
+
   function showLevelIntroToast(lvl = state.currentLevel) {
+    if (introToastTimer) {
+      clearTimeout(introToastTimer);
+      introToastTimer = null;
+    }
     const lvlConfig = getLevelConfig(lvl);
     const toast = document.getElementById('level-intro-toast');
     const tagEl = document.getElementById('toast-level-num');
@@ -1044,16 +1087,25 @@
       titleEl.textContent = `${lvlConfig.title} · ${lvlConfig.subtitle}`;
       tipEl.textContent = lvlConfig.tip;
       toast.classList.add('show');
+
+      // 关卡弹窗作为提示，开始游戏后自动消失（无需手动点击开始挑战）
+      introToastTimer = setTimeout(() => {
+        hideLevelIntroToast();
+      }, 3200);
     }
   }
 
   function hideLevelIntroToast() {
+    if (introToastTimer) {
+      clearTimeout(introToastTimer);
+      introToastTimer = null;
+    }
     const toast = document.getElementById('level-intro-toast');
     if (toast) toast.classList.remove('show');
   }
 
   function triggerLevelClear() {
-    if (state.isLevelCleared) return;
+    if (state.isLevelCleared || state.isLevelFailed) return;
     state.isLevelCleared = true;
     sfx.playLevelClear();
 
@@ -1061,11 +1113,12 @@
     const lvlConfig = getLevelConfig();
     const cond = lvlConfig.starConditions;
 
-    // Calculate Stars
+    // Calculate Stars based on Hearts survival & Combo & Time
     let starsCount = 1;
-    if (elapsed <= cond.star3Time && state.maxCombo >= cond.star3Combo) {
+    const flawlessHearts = state.hearts >= state.maxHearts;
+    if ((elapsed <= cond.star3Time && state.maxCombo >= cond.star3Combo) || (flawlessHearts && state.maxCombo >= Math.max(1, cond.star3Combo - 2))) {
       starsCount = 3;
-    } else if (elapsed <= cond.star2Time || state.maxCombo >= Math.max(1, cond.star3Combo - 1)) {
+    } else if (elapsed <= cond.star2Time || state.maxCombo >= Math.max(1, cond.star3Combo - 1) || state.hearts >= 2) {
       starsCount = 2;
     }
 
@@ -1094,7 +1147,8 @@
 
     document.getElementById('level-clear-title').textContent = `🎉 第 ${state.currentLevel} 关 通关成功！`;
     document.getElementById('level-clear-stars').textContent = starStr;
-    document.getElementById('level-clear-desc').textContent = `恭喜完成【${lvlConfig.title}】全部目标！`;
+    const heartBadge = flawlessHearts ? '❤️ 满心完美通关！' : `❤️ 剩余 ${state.hearts} 心过关！`;
+    document.getElementById('level-clear-desc').textContent = `恭喜完成【${lvlConfig.title}】全部目标！${heartBadge}`;
     document.getElementById('lc-candies').textContent = `${state.levelCollected} / ${getLevelTotalTarget(lvlConfig)}`;
     document.getElementById('lc-time').textContent = formatTime(elapsed);
     document.getElementById('lc-combo').textContent = state.maxCombo;
@@ -1117,6 +1171,70 @@
       sfx.playStarChime(starsCount - 1);
       document.getElementById('level-clear-modal').classList.add('open');
     }, 600);
+  }
+
+  function triggerFullScreenError(x, y, title, subtitle = '') {
+    state.errorFlashTimer = 0.9;
+    state.screenShake = 18;
+    state.errorHeartPrompt = {
+      title,
+      subtitle,
+      timer: 1.25,
+      maxTimer: 1.25
+    };
+    state.errorShockwaves.push({
+      x: x || state.width / 2,
+      y: y || state.height / 2,
+      r: 10,
+      maxR: Math.hypot(state.width, state.height) * 0.95,
+      speed: 850,
+      alpha: 1
+    });
+
+    const stage = document.getElementById('paper-stage');
+    if (stage) {
+      stage.classList.remove('screen-error-flash');
+      void stage.offsetWidth;
+      stage.classList.add('screen-error-flash');
+      setTimeout(() => stage.classList.remove('screen-error-flash'), 550);
+    }
+  }
+
+  function triggerLevelFail(reason = 'mismatch') {
+    if (state.isLevelCleared || state.isLevelFailed) return;
+    state.isLevelFailed = true;
+    sfx.playDefeat();
+    state.cloud.mood = 'oops';
+    state.screenShake = 12;
+
+    const elapsed = (Date.now() - state.levelStartTime) / 1000;
+    const lvlConfig = getLevelConfig();
+
+    document.getElementById('level-fail-title').textContent = `第 ${state.currentLevel} 关 挑战遗憾失败`;
+    let reasonDesc = '生命红心耗尽啦！投错颜色跑道会扣除红心哦~';
+    let tipDesc = '💡 <strong>小画师建议：</strong>放慢节奏，看清糖果颜色左右对准再放下！连续接对 5 次 Combo 可恢复 1 颗生命红心！';
+
+    if (reason === 'bomb') {
+      reasonDesc = '坏坏炸弹掉入跑道引爆并扣光了红心！下次在半空中直接点击炸弹拆弹！';
+      tipDesc = '💡 <strong>拆弹小技巧：</strong>黑色炸弹出现时，直接用手指轻触或鼠标点击空中炸弹，即可直接拆除！';
+    } else if (reason === 'bug') {
+      reasonDesc = '贪吃虫抢走糖果并扣光了红心！及时点击虫子把它赶跑！';
+      tipDesc = '💡 <strong>除虫小技巧：</strong>贪吃虫爬上跑道时，直接点击该跑道拍飞贪吃虫，保护糖果与红心！';
+    } else if (reason === 'timeout') {
+      reasonDesc = '倒计时耗尽糖果自动落下错配跑道，扣光了红心！';
+      tipDesc = '💡 <strong>手速小建议：</strong>注意糖果外围的倒计时光环，在光环转完前尽快移动云朵对准跑道！';
+    }
+
+    document.getElementById('level-fail-desc').textContent = reasonDesc;
+    document.getElementById('level-fail-tip').innerHTML = tipDesc;
+    document.getElementById('lf-candies').textContent = `${state.levelCollected} / ${getLevelTotalTarget(lvlConfig)}`;
+    document.getElementById('lf-time').textContent = formatTime(elapsed);
+    document.getElementById('lf-combo').textContent = state.maxCombo;
+    document.getElementById('lf-score').textContent = state.score;
+
+    setTimeout(() => {
+      document.getElementById('level-fail-modal').classList.add('open');
+    }, 500);
   }
 
   function triggerGrandFinale() {
@@ -1155,6 +1273,7 @@
   function startLevel(lvlIndex, autoIntro = true) {
     state.currentLevel = Math.max(1, Math.min(LEVELS.length, lvlIndex));
     state.isLevelCleared = false;
+    state.isLevelFailed = false;
     state.isGrandFinale = false;
     state.score = 0;
     state.combo = 0;
@@ -1162,6 +1281,9 @@
     state.levelCollected = 0;
     state.levelStartTime = Date.now();
     state.screenShake = 0;
+    state.errorFlashTimer = 0;
+    state.errorShockwaves = [];
+    state.errorHeartPrompt = null;
     state.feverGauge = 0;
     state.feverTimer = 0;
     state.magnetTimer = 0;
@@ -1176,6 +1298,11 @@
     state.columnBugs = [null, null, null, null, null, null, null];
 
     const lvlConfig = getLevelConfig();
+
+    // Hearts init
+    state.maxHearts = lvlConfig.maxHearts || 3;
+    state.hearts = state.maxHearts;
+
     // Top icon charges
     state.topIconCharge = lvlConfig.features.topMagic ? [40, 40, 40, 40, 40, 40] : [0, 0, 0, 0, 0, 0];
 
@@ -1210,6 +1337,7 @@
 
     // Close any open modals
     document.getElementById('level-clear-modal').classList.remove('open');
+    document.getElementById('level-fail-modal').classList.remove('open');
     document.getElementById('victory-modal').classList.remove('open');
     document.getElementById('level-select-modal').classList.remove('open');
 
@@ -1231,8 +1359,49 @@
       state.screenShake = Math.max(0, state.screenShake - dt * 20);
     }
 
+    if (state.errorFlashTimer > 0) {
+      state.errorFlashTimer = Math.max(0, state.errorFlashTimer - dt);
+    }
+
+    if (state.errorHeartPrompt) {
+      state.errorHeartPrompt.timer -= dt;
+      if (state.errorHeartPrompt.timer <= 0) {
+        state.errorHeartPrompt = null;
+      }
+    }
+
+    for (let i = state.errorShockwaves.length - 1; i >= 0; i--) {
+      const sw = state.errorShockwaves[i];
+      sw.r += sw.speed * dt;
+      sw.alpha = Math.max(0, 1 - sw.r / sw.maxR);
+      if (sw.alpha <= 0) {
+        state.errorShockwaves.splice(i, 1);
+      }
+    }
+
     if (state.magnetTimer > 0) {
       state.magnetTimer = Math.max(0, state.magnetTimer - dt);
+    }
+
+    if (state.isLevelFailed) {
+      // Keep animating floating texts and particles when level failed
+      for (let i = state.particles.length - 1; i >= 0; i--) {
+        const p = state.particles[i];
+        p.vy += 320 * dt;
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.life -= dt;
+        p.alpha = Math.max(0, p.life / p.maxLife);
+        if (p.life <= 0) state.particles.splice(i, 1);
+      }
+      for (let i = state.floatingTexts.length - 1; i >= 0; i--) {
+        const ft = state.floatingTexts[i];
+        ft.y += ft.vy * dt;
+        ft.life -= dt;
+        ft.alpha = Math.max(0, Math.min(1, ft.life * 1.5));
+        if (ft.life <= 0) state.floatingTexts.splice(i, 1);
+      }
+      return;
     }
 
     // Victory celebration state updates
@@ -1337,8 +1506,15 @@
             state.columnCounts[i] -= 1;
             state.levelCollected = Math.max(0, state.levelCollected - 1);
             state.columnStacks[i].pop();
-            addFloatingText(cols[i].centerX, cols[i].topY - 16, '🐛 哎呀被偷吃1颗! 快点虫子!', '#cf2027', 1.1);
+            state.hearts = Math.max(0, state.hearts - 1);
+            sfx.playHeartLost();
+            triggerFullScreenError(cols[i].centerX, cols[i].topY, '🐛 贪吃虫得逞！生命 -1', '爬上跑道时直接点击虫子将其赶跑！');
+            addFloatingText(cols[i].centerX, cols[i].topY - 16, '🐛 哎呀被偷吃1颗并扣1心! 快点虫子!', '#cf2027', 1.2);
             updateHUD();
+            if (state.hearts <= 0) {
+              triggerLevelFail('bug');
+              return;
+            }
           }
           state.columnBugs[i] = null;
         }
@@ -1507,20 +1683,25 @@
       if (fc.y >= Math.max(col.topY + 20, landingY)) {
         // 1. Bomb landing
         if (fc.specialType === 'bomb') {
-          sfx.playMismatch();
-          state.screenShake = 7;
-          spawnBurstParticles(fc.x, col.topY + 20, '#333333', 20, false);
+          sfx.playHeartLost();
+          spawnBurstParticles(fc.x, col.topY + 20, '#ef4444', 28, false);
+          state.hearts = Math.max(0, state.hearts - 1);
+          triggerFullScreenError(fc.x, col.topY + 20, '💣 炸弹引爆！生命 -1', '黑色炸弹掉入跑道会爆炸！空中点击可拆弹！');
           if (state.columnCounts[colIdx] > 0 && isColActive) {
             state.columnCounts[colIdx] -= 1;
             state.levelCollected = Math.max(0, state.levelCollected - 1);
             state.columnStacks[colIdx].pop();
-            addFloatingText(col.centerX, col.topY - 12, '💣 炸飞1颗！下次空中直接点炸弹拆弹！', '#cf2027', 1.1);
+            addFloatingText(col.centerX, col.topY - 12, '💣 炸弹爆炸！扣 1 心 & 炸飞1颗！', '#cf2027', 1.25);
           } else {
-            addFloatingText(col.centerX, col.topY - 12, '💣 炸弹落空！半空中点击可拆弹哦~', '#555', 1.05);
+            addFloatingText(col.centerX, col.topY - 12, '💣 炸弹引爆！扣 1 心！空中点它可拆弹！', '#cf2027', 1.2);
           }
           state.combo = 0;
           updateHUD();
           state.fallingCandies.splice(i, 1);
+          if (state.hearts <= 0) {
+            triggerLevelFail('bomb');
+            return;
+          }
           continue;
         }
 
@@ -1549,6 +1730,14 @@
             state.combo += 1;
             if (state.combo > state.maxCombo) state.maxCombo = state.combo;
             if (state.combo >= 10) unlockSticker('combo_master');
+
+            // 5-Combo Heart Recovery Bonus!
+            if (state.combo % 5 === 0 && state.hearts < state.maxHearts) {
+              state.hearts = Math.min(state.maxHearts, state.hearts + 1);
+              sfx.playStarChime(2);
+              spawnBurstParticles(state.cloud.x, state.cloud.y - 18, '#ff4d6d', 20, true);
+              addFloatingText(state.cloud.x, state.cloud.y - 28, '💖 达成 5 连击！奖励恢复 1 颗生命红心！', '#ff2e63', 1.35);
+            }
           } else {
             state.combo = 1;
           }
@@ -1615,18 +1804,33 @@
           // Mismatch or dropped into inactive column
           state.combo = 0;
           state.cloud.mood = 'oops';
-          state.cloud.moodTimer = 0.75;
-          sfx.playMismatch();
+          state.cloud.moodTimer = 0.95;
+          sfx.playHeartLost();
+          state.hearts = Math.max(0, state.hearts - 1);
 
           const targetName = COLOR_COLUMNS[fc.colorIdx].name;
-          spawnBurstParticles(fc.x, fc.y, '#cccccc', 10, false);
+          spawnBurstParticles(fc.x, fc.y, '#e11d48', 26, false);
+          triggerFullScreenError(
+            fc.x,
+            col.topY + 15,
+            !isColActive ? '💔 跑道未开启！生命 -1' : '💔 放错颜色！生命 -1',
+            `正确目标是【${targetName}】跑道`
+          );
+
           if (!isColActive) {
-            addFloatingText(fc.x, Math.min(fc.y - 10, state.layout.columnsTopY + 50), `该跑道未开启哦！我是${targetName}~`, COLOR_COLUMNS[fc.colorIdx].hex, 1.05);
+            addFloatingText(fc.x, Math.min(fc.y - 10, state.layout.columnsTopY + 50), `💔 跑道未开启 -1心! 应移到【${targetName}】`, '#e11d48', 1.25);
           } else {
-            addFloatingText(fc.x, Math.min(fc.y - 10, state.layout.columnsTopY + 50), `哎呀！我是${targetName}哦~`, COLOR_COLUMNS[fc.colorIdx].hex, 1.05);
+            addFloatingText(fc.x, Math.min(fc.y - 10, state.layout.columnsTopY + 50), `💔 放错颜色 -1心! 我是【${targetName}】`, '#e11d48', 1.25);
           }
           state.columnHighlight[fc.colorIdx] = 1.8;
           updateHUD();
+          state.fallingCandies.splice(i, 1);
+
+          if (state.hearts <= 0) {
+            triggerLevelFail('mismatch');
+            return;
+          }
+          continue;
         }
 
         state.fallingCandies.splice(i, 1);
@@ -2094,6 +2298,52 @@
     ctx.save();
     ctx.translate(0, c.bounceY);
 
+    // Floating Mini Hearts above Cloud Bar (Immediate health status)
+    const numHearts = state.maxHearts;
+    const heartSpacing = 18;
+    const totalHeartsW = (numHearts - 1) * heartSpacing;
+    const heartsBaseX = x - totalHeartsW / 2;
+    const heartsBaseY = y - halfH - 12;
+
+    for (let h = 0; h < numHearts; h++) {
+      const hx = heartsBaseX + h * heartSpacing;
+      const isAlive = h < state.hearts;
+      const isCritical = state.hearts === 1 && isAlive;
+      const pulseScale = isCritical ? (1 + Math.sin(performance.now() * 0.012) * 0.2) : 1;
+
+      ctx.save();
+      ctx.translate(hx, heartsBaseY);
+      ctx.scale(pulseScale, pulseScale);
+
+      // Heart Path
+      ctx.beginPath();
+      ctx.moveTo(0, 4.5);
+      ctx.bezierCurveTo(-5.5, 0.8, -6.5, -5.5, 0, -2);
+      ctx.bezierCurveTo(6.5, -5.5, 5.5, 0.8, 0, 4.5);
+      ctx.closePath();
+
+      if (isAlive) {
+        ctx.fillStyle = '#ef4444';
+        ctx.fill();
+        ctx.strokeStyle = '#991b1b';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        // Highlight glint
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.beginPath();
+        ctx.arc(-2, -2.5, 1.2, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.fillStyle = 'rgba(120, 120, 120, 0.22)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(70, 70, 70, 0.4)';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
     // Thick Hand-Drawn Yellow-Green Frame
     ctx.beginPath();
     ctx.roundRect(x - halfW, y - halfH, c.width, c.height, 22);
@@ -2227,83 +2477,6 @@
       }
 
       drawCandy(ctx, candyX, candyY, candyR, ac.colorIdx, ac.shape, ac.isRainbow, Math.sin(performance.now() * 0.005) * 0.12, 1, ac.specialType);
-
-      // Prominent In-Game Hint Slogan Bubble (Large, Bold & High Contrast)
-      let badgeText = '';
-      let badgeBg = 'rgba(255, 255, 255, 0.96)';
-      let badgeBorder = '#282a24';
-      let badgeTextColor = '#1f2937';
-
-      if (ac.specialType === 'bomb') {
-        badgeText = '💣 坏坏炸弹！空中点击直接拆弹！';
-        badgeBg = '#fee2e2';
-        badgeBorder = '#ef4444';
-        badgeTextColor = '#b91c1c';
-      } else if (ac.specialType === 'mystery') {
-        badgeText = '🎁 惊喜盲盒糖（半空分裂3颗）';
-        badgeBg = '#fef3c7';
-        badgeBorder = '#f59e0b';
-        badgeTextColor = '#b45309';
-      } else if (ac.specialType === 'shower') {
-        badgeText = '🌧️ 七彩甘霖糖（活跃跑道齐加1）';
-        badgeBg = '#e0f2fe';
-        badgeBorder = '#0284c7';
-        badgeTextColor = '#0369a1';
-      } else if (isMatch) {
-        const colFull = state.columnCounts[hoverIdx] >= curLevelConfig.targetPerTube;
-        if (colFull) {
-          badgeText = '⭐ 该跑道已装满目标！';
-          badgeBg = '#fef9c3';
-          badgeBorder = '#eab308';
-          badgeTextColor = '#854d0e';
-        } else if (ac.isRainbow) {
-          badgeText = '✨ 百搭彩虹星糖！任意跑道可放';
-          badgeBg = '#fdf4ff';
-          badgeBorder = '#c084fc';
-          badgeTextColor = '#7e22ce';
-        } else {
-          badgeText = `✓ 对准${colInfo.name}！轻点屏幕放下`;
-          badgeBg = '#ecfdf5';
-          badgeBorder = '#10b981';
-          badgeTextColor = '#047857';
-        }
-      } else if (!isTargetActive) {
-        badgeText = `🔒 该跑道未开启，请移到【${colInfo.name}】`;
-        badgeBg = '#f3f4f6';
-        badgeBorder = '#9ca3af';
-        badgeTextColor = '#4b5563';
-      } else {
-        badgeText = `👉 移到【${colInfo.name}】跑道上方`;
-        badgeBg = '#fffbeb';
-        badgeBorder = '#f59e0b';
-        badgeTextColor = '#b45309';
-      }
-
-      ctx.save();
-      ctx.font = 'bold 15px "PingFang SC", "Microsoft YaHei", sans-serif';
-      const textW = ctx.measureText(badgeText).width;
-      const pillW = textW + 24;
-      const pillH = 28;
-      const badgeY = candyY + candyR + 20;
-
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.18)';
-      ctx.shadowBlur = 6;
-      ctx.shadowOffsetY = 2;
-      ctx.fillStyle = badgeBg;
-      ctx.beginPath();
-      ctx.roundRect(candyX - pillW / 2, badgeY - pillH / 2, pillW, pillH, 14);
-      ctx.fill();
-
-      ctx.shadowColor = 'transparent';
-      ctx.strokeStyle = badgeBorder;
-      ctx.lineWidth = 2.2;
-      ctx.stroke();
-
-      ctx.fillStyle = badgeTextColor;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(badgeText, candyX, badgeY);
-      ctx.restore();
     }
   }
 
@@ -2537,7 +2710,7 @@
     }
   }
 
-  // Draw Interactive Tutorial Helpers on Canvas for Level 1 (Prominent Badges & Slogans)
+  // Draw Interactive Tutorial Helpers on Canvas for Level 1 (Highlights Target Column without Obstructing Candies)
   function drawTutorialOverlay(ctx) {
     if (state.currentLevel !== 1 || state.tutorialStep >= 4 || !state.activeCandy) return;
 
@@ -2545,97 +2718,98 @@
     const colObj = state.layout.columns[targetColIdx];
     if (!colObj) return;
 
-    const candyX = state.cloud.x;
-    const currentHover = getColumnIndexAtX(candyX);
-    const isAligned = currentHover === targetColIdx;
-
     ctx.save();
-
-    // 1. Highlight target column with pulsing golden border
+    // Highlight target column with pulsing golden border on the column itself (clean view, no obstructing badges)
     const pulse = Math.sin(performance.now() * 0.008) * 3;
     ctx.strokeStyle = '#f59e0b';
-    ctx.lineWidth = 4 + pulse;
+    ctx.lineWidth = 3.5 + pulse;
     ctx.beginPath();
     ctx.roundRect(colObj.x - 2, colObj.topY - 4, colObj.width + 4, state.height - colObj.topY + 4, 8);
     ctx.stroke();
+    ctx.restore();
+  }
 
-    // 2. Animated guidance with large prominent badges
-    if (!isAligned) {
-      const dir = colObj.centerX > candyX ? 1 : -1;
-      const arrowX = candyX + dir * 75 + Math.sin(performance.now() * 0.01) * 8;
-      const arrowY = state.cloud.y + state.cloud.height * 0.5 + 24;
+  // Full-screen Penalty Effect (Red Danger Vignette, Expanding Shockwaves & Central Warning Card)
+  function drawFullScreenErrorEffect(ctx) {
+    const W = state.width;
+    const H = state.height;
 
-      const guideText = dir > 0 ? '👉 向右滑动' : '👈 向左滑动';
-      ctx.font = 'bold 16px "PingFang SC", "Microsoft YaHei", sans-serif';
-      const gw = ctx.measureText(guideText).width + 22;
-
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.18)';
-      ctx.shadowBlur = 6;
-      ctx.shadowOffsetY = 2;
-      ctx.fillStyle = '#fffbeb';
+    // 1. Shockwaves expanding across the entire screen
+    for (let i = 0; i < state.errorShockwaves.length; i++) {
+      const sw = state.errorShockwaves[i];
+      ctx.save();
       ctx.beginPath();
-      ctx.roundRect(arrowX + (dir > 0 ? 8 : -gw - 8), arrowY - 15, gw, 30, 15);
-      ctx.fill();
-
-      ctx.shadowColor = 'transparent';
-      ctx.strokeStyle = '#d97706';
-      ctx.lineWidth = 2.2;
+      ctx.arc(sw.x, sw.y, sw.r, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(239, 68, 68, ${sw.alpha * 0.9})`;
+      ctx.lineWidth = 8 * sw.alpha + 2;
       ctx.stroke();
-
-      ctx.fillStyle = '#b45309';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(guideText, arrowX + (dir > 0 ? 8 + gw / 2 : -gw / 2 - 8), arrowY);
-
-      ctx.fillStyle = '#f59e0b';
-      ctx.strokeStyle = '#282a24';
-      ctx.lineWidth = 2.2;
-      ctx.beginPath();
-      ctx.arc(arrowX, arrowY, 14, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.fillStyle = '#282a24';
-      ctx.font = 'bold 14px sans-serif';
-      ctx.fillText(dir > 0 ? '➔' : '⬅', arrowX, arrowY);
-    } else {
-      const tapY = state.cloud.y + state.cloud.height + 56;
-      ctx.fillStyle = '#10b981';
-      ctx.strokeStyle = '#282a24';
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.arc(candyX, tapY - 6, 18 + pulse, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.fillStyle = '#fff';
-      ctx.font = 'bold 16px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('👇', candyX, tapY - 6);
-
-      const dropTip = '轻点屏幕放下糖果！';
-      ctx.font = 'bold 16px "PingFang SC", "Microsoft YaHei", sans-serif';
-      const dtw = ctx.measureText(dropTip).width + 24;
-
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.18)';
-      ctx.shadowBlur = 6;
-      ctx.shadowOffsetY = 2;
-      ctx.fillStyle = '#ecfdf5';
-      ctx.beginPath();
-      ctx.roundRect(candyX - dtw / 2, tapY + 18, dtw, 32, 16);
-      ctx.fill();
-
-      ctx.shadowColor = 'transparent';
-      ctx.strokeStyle = '#059669';
-      ctx.lineWidth = 2.2;
-      ctx.stroke();
-
-      ctx.fillStyle = '#065f46';
-      ctx.fillText(dropTip, candyX, tapY + 34);
+      ctx.restore();
     }
 
-    ctx.restore();
+    // 2. Full-screen Red Danger Vignette & Pulsing Border
+    if (state.errorFlashTimer > 0) {
+      const p = state.errorFlashTimer / 0.9;
+      const alpha = Math.min(1, p * 1.3);
+
+      ctx.save();
+      const maxD = Math.hypot(W / 2, H / 2);
+      const vig = ctx.createRadialGradient(W / 2, H / 2, maxD * 0.28, W / 2, H / 2, maxD);
+      vig.addColorStop(0, 'rgba(239, 68, 68, 0)');
+      vig.addColorStop(0.5, `rgba(239, 68, 68, ${alpha * 0.3})`);
+      vig.addColorStop(1, `rgba(220, 38, 38, ${alpha * 0.82})`);
+      ctx.fillStyle = vig;
+      ctx.fillRect(0, 0, W, H);
+
+      // Full-screen Pulsing Warning Border
+      ctx.strokeStyle = `rgba(225, 29, 72, ${alpha * 0.95})`;
+      ctx.lineWidth = 10 + Math.sin(p * 18) * 4;
+      ctx.strokeRect(0, 0, W, H);
+      ctx.restore();
+    }
+
+    // 3. Full-screen Central Warning Slogan Card
+    if (state.errorHeartPrompt) {
+      const eh = state.errorHeartPrompt;
+      const p = eh.timer / eh.maxTimer;
+      const alpha = Math.min(1, p * 2);
+      const scale = p > 0.8 ? (1.25 - (p - 0.8) * 1.25) : 1;
+
+      ctx.save();
+      ctx.translate(W / 2, H * 0.44);
+      ctx.scale(scale, scale);
+      ctx.globalAlpha = alpha;
+
+      const boxW = Math.min(W * 0.88, 380);
+      const boxH = eh.subtitle ? 74 : 52;
+
+      ctx.shadowColor = 'rgba(220, 38, 38, 0.45)';
+      ctx.shadowBlur = 18;
+      ctx.shadowOffsetY = 4;
+
+      ctx.fillStyle = '#fff1f2';
+      ctx.beginPath();
+      ctx.roundRect(-boxW / 2, -boxH / 2, boxW, boxH, 20);
+      ctx.fill();
+
+      ctx.shadowColor = 'transparent';
+      ctx.strokeStyle = '#e11d48';
+      ctx.lineWidth = 3.5;
+      ctx.stroke();
+
+      ctx.font = '900 21px "PingFang SC", "Microsoft YaHei", sans-serif';
+      ctx.fillStyle = '#be123c';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(eh.title, 0, eh.subtitle ? -14 : 0);
+
+      if (eh.subtitle) {
+        ctx.font = 'bold 14px "PingFang SC", "Microsoft YaHei", sans-serif';
+        ctx.fillStyle = '#e11d48';
+        ctx.fillText(eh.subtitle, 0, 16);
+      }
+
+      ctx.restore();
+    }
   }
 
   function render() {
@@ -2708,6 +2882,9 @@
       ctx.fillText(ft.text, ft.x, ft.y);
       ctx.restore();
     }
+
+    // Full-screen Penalty Effect (Red Danger Vignette, Expanding Shockwaves & Central Warning Card)
+    drawFullScreenErrorEffect(ctx);
 
     ctx.restore();
   }
@@ -2815,6 +2992,7 @@
   canvas.addEventListener('pointerdown', (e) => {
     e.preventDefault();
     sfx.init();
+    hideLevelIntroToast();
 
     const px = getCanvasX(e.clientX);
     const py = getCanvasY(e.clientY);
@@ -2869,6 +3047,7 @@
   // Keyboard controls for desktop
   window.addEventListener('keydown', (e) => {
     sfx.init();
+    hideLevelIntroToast();
 
     if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
       e.preventDefault();
@@ -2911,6 +3090,7 @@
   // UI Modals & Buttons
   const levelSelectModal = document.getElementById('level-select-modal');
   const levelClearModal = document.getElementById('level-clear-modal');
+  const levelFailModal = document.getElementById('level-fail-modal');
   const victoryModal = document.getElementById('victory-modal');
   const tutorialModal = document.getElementById('tutorial-modal');
   const stickerModal = document.getElementById('sticker-modal');
@@ -2925,6 +3105,14 @@
   document.getElementById('hud-level-pill').addEventListener('click', openLevelMap);
   document.getElementById('close-level-select').addEventListener('click', () => levelSelectModal.classList.remove('open'));
   document.getElementById('btn-continue-level').addEventListener('click', () => levelSelectModal.classList.remove('open'));
+
+  // Hearts Pill info click
+  const hudHeartsPill = document.getElementById('hud-hearts-pill');
+  if (hudHeartsPill) {
+    hudHeartsPill.addEventListener('click', () => {
+      addFloatingText(state.width / 2, state.cloud.y - 18, `❤️ 当前生命：${state.hearts}/${state.maxHearts}（达成 5 连击可恢复 1 心）`, '#ff2e63', 1.15);
+    });
+  }
 
   // Reset levels
   document.getElementById('btn-reset-levels').addEventListener('click', () => {
@@ -2954,6 +3142,22 @@
     openLevelMap();
   });
 
+  // Level Fail buttons
+  const btnRetryLevel = document.getElementById('btn-retry-level');
+  if (btnRetryLevel) {
+    btnRetryLevel.addEventListener('click', () => {
+      levelFailModal.classList.remove('open');
+      startLevel(state.currentLevel);
+    });
+  }
+  const btnFailOpenMap = document.getElementById('btn-fail-open-map');
+  if (btnFailOpenMap) {
+    btnFailOpenMap.addEventListener('click', () => {
+      levelFailModal.classList.remove('open');
+      openLevelMap();
+    });
+  }
+
   // Quick reset in HUD
   document.getElementById('btn-quick-reset').addEventListener('click', () => {
     startLevel(state.currentLevel, false);
@@ -2971,10 +3175,19 @@
     tutorialModal.classList.remove('open');
   });
 
-  // Intro Toast Close
-  document.getElementById('close-intro-toast').addEventListener('click', () => {
-    hideLevelIntroToast();
-  });
+  // Level Intro Toast (Click-to-dismiss early if tapped)
+  const introToastEl = document.getElementById('level-intro-toast');
+  if (introToastEl) {
+    introToastEl.addEventListener('click', () => {
+      hideLevelIntroToast();
+    });
+  }
+  const closeIntroBtn = document.getElementById('close-intro-toast');
+  if (closeIntroBtn) {
+    closeIntroBtn.addEventListener('click', () => {
+      hideLevelIntroToast();
+    });
+  }
 
   // Victory modal buttons
   document.getElementById('btn-win-replay').addEventListener('click', () => {

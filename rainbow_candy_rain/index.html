@@ -27,6 +27,11 @@
           🎯<span class="label-text"> 目标</span> <span class="val" id="target-progress-val">0/6</span>
         </div>
 
+        <!-- Hearts / Life Pill -->
+        <div class="stat-pill pill-hearts" id="hud-hearts-pill" title="剩余生命红心：放错跑道或失误会扣除！5连击可恢复1颗！">
+          ❤️<span class="label-text"> 生命</span> <span class="val" id="hearts-val">❤️❤️❤️</span>
+        </div>
+
         <!-- Combo Streak Pill -->
         <div class="stat-pill" title="连续投进同色柱子的连击加成">
           🔥<span class="label-text"> 连击</span> <span class="val" id="combo-val">0</span>
@@ -72,14 +77,15 @@
     <div id="paper-stage">
       <canvas id="game-canvas"></canvas>
 
-      <!-- Level Intro Toast / Guidance Banner -->
+      <!-- Level Intro Toast / Guidance Banner (Auto-dismisses) -->
       <div class="level-intro-toast" id="level-intro-toast">
         <div class="intro-toast-content">
-          <div class="toast-level-tag" id="toast-level-num">第 1 关</div>
-          <h3 class="toast-title" id="toast-level-title">初识彩虹</h3>
+          <div class="toast-header-row">
+            <span class="toast-level-tag" id="toast-level-num">第 1 关</span>
+            <span class="toast-title" id="toast-level-title">初识彩虹</span>
+          </div>
           <p class="toast-tip" id="toast-level-tip">滑动云朵对齐同色跑道，轻点屏幕放下糖果！</p>
         </div>
-        <button class="btn-cute active-mode toast-close-btn" id="close-intro-toast">开始挑战 ✨</button>
       </div>
     </div>
   </div>
@@ -148,6 +154,43 @@
     </div>
   </div>
 
+  <!-- Level Fail Modal (When hearts reach 0) -->
+  <div class="modal-backdrop" id="level-fail-modal">
+    <div class="modal-card level-fail-card">
+      <div class="victory-badge" style="filter: drop-shadow(0 6px 12px rgba(220, 38, 38, 0.4));">💔</div>
+      <h2 class="victory-title" style="color: #dc2626;" id="level-fail-title">关卡挑战失败！</h2>
+      <p class="victory-subtitle" id="level-fail-desc">生命红心耗尽啦！投错跑道或倒计时未对准会扣除生命哦~</p>
+
+      <div class="victory-stats-grid">
+        <div class="vstat-box">
+          <div class="label">🍬 本关收集</div>
+          <div class="num" id="lf-candies">0 / 0</div>
+        </div>
+        <div class="vstat-box">
+          <div class="label">⏱️ 坚持用时</div>
+          <div class="num" id="lf-time">00:00</div>
+        </div>
+        <div class="vstat-box">
+          <div class="label">🔥 最高连击</div>
+          <div class="num" id="lf-combo">0</div>
+        </div>
+        <div class="vstat-box">
+          <div class="label">⭐ 本关得分</div>
+          <div class="num" id="lf-score">0</div>
+        </div>
+      </div>
+
+      <div class="level-fail-tip-box" id="level-fail-tip">
+        💡 <strong>闯关通关心得：</strong>放慢手速看清糖果颜色，左右对准跑道再放下！连续接中 5 次可恢复 1 颗生命红心！
+      </div>
+
+      <div class="victory-actions">
+        <button class="btn-win-replay" id="btn-retry-level" style="background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);">🔄 重新挑战</button>
+        <button class="btn-cute" id="btn-fail-open-map" style="font-size:15px; padding: 10px 18px;">🗺️ 关卡地图</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Grand Finale Victory Celebration Modal (Level 8 completion) -->
   <div class="modal-backdrop" id="victory-modal">
     <div class="modal-card victory-card">
@@ -195,7 +238,8 @@
       <div class="tutorial-content" style="font-size:13.5px; color:#444; line-height: 1.6;">
         <h4 style="color:#d97706; margin-bottom:4px;">🎯 核心规则：</h4>
         <p>
-          把云朵嘴边的彩色糖果投进下方<strong>相同颜色的跑道</strong>。投中不仅能装满柱子，还能累积连击（Combo 🔥）获得更高分数！
+          把云朵嘴边的彩色糖果投进下方<strong>相同颜色的跑道</strong>。投中不仅能装满柱子，还能累积连击（Combo 🔥）获得更高分数！<br/>
+          ❤️ <strong>生命惩罚与恢复机制：</strong>投错颜色跑道、炸弹掉落爆炸或贪吃虫得逞都会扣除 1 颗生命红心；达成 <strong>5 连击（5x Combo）</strong> 即可恢复 1 颗生命红心！红心耗尽关卡挑战失败！
         </p>
         <h4 style="color:#298cd4; margin:10px 0 4px;">🕹️ 操控方式：</h4>
         <p>
