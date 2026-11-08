@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="description" content="云朵彩虹糖果 — 根据小朋友于2026年11月1日亲手绘制的设计稿还原的趣味网页小游戏，支持电脑键盘与iPad/手机触屏。" />
-  <meta property="og:title" content="云朵彩虹糖果 (Rainbow Candy Cloud)" />
+  <meta name="description" content="彩虹糖下雨 — 根据小朋友于2026年11月1日亲手绘制的设计稿还原的趣味网页小游戏，支持电脑键盘与iPad/手机触屏。" />
+  <meta property="og:title" content="彩虹糖下雨 (Rainbow Candy Rain)" />
   <meta property="og:description" content="根据小朋友于2026年11月1日亲手绘制的设计稿还原的趣味网页小游戏，支持电脑键盘与iPad/手机触屏。" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="artwork.jpg" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍬</text></svg>" />
-  <title>云朵彩虹糖果 — 3个版本合集大厅 (2026年11月1日 原创手绘)</title>
+  <title>彩虹糖下雨 — 游戏大厅</title>
   <style>
     * {
       box-sizing: border-box;
@@ -37,12 +37,12 @@
     }
     .hub-header {
       text-align: center;
-      margin-bottom: 18px;
-      padding-bottom: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
       border-bottom: 2.5px dashed #d5cbb8;
     }
     .hub-header h1 {
-      font-size: 24px;
+      font-size: 25px;
       font-weight: 900;
       margin-bottom: 6px;
     }
@@ -50,102 +50,126 @@
       font-size: 13.5px;
       color: #555;
     }
-    .version-list {
+    .game-list {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 16px;
     }
-    .version-card {
+    .game-card {
       display: block;
       text-decoration: none;
       color: #282a24;
       background: #fff;
       border: 3px solid #282a24;
       border-radius: 18px;
-      padding: 15px 18px;
+      padding: 18px 20px;
       box-shadow: 0 5px 0 #282a24;
       transition: transform 0.1s, box-shadow 0.1s, background 0.15s;
     }
-    .version-card:hover {
+    .game-card.playable:hover {
       background: #fffbe6;
       transform: translateY(-2px);
       box-shadow: 0 7px 0 #282a24;
     }
-    .version-card:active {
+    .game-card.playable:active {
       transform: translateY(3px);
       box-shadow: 0 2px 0 #282a24;
     }
-    .v-title {
+    .game-card.coming-soon {
+      background: #f4efe6;
+      border: 2.5px dashed #999;
+      box-shadow: none;
+      opacity: 0.85;
+      cursor: default;
+    }
+    .g-title {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 18px;
+      font-size: 19px;
       font-weight: 900;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
-    .v-badge {
+    .g-badge {
       font-size: 12px;
-      padding: 3px 10px;
+      padding: 3px 12px;
       border-radius: 999px;
       border: 2px solid #282a24;
       font-weight: 800;
     }
-    .v1 .v-badge { background: #d4f5b4; }
-    .v2 .v-badge { background: #ffd166; }
-    .v3 .v-badge { background: #ff8fa3; color: #fff; }
-    .v-desc {
-      font-size: 13.5px;
-      color: #444;
-      line-height: 1.5;
+    .badge-play {
+      background: #d4f5b4;
     }
-    .v-file {
-      margin-top: 6px;
+    .badge-wait {
+      background: #e2ddd3;
+      border-color: #777;
+      color: #666;
+    }
+    .g-desc {
+      font-size: 14px;
+      color: #444;
+      line-height: 1.55;
+    }
+    .g-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1.5px dashed #ede5d8;
+    }
+    .g-file {
       font-size: 12px;
       color: #777;
       font-family: monospace;
+    }
+    .g-action {
+      font-size: 13px;
+      font-weight: 900;
+      color: #cf2027;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
   </style>
 </head>
 <body>
   <div class="hub-card">
     <div class="hub-header">
-      <h1>🌈 云朵彩虹糖果 — 3个版本合集</h1>
+      <h1>🌈 游戏大厅 (Game Hub)</h1>
       <p>源自女儿 2026年11月1日 原创手绘设计 ｜ 电脑键盘 & 平板/手机触屏全兼容</p>
     </div>
 
-    <div class="version-list">
-      <a class="version-card v1" href="v1_classic.html">
-        <div class="v-title">
-          <span>🍬 第 1 版：经典单颗掉落版</span>
-          <span class="v-badge">轻松温和</span>
+    <div class="game-list">
+      <!-- 经典版游戏卡片 -->
+      <a class="game-card playable" href="v1_classic.html">
+        <div class="g-title">
+          <span>🍬 彩虹糖下雨 (Rainbow Candy Rain)</span>
+          <span class="g-badge badge-play">▶ 立即游玩</span>
         </div>
-        <div class="v-desc">
-          云朵嘴边每次准备一颗彩色糖果，对准下方的同色糖果管落入，每个管子刚好装满 10 颗即可通关胜利！糖果更大更饱满，画面精致和谐。
+        <div class="g-desc">
+          云朵嘴边准备彩色糖果，对准下方的同色糖果管落入，每个管子装满 10 颗即可通关胜利！糖果饱满立体，画面纯真精致。
         </div>
-        <div class="v-file">独立文件：v1_classic.html</div>
+        <div class="g-footer">
+          <span class="g-file">游戏文件：v1_classic.html</span>
+          <span class="g-action">进入游戏 ➔</span>
+        </div>
       </a>
 
-      <a class="version-card v2" href="v2_waterfall.html">
-        <div class="v-title">
-          <span>🔥 第 2 版：全自动糖果瀑布爽玩版</span>
-          <span class="v-badge">解压狂喷</span>
+      <!-- 未来新游戏卡片预留 -->
+      <div class="game-card coming-soon">
+        <div class="g-title">
+          <span style="color: #666;">✨ 更多游戏 (More Games)</span>
+          <span class="g-badge badge-wait">敬请期待</span>
         </div>
-        <div class="v-desc">
-          云朵变成全自动高速糖果喷泉，每次成串倾泻十几颗糖果瀑布！攒满能量直接触发满屏彩虹暴风雪，没有炸弹与死亡压力，纯粹爽快！
+        <div class="g-desc">
+          新的童趣创意与奇思妙想正在酝酿中，未来将收录更多好玩的自制小游戏！
         </div>
-        <div class="v-file">独立文件：v2_waterfall.html</div>
-      </a>
-
-      <a class="version-card v3" href="v3_arcade.html">
-        <div class="v-title">
-          <span>💥 第 3 版：街机大作战闯关版 (含Game Over)</span>
-          <span class="v-badge">刺激闯关</span>
+        <div class="g-footer" style="border-top-color: #ddd;">
+          <span class="g-file" style="color: #999;">Coming Soon...</span>
+          <span style="font-size: 12px; color: #888;">即将推出 🚀</span>
         </div>
-        <div class="v-desc">
-          画纸顶部的 6 个手绘图案化为 6 条生命值！包含 💣捣蛋黑炸弹（空中拍碎/水池灭火）、❄️冰封跑道、🎁四大道具（磁铁/金盾/减速/回血）以及死亡战绩段位结算榜！
-        </div>
-        <div class="v-file">独立文件：v3_arcade.html</div>
-      </a>
+      </div>
     </div>
   </div>
 </body>
