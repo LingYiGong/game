@@ -51,11 +51,10 @@
     .hud-bar {
       width: 100%;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      padding: 5px 8px;
-      background: rgba(255, 252, 245, 0.96);
+      flex-direction: column;
+      gap: 5px;
+      padding: 6px 10px;
+      background: rgba(255, 252, 245, 0.98);
       border: 2.5px solid var(--ink-dark);
       border-radius: 16px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
@@ -65,19 +64,40 @@
     }
 
     .hud-stats {
+      width: 100%;
       display: flex;
       align-items: center;
-      gap: 5px;
+      justify-content: space-between;
+      gap: 4px;
       flex-wrap: nowrap;
       min-width: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .hud-stats::-webkit-scrollbar {
+      display: none;
     }
 
     .hud-actions {
+      width: 100%;
       display: flex;
       align-items: center;
-      gap: 5px;
+      justify-content: space-between;
+      gap: 4px;
       flex-wrap: nowrap;
       min-width: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .hud-actions::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hud-actions .btn-cute {
+      flex: 1;
+      text-align: center;
     }
 
     .stat-pill {
@@ -87,9 +107,9 @@
       background: #fff;
       border: 2px solid var(--ink-dark);
       border-radius: 999px;
-      padding: 3px 8px;
+      padding: 2.5px 7px;
       font-weight: 800;
-      font-size: 13px;
+      font-size: 12.5px;
       color: var(--ink-dark);
       box-shadow: 1.5px 1.5px 0 rgba(0,0,0,0.12);
       white-space: nowrap;
@@ -98,7 +118,7 @@
 
     .stat-pill span.val {
       color: #d62828;
-      font-size: 14.5px;
+      font-size: 13.5px;
       min-width: 16px;
       text-align: center;
     }
@@ -482,28 +502,28 @@
     /* iPad and Tablet responsive optimization (601px ~ 860px) */
     @media (max-width: 860px) {
       .hud-bar {
-        padding: 4px 8px;
+        padding: 4px 6px;
         gap: 4px;
       }
       .hud-stats {
-        gap: 4px;
+        gap: 3px;
       }
       .hud-actions {
-        gap: 4px;
+        gap: 3px;
       }
       .stat-pill {
-        padding: 2.5px 6px;
-        font-size: 12px;
+        padding: 2px 5px;
+        font-size: 11.5px;
       }
       .stat-pill .label-text {
         display: none;
       }
       .stat-pill span.val {
-        font-size: 13px;
+        font-size: 12.5px;
       }
       .btn-cute {
-        padding: 4px 6px;
-        font-size: 12px;
+        padding: 4px 5px;
+        font-size: 11.5px;
       }
       .mode-long {
         display: none;
@@ -516,31 +536,27 @@
     /* Mobile phone optimization (<= 600px) */
     @media (max-width: 600px) {
       .hud-bar {
-        flex-direction: column;
-        gap: 5px;
-        padding: 5px 7px;
+        gap: 4px;
+        padding: 4px 5px;
       }
       .hud-stats {
-        width: 100%;
-        justify-content: space-between;
+        gap: 2px;
       }
       .hud-actions {
-        width: 100%;
-        justify-content: space-between;
+        gap: 2px;
       }
       .hud-actions .btn-cute {
-        flex: 1;
-        padding: 4px 2px;
-        font-size: 11.5px;
+        padding: 3.5px 2px;
+        font-size: 11px;
       }
       .stat-pill {
-        padding: 2px 4px;
-        font-size: 11.5px;
+        padding: 1.5px 3.5px;
+        font-size: 11px;
       }
       .stat-pill span.val {
-        font-size: 12px;
+        font-size: 11.5px;
       }
       .victory-title {
-        font-size: 21px;
+        font-size: 20px;
       }
     }

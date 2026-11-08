@@ -270,10 +270,10 @@
         const W = state.width;
         const H = state.height;
 
-        state.layout.topIconsY = Math.max(28, H * 0.052);
+        state.layout.topIconsY = Math.max(34, H * 0.065);
         state.cloud.width = Math.min(Math.max(W * 0.38, 160), 280);
         state.cloud.height = Math.min(Math.max(H * 0.075, 42), 56);
-        state.layout.cloudY = state.layout.topIconsY + state.cloud.height * 0.82 + 18;
+        state.layout.cloudY = state.layout.topIconsY + state.cloud.height * 0.85 + 24;
         state.cloud.y = state.layout.cloudY;
         state.layout.columnsTopY = state.layout.cloudY + state.cloud.height * 0.5 + Math.max(38, H * 0.062);
 
