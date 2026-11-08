@@ -2,14 +2,15 @@
   'use strict';
 
   // 7 Rainbow Colors matching daughter's original hand drawing (2026-11-01)
+  // Pitch mapping: Helmholtz 小字1组 (Scientific Pitch Notation C4..B4 / 1 2 3 4 5 6 7)
   const COLOR_COLUMNS = [
-    { id: 'red',     name: '草莓红',   hex: '#cf2027', lightHex: '#ff6b72', darkHex: '#9e1318', noteFreq: 261.63, unlockLvl: 1 },
-    { id: 'pink',    name: '蜜桃粉',   hex: '#f39bc3', lightHex: '#ffd0e6', darkHex: '#d46b9b', noteFreq: 293.66, unlockLvl: 3 },
-    { id: 'green',   name: '苹果绿',   hex: '#1d8f24', lightHex: '#5cd664', darkHex: '#116316', noteFreq: 329.63, unlockLvl: 2 },
-    { id: 'purple',  name: '葡萄紫',   hex: '#5d4b86', lightHex: '#9b86cc', darkHex: '#3f3161', noteFreq: 349.23, unlockLvl: 4 },
-    { id: 'blue',    name: '蓝莓蓝',   hex: '#4650b0', lightHex: '#828cf2', darkHex: '#2b3380', noteFreq: 392.00, unlockLvl: 3 },
-    { id: 'orange',  name: '甜橙橘',   hex: '#e36517', lightHex: '#ffa063', darkHex: '#ab4507', noteFreq: 440.00, unlockLvl: 5 },
-    { id: 'skyblue', name: '苏打天蓝', hex: '#298cd4', lightHex: '#73c6ff', darkHex: '#186299', noteFreq: 493.88, unlockLvl: 1 }
+    { id: 'red',     name: '草莓红',   solfege: '1 Do',  pitch: 'C4', hex: '#cf2027', lightHex: '#ff6b72', darkHex: '#9e1318', noteFreq: 261.63, unlockLvl: 1 },
+    { id: 'pink',    name: '蜜桃粉',   solfege: '2 Re',  pitch: 'D4', hex: '#f39bc3', lightHex: '#ffd0e6', darkHex: '#d46b9b', noteFreq: 293.66, unlockLvl: 3 },
+    { id: 'green',   name: '苹果绿',   solfege: '3 Mi',  pitch: 'E4', hex: '#1d8f24', lightHex: '#5cd664', darkHex: '#116316', noteFreq: 329.63, unlockLvl: 2 },
+    { id: 'purple',  name: '葡萄紫',   solfege: '4 Fa',  pitch: 'F4', hex: '#5d4b86', lightHex: '#9b86cc', darkHex: '#3f3161', noteFreq: 349.23, unlockLvl: 4 },
+    { id: 'blue',    name: '蓝莓蓝',   solfege: '5 Sol', pitch: 'G4', hex: '#4650b0', lightHex: '#828cf2', darkHex: '#2b3380', noteFreq: 392.00, unlockLvl: 3 },
+    { id: 'orange',  name: '甜橙橘',   solfege: '6 La',  pitch: 'A4', hex: '#e36517', lightHex: '#ffa063', darkHex: '#ab4507', noteFreq: 440.00, unlockLvl: 5 },
+    { id: 'skyblue', name: '苏打天蓝', solfege: '7 Ti',  pitch: 'B4', hex: '#298cd4', lightHex: '#73c6ff', darkHex: '#186299', noteFreq: 493.88, unlockLvl: 1 }
   ];
 
   const TOTAL_TUBES = COLOR_COLUMNS.length; // 7
@@ -218,177 +219,431 @@
     { id: 'grand_champion', icon: '👑', title: '彩虹大满贯', desc: '通关全部 8 个关卡完成彩虹大圆满！' }
   ];
 
-  // Web Audio Synthesizer + Music Box BGM
+  // Real Acoustic Grand Piano Sample Engine (Yamaha Disklavier Pro Studio Samples)
+  // Dual-mode audio engine: Web Audio AudioBuffer (polyphonic, low-latency) + HTML5 Audio pool fallback (for file:// protocol)
+  const PIANO_NOTE_FREQS = [
+    { note: 'B2',  freq: 123.47 },
+    { note: 'C3',  freq: 130.81 },
+    { note: 'D3',  freq: 146.83 },
+    { note: 'Eb3', freq: 155.56 },
+    { note: 'E3',  freq: 164.81 },
+    { note: 'F3',  freq: 174.61 },
+    { note: 'Gb3', freq: 185.00 },
+    { note: 'G3',  freq: 196.00 },
+    { note: 'A3',  freq: 220.00 },
+    { note: 'B3',  freq: 246.94 },
+    { note: 'C4',  freq: 261.63 },
+    { note: 'D4',  freq: 293.66 },
+    { note: 'E4',  freq: 329.63 },
+    { note: 'F4',  freq: 349.23 },
+    { note: 'G4',  freq: 392.00 },
+    { note: 'A4',  freq: 440.00 },
+    { note: 'B4',  freq: 493.88 },
+    { note: 'C5',  freq: 523.25 },
+    { note: 'D5',  freq: 587.33 },
+    { note: 'Eb5', freq: 622.25 },
+    { note: 'E5',  freq: 659.25 },
+    { note: 'F5',  freq: 698.46 },
+    { note: 'G5',  freq: 783.99 },
+    { note: 'A5',  freq: 880.00 },
+    { note: 'B5',  freq: 987.77 },
+    { note: 'C6',  freq: 1046.50 },
+    { note: 'D6',  freq: 1174.66 },
+    { note: 'E6',  freq: 1318.51 },
+    { note: 'G6',  freq: 1567.98 },
+    { note: 'A6',  freq: 1760.00 },
+    { note: 'C7',  freq: 2093.00 }
+  ];
+
+  function getClosestPianoNote(freq) {
+    if (typeof freq === 'string') return freq;
+    if (!freq || typeof freq !== 'number') return 'C4';
+    let closest = PIANO_NOTE_FREQS[0];
+    let minDiff = Math.abs(freq - closest.freq);
+    for (let i = 1; i < PIANO_NOTE_FREQS.length; i++) {
+      const diff = Math.abs(freq - PIANO_NOTE_FREQS[i].freq);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closest = PIANO_NOTE_FREQS[i];
+      }
+    }
+    return closest.note;
+  }
+
   class SoundFX {
     constructor() {
       this.enabled = true;
       this.bgmEnabled = false;
       this.ctx = null;
+      this.masterGain = null;
+      this.compressor = null;
       this.bgmNoteIdx = 0;
       this.bgmTimer = 0;
+
+      // Real piano sample caches
+      this.audioBuffers = {}; // Decoded Web Audio AudioBuffers
+      this.audioPool = {};    // HTML5 Audio element pool for local file:// fallback
+      this.isPreloaded = false;
     }
 
     init() {
-      if (!this.ctx) {
+      if (!this.ctx && (typeof window !== 'undefined')) {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (AudioCtx) this.ctx = new AudioCtx();
+        if (AudioCtx) {
+          try {
+            this.ctx = new AudioCtx();
+          } catch (_) {}
+        }
       }
-      if (this.ctx && this.ctx.state === 'suspended') {
-        this.ctx.resume();
+      if (this.ctx) {
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume().catch(() => {});
+        }
+        if (!this.masterGain) {
+          try {
+            // Master gain with default 2.4x volume boost (~+7.6 dB)
+            this.masterGain = this.ctx.createGain();
+            this.masterGain.gain.setValueAtTime(2.4, this.ctx.currentTime);
+
+            // Studio-grade dynamics compressor to avoid digital clipping while delivering punchy RMS acoustic loudness
+            this.compressor = this.ctx.createDynamicsCompressor();
+            this.compressor.threshold.setValueAtTime(-12, this.ctx.currentTime);
+            this.compressor.knee.setValueAtTime(8, this.ctx.currentTime);
+            this.compressor.ratio.setValueAtTime(3.5, this.ctx.currentTime);
+            this.compressor.attack.setValueAtTime(0.003, this.ctx.currentTime);
+            this.compressor.release.setValueAtTime(0.22, this.ctx.currentTime);
+
+            // Connect signal chain: noteGain -> masterGain -> compressor -> destination
+            this.masterGain.connect(this.compressor);
+            this.compressor.connect(this.ctx.destination);
+          } catch (_) {
+            this.masterGain = null;
+            this.compressor = null;
+          }
+        }
       }
+      this.preload();
     }
 
-    playTone(freq, duration = 0.22, type = 'triangle', volume = 0.18, delay = 0) {
+    // Preload all real piano MP3 samples into memory for zero-latency instant playback
+    preload() {
+      if (this.isPreloaded) return;
+      this.isPreloaded = true;
+
+      // Helper to convert base64 to ArrayBuffer for offline file:/// decoding
+      const base64ToArrayBuffer = (b64) => {
+        if (typeof window !== 'undefined' && typeof window.atob === 'function') {
+          const binary = window.atob(b64);
+          const len = binary.length;
+          const bytes = new Uint8Array(len);
+          for (let i = 0; i < len; i++) {
+            bytes[i] = binary.charCodeAt(i);
+          }
+          return bytes.buffer;
+        }
+        return null;
+      };
+
+      // 1. Immediately decode embedded base64 landing notes if available (works 100% offline under file:///)
+      if (this.ctx && typeof window !== 'undefined' && window.EMBEDDED_LANDING_NOTES) {
+        Object.keys(window.EMBEDDED_LANDING_NOTES).forEach(name => {
+          try {
+            const rawB64 = window.EMBEDDED_LANDING_NOTES[name];
+            const ab = base64ToArrayBuffer(rawB64);
+            if (ab) {
+              this.ctx.decodeAudioData(ab, (decoded) => {
+                this.audioBuffers[name] = decoded;
+              }, () => {});
+            }
+          } catch (_) {}
+        });
+      }
+
+      const noteList = [
+        'B2', 'C3', 'D3', 'Eb3', 'E3', 'F3', 'Gb3', 'G3', 'A3', 'B3',
+        'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4',
+        'C5', 'D5', 'Eb5', 'E5', 'F5', 'G5', 'A5', 'B5',
+        'C6', 'D6', 'E6', 'G6', 'A6', 'C7'
+      ];
+
+      noteList.forEach(name => {
+        const url = `sounds/${name}.mp3`;
+
+        // Preload HTML5 Audio (Guaranteed to work under file:/// in browsers)
+        if (typeof Audio !== 'undefined') {
+          try {
+            const a = new Audio();
+            a.preload = 'auto';
+            a.src = url;
+            this.audioPool[name] = a;
+          } catch (_) {}
+        }
+
+        // Preload Web Audio buffer (for sample-accurate polyphony scheduling under http/https)
+        if (this.ctx && typeof fetch === 'function' && !this.audioBuffers[name]) {
+          fetch(url)
+            .then(res => {
+              if (!res.ok) throw new Error('Fetch failed');
+              return res.arrayBuffer();
+            })
+            .then(buf => this.ctx.decodeAudioData(buf))
+            .then(decoded => {
+              this.audioBuffers[name] = decoded;
+            })
+            .catch(() => {});
+        }
+      });
+    }
+
+    // Play real acoustic grand piano note by name (e.g. 'C4', 'D4', 'E4')
+    playRealPianoNote(noteName, volume = 1.0, delay = 0) {
       if (!this.enabled) return;
       this.init();
-      if (!this.ctx) return;
 
-      const now = this.ctx.currentTime + delay;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
+      const playExec = () => {
+        // Option 1: Web Audio decoded AudioBuffer (zero latency, polyphonic, amplified through masterGain + compressor)
+        if (this.ctx && this.audioBuffers[noteName]) {
+          try {
+            const now = this.ctx.currentTime;
+            const src = this.ctx.createBufferSource();
+            src.buffer = this.audioBuffers[noteName];
+            const gainNode = this.ctx.createGain();
+            // Generous per-note gain (1.5x boost)
+            gainNode.gain.setValueAtTime(Math.max(0.01, Math.min(3.0, volume * 1.5)), now);
+            src.connect(gainNode);
 
-      osc.type = type;
-      osc.frequency.setValueAtTime(freq, now);
+            if (this.masterGain) {
+              gainNode.connect(this.masterGain);
+            } else {
+              gainNode.connect(this.ctx.destination);
+            }
+            src.start(now);
+            return;
+          } catch (_) {}
+        }
 
-      gain.gain.setValueAtTime(0.001, now);
-      gain.gain.linearRampToValueAtTime(volume, now + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+        // Option 2: HTML5 Audio pool clone (reliable across all browser protocols including file:///)
+        try {
+          const cached = this.audioPool[noteName];
+          if (cached) {
+            const clone = cached.cloneNode();
+            clone.volume = 1.0; // Max 100% hardware volume for loud, clear acoustic playback
+            clone.play().catch(() => {});
+            return;
+          } else if (typeof Audio !== 'undefined') {
+            const a = new Audio(`sounds/${noteName}.mp3`);
+            a.volume = 1.0; // Max 100% hardware volume
+            a.play().catch(() => {});
+            return;
+          }
+        } catch (_) {}
 
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
+        // Fallback option 3: Synthesized piano tone
+        this.playPianoToneSynth(noteName, volume);
+      };
 
-      osc.start(now);
-      osc.stop(now + duration + 0.02);
+      if (delay > 0) {
+        setTimeout(playExec, Math.round(delay * 1000));
+      } else {
+        playExec();
+      }
     }
 
+    // Fallback synthesizer if sample cannot be loaded
+    playPianoToneSynth(freqOrNote, volume = 0.5) {
+      if (!this.enabled) return;
+      if (!this.ctx) return;
+      const freq = typeof freqOrNote === 'number'
+        ? freqOrNote
+        : (PIANO_NOTE_FREQS.find(p => p.note === freqOrNote)?.freq || 261.63);
+      try {
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, now);
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(Math.min(1.0, volume * 0.75), now + 0.005);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.65);
+        osc.connect(gain);
+        if (this.masterGain) {
+          gain.connect(this.masterGain);
+        } else {
+          gain.connect(this.ctx.destination);
+        }
+        osc.start(now);
+        osc.stop(now + 0.7);
+      } catch (_) {}
+    }
+
+    // Play piano tone by frequency or note name
+    playPianoTone(freq, duration = 0.85, volume = 0.45, delay = 0, velocity = 1) {
+      const noteName = typeof freq === 'string' ? freq : getClosestPianoNote(freq);
+      const vol = Math.max(0.1, Math.min(1.5, (volume || 0.45) * (velocity || 1) * 3.2));
+      this.playRealPianoNote(noteName, vol, delay);
+    }
+
+    playTone(freq, duration = 0.25, type = 'triangle', volume = 0.35, delay = 0) {
+      this.playPianoTone(freq, duration, volume, delay);
+    }
+
+    // Warm Real Piano Music Box BGM
     updateBGM(dt, isFever) {
       if (!this.bgmEnabled || !this.enabled) return;
       this.init();
-      if (!this.ctx) return;
 
-      const tempo = isFever ? 0.16 : 0.26;
+      const tempo = isFever ? 0.16 : 0.28;
       this.bgmTimer -= dt;
       if (this.bgmTimer <= 0) {
         this.bgmTimer = tempo;
         const melody = [
-          523.25, 659.25, 783.99, 659.25, 880.00, 783.99, 659.25, 587.33,
-          523.25, 587.33, 659.25, 783.99, 1046.5, 880.00, 783.99, 659.25
+          'C5', 'E5', 'G5', 'E5', 'A5', 'G5', 'E5', 'D5',
+          'C5', 'D5', 'E5', 'G5', 'C6', 'A5', 'G5', 'E5'
         ];
-        const f = melody[this.bgmNoteIdx % melody.length] * (isFever ? 1.122 : 1);
+        const note = melody[this.bgmNoteIdx % melody.length];
         this.bgmNoteIdx++;
-        this.playTone(f, tempo * 0.9, 'sine', 0.045, 0);
+        this.playRealPianoNote(note, 0.55, 0);
       }
     }
 
+    // 1. Candy Release: Silent as user requested
     playDrop() {
-      if (!this.enabled) return;
-      this.init();
-      if (!this.ctx) return;
-      const now = this.ctx.currentTime;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(520, now);
-      osc.frequency.exponentialRampToValueAtTime(240, now + 0.14);
-      gain.gain.setValueAtTime(0.14, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.16);
+      // Kept silent so only landing tones are heard
     }
 
-    playMatch(colIndex, combo) {
-      const baseFreq = COLOR_COLUMNS[colIndex]?.noteFreq || 330;
-      const pitchBoost = Math.min(combo * 0.03, 0.35);
-      const f = baseFreq * (1 + pitchBoost);
-      this.playTone(f, 0.25, 'triangle', 0.22, 0);
-      this.playTone(f * 1.25, 0.25, 'sine', 0.16, 0.06);
-      this.playTone(f * 1.5, 0.32, 'triangle', 0.18, 0.12);
-      if (combo >= 3) {
-        this.playTone(f * 2, 0.35, 'sine', 0.15, 0.18);
+    // 2. Candy Landing in Column: Strictly Helmholtz 小字1组 (1 2 3 4 5 6 7 -> C4..B4)
+    // Plays the genuine acoustic Grand Piano sample for that column
+    playMatch(colIndex, combo = 1) {
+      const col = COLOR_COLUMNS[colIndex] || COLOR_COLUMNS[0];
+      const rootNote = col.pitch || 'C4'; // 'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4'
+
+      // Primary note: 100% Real Grand Piano sample of this column in 小字1组! (Louder & punchier)
+      this.playRealPianoNote(rootNote, 1.25, 0);
+
+      // Harmony chord accompaniment based on real piano samples
+      const harmonyMap = {
+        C4: { fifth: 'G4', octave: 'C5', sparkle: 'G5' },
+        D4: { fifth: 'A4', octave: 'D5', sparkle: 'A5' },
+        E4: { fifth: 'B4', octave: 'E5', sparkle: 'B5' },
+        F4: { fifth: 'C5', octave: 'F5', sparkle: 'C6' },
+        G4: { fifth: 'D5', octave: 'G5', sparkle: 'D6' },
+        A4: { fifth: 'E5', octave: 'A5', sparkle: 'E6' },
+        B4: { fifth: 'Gb5', octave: 'B5', sparkle: 'Gb5' }
+      };
+
+      const harm = harmonyMap[rootNote] || harmonyMap['C4'];
+
+      if (combo >= 2) {
+        this.playRealPianoNote(harm.fifth, 0.95, 0.038);
+      }
+      if (combo >= 4) {
+        this.playRealPianoNote(harm.octave, 1.05, 0.076);
+      }
+      if (combo >= 7) {
+        this.playRealPianoNote(harm.sparkle, 0.95, 0.114);
       }
     }
 
+    // 3. Multiplier Gate: Ascending sparkling real piano arpeggio
     playGateMultiply() {
-      this.playTone(587.33, 0.14, 'sine', 0.2, 0);
-      this.playTone(880.00, 0.22, 'triangle', 0.22, 0.06);
-      this.playTone(1174.66, 0.26, 'sine', 0.18, 0.12);
+      const notes = ['C5', 'E5', 'G5', 'C6'];
+      notes.forEach((n, i) => this.playRealPianoNote(n, 1.15, i * 0.045));
     }
 
+    // 4. Magic Skill: Classical rolling real piano broken chord
     playMagicSkill() {
-      const chord = [523.25, 659.25, 783.99, 1046.5, 1318.5];
-      chord.forEach((n, i) => this.playTone(n, 0.35, 'sine', 0.2, i * 0.055));
+      const chord = ['C4', 'G4', 'C5', 'E5', 'G5', 'C6'];
+      chord.forEach((n, i) => this.playRealPianoNote(n, 1.25, i * 0.055));
     }
 
+    // 5. Swat Caterpillar / Crack Ice: Energetic real piano staccato octave strike
     playSwat() {
-      this.playTone(300, 0.1, 'sawtooth', 0.18, 0);
-      this.playTone(740, 0.2, 'triangle', 0.22, 0.05);
-      this.playTone(987, 0.25, 'sine', 0.18, 0.11);
+      this.playRealPianoNote('A4', 1.25, 0);
+      this.playRealPianoNote('A5', 1.10, 0.015);
     }
 
+    // 6. Fever Rainbow Mode: Brilliant upward real piano glissando
     playFeverStart() {
-      const notes = [523.25, 659.25, 783.99, 1046.5, 1318.5, 1567.98];
-      notes.forEach((n, i) => this.playTone(n, 0.28, 'triangle', 0.24, i * 0.06));
+      const gliss = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5', 'D5', 'E5', 'G5', 'C6'];
+      gliss.forEach((n, i) => this.playRealPianoNote(n, 1.10, i * 0.038));
     }
 
+    // 7. Mismatch / Misplacement: Low real piano minor dissonance
     playMismatch() {
-      this.playTone(210, 0.18, 'sawtooth', 0.09, 0);
-      this.playTone(165, 0.25, 'triangle', 0.11, 0.12);
+      this.playRealPianoNote('D3', 1.20, 0);
+      this.playRealPianoNote('Eb3', 1.15, 0.01);
     }
 
+    // 8. Heart Lost / Danger: Dramatic low acoustic real piano warning chord
     playHeartLost() {
-      this.playTone(320, 0.15, 'sawtooth', 0.22, 0);
-      this.playTone(196, 0.28, 'triangle', 0.25, 0.08);
+      this.playRealPianoNote('B2', 1.35, 0);
+      this.playRealPianoNote('C3', 1.30, 0.01);
+      this.playRealPianoNote('Gb3', 1.20, 0.02);
     }
 
+    // 9. Defeat: Melancholy descending real piano chords
     playDefeat() {
-      const notes = [440, 392, 349.23, 293.66];
-      notes.forEach((n, idx) => {
-        this.playTone(n, 0.38, 'sawtooth', 0.18, idx * 0.16);
-      });
-    }
-
-    playTubeComplete() {
-      const notes = [523.25, 659.25, 783.99, 1046.5];
-      notes.forEach((n, idx) => {
-        this.playTone(n, 0.3, 'triangle', 0.24, idx * 0.08);
-      });
-    }
-
-    playLevelClear() {
-      const notes = [523.25, 659.25, 783.99, 1046.5, 1318.5];
-      notes.forEach((n, idx) => {
-        this.playTone(n, 0.28, 'triangle', 0.25, idx * 0.08);
-        this.playTone(n * 1.5, 0.24, 'sine', 0.15, idx * 0.08 + 0.02);
-      });
-    }
-
-    playStarChime(starIdx) {
-      const freqs = [659.25, 783.99, 1046.5];
-      const f = freqs[starIdx % freqs.length] || 1046.5;
-      this.playTone(f, 0.3, 'sine', 0.24, 0);
-      this.playTone(f * 2, 0.35, 'triangle', 0.18, 0.04);
-    }
-
-    playVictory() {
-      const fanfare = [
-        { f: 523.25, d: 0.18, t: 0 },
-        { f: 659.25, d: 0.18, t: 0.12 },
-        { f: 783.99, d: 0.24, t: 0.24 },
-        { f: 1046.5, d: 0.55, t: 0.40 },
-        { f: 880.00, d: 0.20, t: 0.75 },
-        { f: 987.77, d: 0.20, t: 0.90 },
-        { f: 1046.5, d: 0.70, t: 1.05 }
+      const chords = [
+        { notes: ['A3', 'C4', 'E4'], t: 0 },
+        { notes: ['G3', 'B3', 'D4'], t: 0.38 },
+        { notes: ['F3', 'A3', 'C4'], t: 0.76 },
+        { notes: ['E3', 'G3', 'B3'], t: 1.18 }
       ];
-      fanfare.forEach(item => {
-        this.playTone(item.f, item.d, 'triangle', 0.28, item.t);
-        this.playTone(item.f * 1.5, item.d * 0.8, 'sine', 0.16, item.t + 0.02);
+      chords.forEach(c => {
+        c.notes.forEach(n => this.playRealPianoNote(n, 1.20, c.t));
+      });
+    }
+
+    // 10. Tube Completed: Brilliant major triad flourish based on column's pitch
+    playTubeComplete(colIndex = 0) {
+      const col = COLOR_COLUMNS[colIndex] || COLOR_COLUMNS[0];
+      const root = col.pitch || 'C4';
+      const tubeChords = {
+        C4: ['C4', 'E4', 'G4', 'C5'],
+        D4: ['D4', 'Gb3', 'A4', 'D5'],
+        E4: ['E4', 'B4', 'E5', 'G5'],
+        F4: ['F4', 'A4', 'C5', 'F5'],
+        G4: ['G4', 'B4', 'D5', 'G5'],
+        A4: ['A4', 'E5', 'A5', 'C6'],
+        B4: ['B4', 'Eb5', 'Gb3', 'B5']
+      };
+      const notes = tubeChords[root] || ['C4', 'E4', 'G4', 'C5'];
+      notes.forEach((n, idx) => {
+        this.playRealPianoNote(n, 1.25, idx * 0.07);
+      });
+    }
+
+    // 11. Level Clear: Grand piano celebratory arpeggio
+    playLevelClear() {
+      const notes = ['C4', 'G4', 'C5', 'E5', 'G5', 'C6'];
+      notes.forEach((n, idx) => {
+        this.playRealPianoNote(n, 1.30, idx * 0.065);
+      });
+    }
+
+    // 12. Star Chime: Crystalline real piano chimes
+    playStarChime(starIdx) {
+      const chimes = ['E6', 'G6', 'C7'];
+      const note = chimes[starIdx % 3] || 'C7';
+      this.playRealPianoNote(note, 1.25, 0);
+    }
+
+    // 13. Victory Fanfare: Grand piano triumphant fanfare
+    playVictory() {
+      const steps = [
+        { notes: ['C4', 'E4', 'G4'], t: 0 },
+        { notes: ['F4', 'A4', 'C5'], t: 0.22 },
+        { notes: ['G4', 'B4', 'D5'], t: 0.44 },
+        { notes: ['C3', 'G3', 'C4', 'E4', 'G4', 'C5', 'E5', 'G5', 'C6'], t: 0.68 }
+      ];
+      steps.forEach(st => {
+        st.notes.forEach(n => this.playRealPianoNote(n, 1.25, st.t));
       });
     }
   }
 
   const sfx = new SoundFX();
+  sfx.preload();
   const canvas = document.getElementById('game-canvas');
   const ctx = canvas.getContext('2d');
 
@@ -431,6 +686,7 @@
     columnHighlight: [0, 0, 0, 0, 0, 0, 0],
     columnFullGlow: [0, 0, 0, 0, 0, 0, 0],
     columnFrozen: [0, 0, 0, 0, 0, 0, 0],
+    columnPunchY: [0, 0, 0, 0, 0, 0, 0],
     columnBugs: [null, null, null, null, null, null, null],
     // Tutorial state (active in Level 1)
     tutorialStep: 0, // 0: guide drag, 1: guide align, 2: guide drop, 3: accomplished first, 4: done
@@ -446,7 +702,10 @@
       eyeOffsetX: 0,
       mood: 'happy',
       moodTimer: 0,
-      bounceY: 0
+      bounceY: 0,
+      angle: 0,
+      scaleX: 1,
+      scaleY: 1
     },
     activeCandy: null,
     nextCandy: null,
@@ -499,6 +758,28 @@
 
   function getLevelTotalTarget(lvlConfig = getLevelConfig()) {
     return lvlConfig.activeCols.length * lvlConfig.targetPerTube;
+  }
+
+  // Tactile Haptic Vibration Feedback (Vibration API for Touch/Mobile Devices)
+  function triggerHaptic(type = 'drop') {
+    const nav = (typeof window !== 'undefined' && window.navigator) || (typeof navigator !== 'undefined' ? navigator : null);
+    if (nav && typeof nav.vibrate === 'function') {
+      try {
+        if (type === 'drop') {
+          nav.vibrate(12);
+        } else if (type === 'match') {
+          nav.vibrate(22);
+        } else if (type === 'combo') {
+          nav.vibrate([15, 30, 25]);
+        } else if (type === 'error') {
+          nav.vibrate([40, 50, 60]);
+        } else if (type === 'clear') {
+          nav.vibrate([30, 40, 50, 40, 60]);
+        } else if (type === 'swat') {
+          nav.vibrate(18);
+        }
+      } catch (_) {}
+    }
   }
 
   function computeLayout() {
@@ -821,8 +1102,11 @@
       });
     }
 
-    state.cloud.bounceY = -6;
-    sfx.playDrop();
+    // Dynamic squash-and-stretch recoil on cloud release
+    state.cloud.bounceY = -14;
+    state.cloud.scaleX = 1.15;
+    state.cloud.scaleY = 0.86;
+    triggerHaptic('drop');
     spawnNextCandyOnCloud();
   }
 
@@ -950,12 +1234,26 @@
         rotation: (Math.random() - 0.5) * 0.18,
         squish: 1.35
       });
+
+      // Tactile Feel: Physical landing recoil punch on this column
+      state.columnPunchY[colIdx] = 8.5;
+
+      // Ripple squish through the existing stack below (jelly bounce feel)
+      const stack = state.columnStacks[colIdx];
+      for (let s = 0; s < stack.length; s++) {
+        const distFromTop = stack.length - 1 - s;
+        stack[s].squish = 1 + 0.32 * Math.pow(0.72, distFromTop);
+      }
+
+      // Haptic pulse for physical confirmation
+      triggerHaptic(state.combo >= 4 ? 'combo' : 'match');
+
       const slotY = getSlotCenterY(state.columnCounts[colIdx] - 1);
       spawnBurstParticles(col.centerX, slotY, COLOR_COLUMNS[colIdx].lightHex, 14, isRainbow);
 
       // Check column fill
       if (state.columnCounts[colIdx] === target) {
-        sfx.playTubeComplete();
+        sfx.playTubeComplete(colIdx);
         unlockSticker('first_tube');
         spawnBurstParticles(col.centerX, col.topY + 30, '#ffd700', 26, true);
         addFloatingText(col.centerX, col.topY - 14, `🎉 ${COLOR_COLUMNS[colIdx].name}收集达成!`, '#1d8f24', 1.35);
@@ -1107,6 +1405,7 @@
   function triggerLevelClear() {
     if (state.isLevelCleared || state.isLevelFailed) return;
     state.isLevelCleared = true;
+    triggerHaptic('clear');
     sfx.playLevelClear();
 
     const elapsed = (Date.now() - state.levelStartTime) / 1000;
@@ -1241,6 +1540,7 @@
     if (state.isLevelCleared) return;
     state.isLevelCleared = true;
     state.isGrandFinale = true;
+    triggerHaptic('clear');
     sfx.playVictory();
 
     const elapsed = (Date.now() - state.levelStartTime) / 1000;
@@ -1290,12 +1590,17 @@
     state.windForce = 0;
     state.windTimer = 0;
 
-    // Reset columns
+    // Reset columns & physical feel states
     state.columnCounts = [0, 0, 0, 0, 0, 0, 0];
     state.columnStacks = [[], [], [], [], [], [], []];
     state.columnFullGlow = [0, 0, 0, 0, 0, 0, 0];
     state.columnFrozen = [0, 0, 0, 0, 0, 0, 0];
+    state.columnPunchY = [0, 0, 0, 0, 0, 0, 0];
     state.columnBugs = [null, null, null, null, null, null, null];
+    state.cloud.angle = 0;
+    state.cloud.scaleX = 1;
+    state.cloud.scaleY = 1;
+    state.cloud.bounceY = 0;
 
     const lvlConfig = getLevelConfig();
 
@@ -1432,7 +1737,6 @@
             isRainbow: Math.random() < 0.35,
             homing: true
           });
-          sfx.playDrop();
         }
       }
       if (state.feverTimer <= 0) {
@@ -1535,6 +1839,14 @@
     const targetEyeOffset = Math.max(-5, Math.min(5, state.cloud.vx * 0.015));
     state.cloud.eyeOffsetX += (targetEyeOffset - state.cloud.eyeOffsetX) * Math.min(1, 10 * dt);
 
+    // Dynamic cloud tilt from horizontal motion
+    const targetAngle = Math.max(-0.13, Math.min(0.13, state.cloud.vx * 0.00038));
+    state.cloud.angle += (targetAngle - state.cloud.angle) * Math.min(1, 14 * dt);
+
+    // Dynamic squash-and-stretch recovery
+    state.cloud.scaleX += (1 - state.cloud.scaleX) * Math.min(1, 15 * dt);
+    state.cloud.scaleY += (1 - state.cloud.scaleY) * Math.min(1, 15 * dt);
+
     if (!state.isLevelCleared) {
       state.cloud.bounceY *= Math.pow(0.08, dt);
     }
@@ -1545,6 +1857,15 @@
 
     for (let i = 0; i < state.topIconBounce.length; i++) {
       state.topIconBounce[i] *= Math.pow(0.05, dt);
+    }
+
+    // Damped spring recovery for column landing punch recoil
+    for (let i = 0; i < state.columnPunchY.length; i++) {
+      if (state.columnPunchY[i] > 0.02) {
+        state.columnPunchY[i] *= Math.pow(0.008, dt);
+      } else {
+        state.columnPunchY[i] = 0;
+      }
     }
 
     const currentHoverCol = getColumnIndexAtX(state.cloud.x);
@@ -1683,6 +2004,7 @@
       if (fc.y >= Math.max(col.topY + 20, landingY)) {
         // 1. Bomb landing
         if (fc.specialType === 'bomb') {
+          triggerHaptic('error');
           sfx.playHeartLost();
           spawnBurstParticles(fc.x, col.topY + 20, '#ef4444', 28, false);
           state.hearts = Math.max(0, state.hearts - 1);
@@ -1709,6 +2031,7 @@
         if (state.columnBugs[colIdx]) {
           state.columnBugs[colIdx] = null;
           state.score += 12;
+          triggerHaptic('swat');
           sfx.playSwat();
           unlockSticker('bomb_hero');
           spawnBurstParticles(col.centerX, col.topY, '#5cd664', 18, true);
@@ -1717,6 +2040,7 @@
         if (state.columnFrozen[colIdx] > 0) {
           state.columnFrozen[colIdx] = 0;
           state.score += 10;
+          triggerHaptic('swat');
           sfx.playSwat();
           spawnBurstParticles(col.centerX, col.topY, '#73c6ff', 18, false);
           addFloatingText(col.centerX, col.topY - 24, '❄️ 破冰成功 +10分!', '#298cd4', 1.2);
@@ -1793,6 +2117,8 @@
             }
           } else {
             // Already full
+            state.columnPunchY[colIdx] = 6.0;
+            triggerHaptic('match');
             sfx.playMatch(colIdx, 1);
             state.score += 5;
             spawnBurstParticles(fc.x, landingY, '#ffd700', 12, true);
@@ -1805,6 +2131,7 @@
           state.combo = 0;
           state.cloud.mood = 'oops';
           state.cloud.moodTimer = 0.95;
+          triggerHaptic('error');
           sfx.playHeartLost();
           state.hearts = Math.max(0, state.hearts - 1);
 
@@ -2296,7 +2623,10 @@
     const curLevelConfig = getLevelConfig();
 
     ctx.save();
-    ctx.translate(0, c.bounceY);
+    ctx.translate(x, y + c.bounceY);
+    ctx.rotate(c.angle || 0);
+    ctx.scale(c.scaleX || 1, c.scaleY || 1);
+    ctx.translate(-x, -y);
 
     // Floating Mini Hearts above Cloud Bar (Immediate health status)
     const numHearts = state.maxHearts;
@@ -2446,7 +2776,7 @@
       const ac = state.activeCandy;
       const candyR = state.layout.candyRadius * ac.scale;
       const candyX = x;
-      const candyY = y + halfH + candyR * 0.95 + 6;
+      const candyY = y + c.bounceY + halfH + candyR * 0.95 + 6;
       const colInfo = COLOR_COLUMNS[ac.colorIdx];
       const hoverIdx = getColumnIndexAtX(candyX);
       const isTargetActive = curLevelConfig.activeCols.includes(hoverIdx);
@@ -2490,8 +2820,9 @@
       const colDef = COLOR_COLUMNS[i];
       const isActive = curLevelConfig.activeCols.includes(i);
       const glow = state.columnHighlight[i];
+      const punchY = state.columnPunchY[i] || 0;
       const isFull = state.columnCounts[i] >= curLevelConfig.targetPerTube;
-      const topY = colRect.topY - (isActive ? glow * 6 : 0);
+      const topY = colRect.topY - (isActive ? glow * 6 : 0) + punchY;
       const colH = H - topY;
 
       ctx.save();
@@ -2600,7 +2931,7 @@
         ctx.fillStyle = '#ffffff';
         ctx.shadowColor = 'rgba(0,0,0,0.55)';
         ctx.shadowBlur = 4;
-        ctx.fillText(colDef.name, colRect.centerX, topY + 22);
+        ctx.fillText(`${colDef.name} · ${colDef.solfege.split(' ')[0]}`, colRect.centerX, topY + 22);
 
         // Progress Badge
         const pillY = topY + 43;
@@ -2650,7 +2981,7 @@
       const stack = state.columnStacks[i];
       for (let sIdx = 0; sIdx < stack.length; sIdx++) {
         const sc = stack[sIdx];
-        const sy = getSlotCenterY(sIdx);
+        const sy = getSlotCenterY(sIdx) + punchY;
         drawCandy(ctx, colRect.centerX, sy, sc.radius || state.layout.candyRadius, sc.colorIdx, sc.shape, sc.isRainbow, sc.rotation, sc.squish || 1);
       }
 
@@ -2694,6 +3025,32 @@
         ctx.fillText('🐛点我!', 0, -14);
         ctx.restore();
       }
+
+      // Piano Key Base Plate with Solfège & Pitch Indicator (Helmholtz 小字1组 1 2 3 4 5 6 7)
+      const keyH = 28;
+      const keyY = H - keyH + Math.min(punchY * 0.65, 6);
+      ctx.save();
+      // Key body (ivory white when idle, warm glow & colored stroke when pressed)
+      ctx.fillStyle = punchY > 1 ? '#fff7ed' : (isActive ? '#ffffff' : 'rgba(235, 235, 235, 0.65)');
+      ctx.beginPath();
+      ctx.roundRect(colRect.x + 2, keyY, colRect.width - 4, keyH + 4, [6, 6, 0, 0]);
+      ctx.fill();
+      ctx.strokeStyle = punchY > 1 ? colDef.hex : (isActive ? '#282a24' : '#9ca3af');
+      ctx.lineWidth = punchY > 1 ? 2.6 : 1.8;
+      ctx.stroke();
+
+      // Solfège pitch label (1 Do, 2 Re, 3 Mi, etc.)
+      ctx.fillStyle = punchY > 1 ? colDef.darkHex : (isActive ? '#111827' : '#9ca3af');
+      ctx.font = `bold ${colRect.width < 75 ? 12 : 13.5}px "PingFang SC", "Microsoft YaHei", sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(colDef.solfege || `${i + 1}`, colRect.centerX, keyY + 11);
+
+      // Pitch notation (C4, D4, E4...)
+      ctx.fillStyle = punchY > 1 ? colDef.hex : (isActive ? colDef.hex : '#9ca3af');
+      ctx.font = 'bold 9.5px monospace';
+      ctx.fillText(colDef.pitch || '', colRect.centerX, keyY + 21);
+      ctx.restore();
 
       ctx.restore();
     }
@@ -2830,10 +3187,11 @@
     drawRainbowColumns(ctx);
     drawMultiplierGates(ctx);
 
-    // Falling Candies
+    // Falling Candies with dynamic aerodynamic fall stretch
     for (let i = 0; i < state.fallingCandies.length; i++) {
       const fc = state.fallingCandies[i];
-      drawCandy(ctx, fc.x, fc.y, fc.radius, fc.colorIdx, fc.shape, fc.isRainbow, fc.rotation, 1, fc.specialType);
+      const stretchSquish = Math.max(0.86, 1 - Math.min(Math.abs(fc.vy) * 0.00022, 0.14));
+      drawCandy(ctx, fc.x, fc.y, fc.radius, fc.colorIdx, fc.shape, fc.isRainbow, fc.rotation, stretchSquish, fc.specialType);
     }
 
     drawCloudBar(ctx);
