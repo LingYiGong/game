@@ -512,42 +512,18 @@
     }
 
     // 2. Candy Landing in Column: Strictly Helmholtz 小字1组 (1 2 3 4 5 6 7 -> C4..B4)
-    // Plays the genuine acoustic Grand Piano sample for that column
-    playMatch(colIndex, combo = 1) {
+    // Pure single acoustic Grand Piano note for ear training (听音/练耳). No chords, no harmony layers!
+    playMatch(colIndex) {
       const col = COLOR_COLUMNS[colIndex] || COLOR_COLUMNS[0];
       const rootNote = col.pitch || 'C4'; // 'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4'
 
-      // Primary note: 100% Real Grand Piano sample of this column in 小字1组! (Louder & punchier)
-      this.playRealPianoNote(rootNote, 1.25, 0);
-
-      // Harmony chord accompaniment based on real piano samples
-      const harmonyMap = {
-        C4: { fifth: 'G4', octave: 'C5', sparkle: 'G5' },
-        D4: { fifth: 'A4', octave: 'D5', sparkle: 'A5' },
-        E4: { fifth: 'B4', octave: 'E5', sparkle: 'B5' },
-        F4: { fifth: 'C5', octave: 'F5', sparkle: 'C6' },
-        G4: { fifth: 'D5', octave: 'G5', sparkle: 'D6' },
-        A4: { fifth: 'E5', octave: 'A5', sparkle: 'E6' },
-        B4: { fifth: 'Gb5', octave: 'B5', sparkle: 'Gb5' }
-      };
-
-      const harm = harmonyMap[rootNote] || harmonyMap['C4'];
-
-      if (combo >= 2) {
-        this.playRealPianoNote(harm.fifth, 0.95, 0.038);
-      }
-      if (combo >= 4) {
-        this.playRealPianoNote(harm.octave, 1.05, 0.076);
-      }
-      if (combo >= 7) {
-        this.playRealPianoNote(harm.sparkle, 0.95, 0.114);
-      }
+      // Strictly ONE single acoustic Grand Piano note!
+      this.playRealPianoNote(rootNote, 1.4, 0);
     }
 
-    // 3. Multiplier Gate: Ascending sparkling real piano arpeggio
+    // 3. Multiplier Gate: Silent during drop so it doesn't interfere with landing note ear training
     playGateMultiply() {
-      const notes = ['C5', 'E5', 'G5', 'C6'];
-      notes.forEach((n, i) => this.playRealPianoNote(n, 1.15, i * 0.045));
+      // Kept silent for pure ear-training experience
     }
 
     // 4. Magic Skill: Classical rolling real piano broken chord
@@ -568,17 +544,14 @@
       gliss.forEach((n, i) => this.playRealPianoNote(n, 1.10, i * 0.038));
     }
 
-    // 7. Mismatch / Misplacement: Low real piano minor dissonance
+    // 7. Mismatch / Misplacement: Single low acoustic piano note (clean, no chord cluster)
     playMismatch() {
       this.playRealPianoNote('D3', 1.20, 0);
-      this.playRealPianoNote('Eb3', 1.15, 0.01);
     }
 
-    // 8. Heart Lost / Danger: Dramatic low acoustic real piano warning chord
+    // 8. Heart Lost / Danger: Single low acoustic piano warning note (clean, no chord cluster)
     playHeartLost() {
       this.playRealPianoNote('B2', 1.35, 0);
-      this.playRealPianoNote('C3', 1.30, 0.01);
-      this.playRealPianoNote('Gb3', 1.20, 0.02);
     }
 
     // 9. Defeat: Melancholy descending real piano chords
@@ -594,23 +567,9 @@
       });
     }
 
-    // 10. Tube Completed: Brilliant major triad flourish based on column's pitch
+    // 10. Tube Completed: Kept silent during drop so it doesn't mask the column landing pitch
     playTubeComplete(colIndex = 0) {
-      const col = COLOR_COLUMNS[colIndex] || COLOR_COLUMNS[0];
-      const root = col.pitch || 'C4';
-      const tubeChords = {
-        C4: ['C4', 'E4', 'G4', 'C5'],
-        D4: ['D4', 'Gb3', 'A4', 'D5'],
-        E4: ['E4', 'B4', 'E5', 'G5'],
-        F4: ['F4', 'A4', 'C5', 'F5'],
-        G4: ['G4', 'B4', 'D5', 'G5'],
-        A4: ['A4', 'E5', 'A5', 'C6'],
-        B4: ['B4', 'Eb5', 'Gb3', 'B5']
-      };
-      const notes = tubeChords[root] || ['C4', 'E4', 'G4', 'C5'];
-      notes.forEach((n, idx) => {
-        this.playRealPianoNote(n, 1.25, idx * 0.07);
-      });
+      // Kept silent for pure ear-training experience
     }
 
     // 11. Level Clear: Grand piano celebratory arpeggio
@@ -1253,7 +1212,6 @@
 
       // Check column fill
       if (state.columnCounts[colIdx] === target) {
-        sfx.playTubeComplete(colIdx);
         unlockSticker('first_tube');
         spawnBurstParticles(col.centerX, col.topY + 30, '#ffd700', 26, true);
         addFloatingText(col.centerX, col.topY - 14, `🎉 ${COLOR_COLUMNS[colIdx].name}收集达成!`, '#1d8f24', 1.35);
@@ -1406,7 +1364,12 @@
     if (state.isLevelCleared || state.isLevelFailed) return;
     state.isLevelCleared = true;
     triggerHaptic('clear');
-    sfx.playLevelClear();
+    // Delay victory fanfare so the final landing piano note resonates purely for ear training
+    setTimeout(() => {
+      if (state.isLevelCleared && !state.isLevelFailed) {
+        sfx.playLevelClear();
+      }
+    }, 850);
 
     const elapsed = (Date.now() - state.levelStartTime) / 1000;
     const lvlConfig = getLevelConfig();
@@ -2032,7 +1995,6 @@
           state.columnBugs[colIdx] = null;
           state.score += 12;
           triggerHaptic('swat');
-          sfx.playSwat();
           unlockSticker('bomb_hero');
           spawnBurstParticles(col.centerX, col.topY, '#5cd664', 18, true);
           addFloatingText(col.centerX, col.topY - 24, '🐛 砸跑贪吃虫 +12分!', '#1d8f24', 1.2);
@@ -2041,7 +2003,6 @@
           state.columnFrozen[colIdx] = 0;
           state.score += 10;
           triggerHaptic('swat');
-          sfx.playSwat();
           spawnBurstParticles(col.centerX, col.topY, '#73c6ff', 18, false);
           addFloatingText(col.centerX, col.topY - 24, '❄️ 破冰成功 +10分!', '#298cd4', 1.2);
         }
@@ -2058,7 +2019,6 @@
             // 5-Combo Heart Recovery Bonus!
             if (state.combo % 5 === 0 && state.hearts < state.maxHearts) {
               state.hearts = Math.min(state.maxHearts, state.hearts + 1);
-              sfx.playStarChime(2);
               spawnBurstParticles(state.cloud.x, state.cloud.y - 18, '#ff4d6d', 20, true);
               addFloatingText(state.cloud.x, state.cloud.y - 28, '💖 达成 5 连击！奖励恢复 1 颗生命红心！', '#ff2e63', 1.35);
             }
@@ -2086,7 +2046,7 @@
 
           // Shower special candy
           if (fc.specialType === 'shower') {
-            sfx.playMagicSkill();
+            sfx.playMatch(colIdx);
             addFloatingText(state.width / 2, state.layout.columnsTopY - 24, '🌧️ 七彩甘霖糖！活跃跑道各加1！', '#298cd4', 1.35);
             lvlConfig.activeCols.forEach(c => addCandyToColumn(c, 'star', false));
           } else if (currentCount < lvlConfig.targetPerTube) {
@@ -2096,7 +2056,8 @@
             state.cloud.bounceY = -10;
             state.topIconBounce[colIdx % 6] = 10;
 
-            sfx.playMatch(colIdx, state.combo);
+            // Pure single piano note for ear-training
+            sfx.playMatch(colIdx);
             const progressStr = `${state.columnCounts[colIdx]}/${lvlConfig.targetPerTube}`;
             addFloatingText(
               col.centerX,
@@ -2119,7 +2080,7 @@
             // Already full
             state.columnPunchY[colIdx] = 6.0;
             triggerHaptic('match');
-            sfx.playMatch(colIdx, 1);
+            sfx.playMatch(colIdx);
             state.score += 5;
             spawnBurstParticles(fc.x, landingY, '#ffd700', 12, true);
             addFloatingText(col.centerX, landingY - 18, '已达标额外奖励 +5! ⭐', '#ffd700', 1.15);
