@@ -326,10 +326,18 @@
 
       // Real piano sample caches
       this.audioBuffers = {}; // Decoded Web Audio AudioBuffers
-      this.audioPool = {};    // HTML5 Audio element pool for local file:// fallback
+      this.rawBuffers = {};   // Fetched (not yet decoded) MP3 ArrayBuffers
+      this.decoding = {};     // Notes currently being decoded
+      this.fetchFailed = {};  // Notes that could not be fetched (e.g. file:// protocol)
+      this.htmlAudio = {};    // Lazily created HTML5 Audio fallback (only when Web Audio can't be used)
+      this.voices = [];       // Active Web Audio voices, capped to keep mobile CPUs happy
+      this.maxVoices = 20;
       this.isPreloaded = false;
+      this.unlocked = false;
+      this.resuming = false;
     }
 
+    // Cheap to call on every gesture / note: creates the context once, then only resumes when needed.
     init() {
       if (!this.ctx && (typeof window !== 'undefined')) {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -338,71 +346,101 @@
             this.ctx = new AudioCtx();
           } catch (_) {}
         }
+        if (this.ctx) {
+          this.setupChain();
+          this.decodeEmbedded();
+          this.decodeAllFetched();
+        }
       }
       if (this.ctx) {
         // iOS/iPadOS can leave the context 'interrupted' (e.g. after switching apps), not just 'suspended'
-        if (this.ctx.state !== 'running') {
-          this.ctx.resume().catch(() => {});
-        }
-        if (!this.masterGain) {
+        if (this.ctx.state !== 'running' && !this.resuming) {
+          this.resuming = true;
+          const done = () => { this.resuming = false; };
           try {
-            // Master gain with default 2.4x volume boost (~+7.6 dB)
-            this.masterGain = this.ctx.createGain();
-            this.masterGain.gain.setValueAtTime(2.4, this.ctx.currentTime);
-
-            // Studio-grade dynamics compressor to avoid digital clipping while delivering punchy RMS acoustic loudness
-            this.compressor = this.ctx.createDynamicsCompressor();
-            this.compressor.threshold.setValueAtTime(-12, this.ctx.currentTime);
-            this.compressor.knee.setValueAtTime(8, this.ctx.currentTime);
-            this.compressor.ratio.setValueAtTime(3.5, this.ctx.currentTime);
-            this.compressor.attack.setValueAtTime(0.003, this.ctx.currentTime);
-            this.compressor.release.setValueAtTime(0.22, this.ctx.currentTime);
-
-            // Connect signal chain: noteGain -> masterGain -> compressor -> destination
-            this.masterGain.connect(this.compressor);
-            this.compressor.connect(this.ctx.destination);
-          } catch (_) {
-            this.masterGain = null;
-            this.compressor = null;
-          }
+            const p = this.ctx.resume();
+            if (p && typeof p.then === 'function') p.then(done, done); else done();
+          } catch (_) { done(); }
+        }
+        // iOS unlock: start a silent buffer inside the first user gesture
+        if (!this.unlocked) {
+          try {
+            const silent = this.ctx.createBuffer(1, 1, 22050);
+            const src = this.ctx.createBufferSource();
+            src.buffer = silent;
+            src.connect(this.ctx.destination);
+            src.start(0);
+            this.unlocked = true;
+          } catch (_) {}
         }
       }
       this.preload();
     }
 
-    // Preload all real piano MP3 samples into memory for zero-latency instant playback
+    setupChain() {
+      try {
+        // Master gain with default 2.4x volume boost (~+7.6 dB)
+        this.masterGain = this.ctx.createGain();
+        this.masterGain.gain.setValueAtTime(2.4, this.ctx.currentTime);
+
+        // Dynamics compressor to avoid digital clipping while keeping the piano loud
+        this.compressor = this.ctx.createDynamicsCompressor();
+        this.compressor.threshold.setValueAtTime(-12, this.ctx.currentTime);
+        this.compressor.knee.setValueAtTime(8, this.ctx.currentTime);
+        this.compressor.ratio.setValueAtTime(3.5, this.ctx.currentTime);
+        this.compressor.attack.setValueAtTime(0.003, this.ctx.currentTime);
+        this.compressor.release.setValueAtTime(0.22, this.ctx.currentTime);
+
+        // Signal chain: noteGain -> masterGain -> compressor -> destination
+        this.masterGain.connect(this.compressor);
+        this.compressor.connect(this.ctx.destination);
+      } catch (_) {
+        this.masterGain = null;
+        this.compressor = null;
+      }
+    }
+
+    // Decode with the callback form: older iOS Safari does not return a Promise from decodeAudioData
+    decode(name, arrayBuffer) {
+      if (!this.ctx || !arrayBuffer || this.audioBuffers[name] || this.decoding[name]) return;
+      this.decoding[name] = true;
+      const ok = (decoded) => {
+        this.decoding[name] = false;
+        if (decoded) this.audioBuffers[name] = decoded;
+      };
+      const fail = () => { this.decoding[name] = false; };
+      try {
+        const p = this.ctx.decodeAudioData(arrayBuffer, ok, fail);
+        if (p && typeof p.catch === 'function') p.catch(fail);
+      } catch (_) { fail(); }
+    }
+
+    decodeAllFetched() {
+      Object.keys(this.rawBuffers).forEach(name => {
+        const ab = this.rawBuffers[name];
+        delete this.rawBuffers[name];
+        this.decode(name, ab);
+      });
+    }
+
+    // Embedded base64 landing notes: works offline under file:///
+    decodeEmbedded() {
+      if (typeof window === 'undefined' || !window.EMBEDDED_LANDING_NOTES || typeof window.atob !== 'function') return;
+      Object.keys(window.EMBEDDED_LANDING_NOTES).forEach(name => {
+        if (this.audioBuffers[name] || this.decoding[name]) return;
+        try {
+          const binary = window.atob(window.EMBEDDED_LANDING_NOTES[name]);
+          const bytes = new Uint8Array(binary.length);
+          for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+          this.decode(name, bytes.buffer);
+        } catch (_) {}
+      });
+    }
+
+    // Fetch all real piano MP3 samples up front (no AudioContext needed); decode once a context exists
     preload() {
       if (this.isPreloaded) return;
       this.isPreloaded = true;
-
-      // Helper to convert base64 to ArrayBuffer for offline file:/// decoding
-      const base64ToArrayBuffer = (b64) => {
-        if (typeof window !== 'undefined' && typeof window.atob === 'function') {
-          const binary = window.atob(b64);
-          const len = binary.length;
-          const bytes = new Uint8Array(len);
-          for (let i = 0; i < len; i++) {
-            bytes[i] = binary.charCodeAt(i);
-          }
-          return bytes.buffer;
-        }
-        return null;
-      };
-
-      // 1. Immediately decode embedded base64 landing notes if available (works 100% offline under file:///)
-      if (this.ctx && typeof window !== 'undefined' && window.EMBEDDED_LANDING_NOTES) {
-        Object.keys(window.EMBEDDED_LANDING_NOTES).forEach(name => {
-          try {
-            const rawB64 = window.EMBEDDED_LANDING_NOTES[name];
-            const ab = base64ToArrayBuffer(rawB64);
-            if (ab) {
-              this.ctx.decodeAudioData(ab, (decoded) => {
-                this.audioBuffers[name] = decoded;
-              }, () => {});
-            }
-          } catch (_) {}
-        });
-      }
 
       const noteList = [
         'B2', 'C3', 'D3', 'Eb3', 'E3', 'F3', 'Gb3', 'G3', 'A3', 'B3',
@@ -411,33 +449,42 @@
         'C6', 'D6', 'E6', 'G6', 'A6', 'C7'
       ];
 
+      if (typeof fetch !== 'function') {
+        noteList.forEach(name => { this.fetchFailed[name] = true; });
+        return;
+      }
       noteList.forEach(name => {
-        const url = `sounds/${name}.mp3`;
-
-        // Preload HTML5 Audio (Guaranteed to work under file:/// in browsers)
-        if (typeof Audio !== 'undefined') {
-          try {
-            const a = new Audio();
-            a.preload = 'auto';
-            a.src = url;
-            this.audioPool[name] = a;
-          } catch (_) {}
-        }
-
-        // Preload Web Audio buffer (for sample-accurate polyphony scheduling under http/https)
-        if (this.ctx && typeof fetch === 'function' && !this.audioBuffers[name]) {
-          fetch(url)
-            .then(res => {
-              if (!res.ok) throw new Error('Fetch failed');
-              return res.arrayBuffer();
-            })
-            .then(buf => this.ctx.decodeAudioData(buf))
-            .then(decoded => {
-              this.audioBuffers[name] = decoded;
-            })
-            .catch(() => {});
-        }
+        fetch(`sounds/${name}.mp3`)
+          .then(res => {
+            if (!res.ok) throw new Error('Fetch failed');
+            return res.arrayBuffer();
+          })
+          .then(buf => {
+            if (this.ctx) this.decode(name, buf);
+            else this.rawBuffers[name] = buf;
+          })
+          .catch(() => { this.fetchFailed[name] = true; });
       });
+    }
+
+    // HTML5 Audio fallback, one reusable element per note (never cloned per play: that stalls iOS)
+    playHtmlAudio(noteName) {
+      if (typeof Audio === 'undefined') return false;
+      try {
+        let a = this.htmlAudio[noteName];
+        if (!a) {
+          a = new Audio(`sounds/${noteName}.mp3`);
+          a.preload = 'auto';
+          this.htmlAudio[noteName] = a;
+        }
+        a.volume = 1.0;
+        try { a.currentTime = 0; } catch (_) {}
+        const p = a.play();
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+        return true;
+      } catch (_) {
+        return false;
+      }
     }
 
     // Play real acoustic grand piano note by name (e.g. 'C4', 'D4', 'E4')
@@ -445,48 +492,50 @@
       if (!this.enabled) return;
       this.init();
 
-      const playExec = () => {
-        // Option 1: Web Audio decoded AudioBuffer (zero latency, polyphonic, amplified through masterGain + compressor)
-        if (this.ctx && this.audioBuffers[noteName]) {
-          try {
-            const now = this.ctx.currentTime;
-            const src = this.ctx.createBufferSource();
-            src.buffer = this.audioBuffers[noteName];
-            const gainNode = this.ctx.createGain();
-            // Generous per-note gain (1.5x boost)
-            gainNode.gain.setValueAtTime(Math.max(0.01, Math.min(3.0, volume * 1.5)), now);
-            src.connect(gainNode);
-
-            if (this.masterGain) {
-              gainNode.connect(this.masterGain);
-            } else {
-              gainNode.connect(this.ctx.destination);
-            }
-            src.start(now);
-            return;
-          } catch (_) {}
-        }
-
-        // Option 2: HTML5 Audio pool clone (reliable across all browser protocols including file:///)
+      // Option 1: Web Audio decoded AudioBuffer, scheduled on the audio clock (no timers, no DOM elements)
+      if (this.ctx && this.audioBuffers[noteName]) {
         try {
-          const cached = this.audioPool[noteName];
-          if (cached) {
-            const clone = cached.cloneNode();
-            clone.volume = 1.0; // Max 100% hardware volume for loud, clear acoustic playback
-            clone.play().catch(() => {});
-            return;
-          } else if (typeof Audio !== 'undefined') {
-            const a = new Audio(`sounds/${noteName}.mp3`);
-            a.volume = 1.0; // Max 100% hardware volume
-            a.play().catch(() => {});
-            return;
+          const when = this.ctx.currentTime + Math.max(0, delay || 0);
+          const src = this.ctx.createBufferSource();
+          src.buffer = this.audioBuffers[noteName];
+          const gainNode = this.ctx.createGain();
+          gainNode.gain.setValueAtTime(Math.max(0.01, Math.min(3.0, volume * 1.5)), when);
+          src.connect(gainNode);
+          gainNode.connect(this.masterGain || this.ctx.destination);
+
+          // Voice cap: quickly fade out and stop the oldest voice
+          if (this.voices.length >= this.maxVoices) {
+            const old = this.voices.shift();
+            try {
+              const t = this.ctx.currentTime;
+              old.gain.gain.cancelScheduledValues(t);
+              old.gain.gain.setValueAtTime(old.gain.gain.value, t);
+              old.gain.gain.linearRampToValueAtTime(0, t + 0.04);
+              old.src.stop(t + 0.05);
+            } catch (_) {}
           }
+          const voice = { src, gain: gainNode };
+          this.voices.push(voice);
+          src.onended = () => {
+            const i = this.voices.indexOf(voice);
+            if (i >= 0) this.voices.splice(i, 1);
+            try { gainNode.disconnect(); } catch (_) {}
+          };
+          src.start(when);
+          return;
         } catch (_) {}
+      }
 
-        // Fallback option 3: Synthesized piano tone
-        this.playPianoToneSynth(noteName, volume);
+      // Sample still loading under Web Audio: use the cheap synth instead of spawning media elements
+      if (this.ctx && !this.fetchFailed[noteName]) {
+        this.playPianoToneSynth(noteName, volume, delay);
+        return;
+      }
+
+      // Option 2: HTML5 Audio (no Web Audio, or sample could not be fetched e.g. file://)
+      const playExec = () => {
+        if (!this.playHtmlAudio(noteName)) this.playPianoToneSynth(noteName, volume);
       };
-
       if (delay > 0) {
         setTimeout(playExec, Math.round(delay * 1000));
       } else {
@@ -495,14 +544,14 @@
     }
 
     // Fallback synthesizer if sample cannot be loaded
-    playPianoToneSynth(freqOrNote, volume = 0.5) {
+    playPianoToneSynth(freqOrNote, volume = 0.5, delay = 0) {
       if (!this.enabled) return;
       if (!this.ctx) return;
       const freq = typeof freqOrNote === 'number'
         ? freqOrNote
         : (PIANO_NOTE_FREQS.find(p => p.note === freqOrNote)?.freq || 261.63);
       try {
-        const now = this.ctx.currentTime;
+        const now = this.ctx.currentTime + Math.max(0, delay || 0);
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'triangle';
@@ -664,6 +713,10 @@
 
   const sfx = new SoundFX();
   sfx.preload();
+  // iOS only lets audio start inside a user gesture: unlock/resume on any touch, click or key press
+  ['touchend', 'pointerdown', 'click', 'keydown'].forEach(evt => {
+    document.addEventListener(evt, () => { if (sfx.enabled) sfx.init(); }, { capture: true, passive: true });
+  });
   const canvas = document.getElementById('game-canvas');
   const ctx = canvas.getContext('2d');
 
