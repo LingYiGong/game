@@ -226,7 +226,9 @@
     { id: 'speed_star', icon: '⚡', title: '闪电满星王', desc: '在任意挑战中斩获 ⭐⭐⭐ 评价' },
     { id: 'grand_champion', icon: '👑', title: '彩虹大满贯', desc: '通关全部 8 个关卡完成彩虹大圆满！' },
     { id: 'lucky_catcher', icon: '🍀', title: '幸运接星手', desc: '用云朵接住 3 颗从天而降的幸运金星' },
-    { id: 'rainbow_row', icon: '🎹', title: '彩虹音阶师', desc: '让所有跑道齐平，奏响一排彩虹音阶' }
+    { id: 'rainbow_row', icon: '🎹', title: '彩虹音阶师', desc: '让所有跑道齐平，奏响一排彩虹音阶' },
+    { id: 'candy_catcher', icon: '🎁', title: '糖果雨达人', desc: '在过关后的奖励糖果雨里接住 15 颗以上糖果' },
+    { id: 'music_box', icon: '🎵', title: '小小音乐家', desc: '在音乐盒里用糖果完整弹出一首曲子' }
   ];
 
   // Combo tiers: score multiplier + big celebratory banner when reached
@@ -262,6 +264,62 @@
 
   // Lucky Candy Rain (from level 2): golden stars & rare hearts drift down from the sky; catch them with the cloud!
   const LUCKY_START_LEVEL = 2;
+
+  // Bonus Candy Rain: once every column is full, a few seconds of "catch everything with the cloud" before the result card
+  const BONUS_RAIN_DURATION = 7;
+  const BONUS_CATCH_NOTES = ['C5', 'D5', 'E5', 'G5', 'A5', 'C6', 'D6', 'E6', 'G6', 'A6'];
+
+  // Music Box mode: candies arrive in the order of a tune, so every correct drop plays its next note.
+  // Notation: scale degree 1-7 (= column). Suffix "-" 2 beats, "--" 4 beats, "." 1.5 beats, "_" half a beat.
+  const SONGS = [
+    { id: 'twinkle', icon: '⭐', title: '小星星', needLevel: 0, beat: 0.34,
+      score: '1 1 5 5 6 6 5- 4 4 3 3 2 2 1- 5 5 4 4 3 3 2- 5 5 4 4 3 3 2- 1 1 5 5 6 6 5- 4 4 3 3 2 2 1-',
+      lyrics: '一闪一闪亮晶晶满天都是小星星挂在天上放光明好像许多小眼睛一闪一闪亮晶晶满天都是小星星' },
+    { id: 'mary', icon: '🐑', title: '玛丽有只小羊羔', needLevel: 1, beat: 0.32,
+      score: '3 2 1 2 3 3 3- 2 2 2- 3 5 5- 3 2 1 2 3 3 3 3 2 2 3 2 1--' },
+    { id: 'london', icon: '🌉', title: '伦敦桥', needLevel: 2, beat: 0.32,
+      score: '5. 6_ 5 4 3 4 5- 2 3 4- 3 4 5- 5. 6_ 5 4 3 4 5- 2- 5- 3 1-' },
+    { id: 'ode', icon: '🎻', title: '欢乐颂', needLevel: 3, beat: 0.34,
+      score: '3 3 4 5 5 4 3 2 1 1 2 3 3. 2_ 2- 3 3 4 5 5 4 3 2 1 1 2 3 2. 1_ 1-' },
+    { id: 'jingle', icon: '🔔', title: '铃儿响叮当', needLevel: 4, beat: 0.28,
+      score: '3 3 3- 3 3 3- 3 5 1. 2_ 3-- 4 4 4. 4_ 4 3 3 3_ 3_ 5 5 4 2 1--' }
+  ];
+  SONGS.forEach(song => {
+    song.notes = song.score.split(/\s+/).map(tok => {
+      const suf = tok.slice(1);
+      const beats = suf === '--' ? 4 : (suf === '-' ? 2 : (suf === '.' ? 1.5 : (suf === '_' ? 0.5 : 1)));
+      return { col: parseInt(tok[0], 10) - 1, beats };
+    });
+  });
+  const SONG_CONFIG = {
+    id: 'song',
+    title: '音乐盒',
+    subtitle: '投对糖果，弹出一首歌',
+    tip: '糖果会按歌曲的顺序出现：点一下同色跑道，就能弹出下一个音！弹错了不扣心～',
+    tags: ['音乐盒'],
+    activeCols: [0, 1, 2, 3, 4, 5, 6],
+    targetPerTube: 10,
+    maxHearts: 3,
+    features: {
+      tutorial: false, combo: true, rainbowCandy: false, multiplierGates: false, topMagic: false,
+      hazards: false, bombs: false, fever: false
+    },
+    allowedSpecials: ['normal'],
+    candyTimer: 99999, // no countdown: play at your own pace
+    starScore: [0, 0]
+  };
+
+  // Cloud outfits: unlocked by total stars (levels + songs), so every star is worth chasing
+  const OUTFITS = [
+    { id: 'none',    icon: '☁️', name: '原味云朵', need: 0 },
+    { id: 'bow',     icon: '🎀', name: '蝴蝶结',   need: 2 },
+    { id: 'cap',     icon: '🧢', name: '棒球帽',   need: 5 },
+    { id: 'glasses', icon: '🕶️', name: '酷酷墨镜', need: 8 },
+    { id: 'hat',     icon: '🎩', name: '魔术礼帽', need: 12 },
+    { id: 'flower',  icon: '🌸', name: '小花花',   need: 16 },
+    { id: 'crown',   icon: '👑', name: '闪亮王冠', need: 20 },
+    { id: 'rainbow', icon: '🌈', name: '彩虹光环', need: 26 }
+  ];
 
   // Real Acoustic Grand Piano Sample Engine (Yamaha Disklavier Pro Studio Samples)
   // Dual-mode audio engine: Web Audio AudioBuffer (polyphonic, low-latency) + HTML5 Audio pool fallback (for file:// protocol)
@@ -730,6 +788,13 @@
     levelStars: {},      // { 1: 3, 2: 2, ... }
     levelHighScores: {}, // { 1: 350, ... }
     isEndlessMode: false,
+    song: null,          // Music Box run: { idx, def, pos, landed, mistakes }
+    songStars: {},       // { twinkle: 3, ... }
+    songPlayback: null,  // end-of-song replay of the whole tune
+    pendingDropCol: -1,  // Music Box: tap a lane = fly there, then drop
+    bonus: null,         // Bonus Candy Rain run
+    lastBonusPts: 0,
+    outfit: 'none',
     score: 0,
     combo: 0,
     maxCombo: 0,
@@ -848,6 +913,7 @@
 
   function getLevelConfig(lvl) {
     if (lvl === undefined) {
+      if (state.song) return SONG_CONFIG;
       if (state.isEndlessMode) return ENDLESS_CONFIG;
       lvl = state.currentLevel;
     }
@@ -869,6 +935,29 @@
 
   function getLevelTotalTarget(lvlConfig = getLevelConfig()) {
     return lvlConfig.activeCols.length * lvlConfig.targetPerTube;
+  }
+
+  function isTutorialLevel() {
+    return state.currentLevel === 1 && !state.song && !state.isEndlessMode;
+  }
+
+  function getTotalStars() {
+    let total = 0;
+    LEVELS.forEach(lvl => { total += (state.levelStars[lvl.id] || 0); });
+    SONGS.forEach(song => { total += (state.songStars[song.id] || 0); });
+    return total;
+  }
+
+  function isSongUnlocked(song) {
+    return song.needLevel <= 0 || (state.levelStars[song.needLevel] || 0) > 0;
+  }
+
+  // Outfits whose star requirement was crossed since `starsBefore`
+  function getNewOutfitText(starsBefore) {
+    const now = getTotalStars();
+    const fresh = OUTFITS.filter(o => o.need > starsBefore && o.need <= now);
+    if (!fresh.length) return '';
+    return ` 🎁 新装扮解锁：${fresh.map(o => o.icon + o.name).join('、')}！`;
   }
 
   // Tactile Haptic Vibration Feedback (Vibration API for Touch/Mobile Devices)
@@ -1021,6 +1110,8 @@
         state.levelStars = data.levelStars || {};
         state.levelHighScores = data.levelHighScores || {};
         state.endlessBest = data.endlessBest || 0;
+        state.songStars = data.songStars || {};
+        state.outfit = OUTFITS.some(o => o.id === data.outfit) ? data.outfit : 'none';
       }
     } catch (e) {
       state.unlockedLevel = 1;
@@ -1043,7 +1134,9 @@
         currentLevel: state.currentLevel,
         levelStars: state.levelStars,
         levelHighScores: state.levelHighScores,
-        endlessBest: state.endlessBest
+        endlessBest: state.endlessBest,
+        songStars: state.songStars,
+        outfit: state.outfit
       };
       localStorage.setItem('rainbow_candy_levels_v2', JSON.stringify(data));
       localStorage.setItem('rainbow_candy_stickers_v2', JSON.stringify(state.unlockedStickers));
@@ -1088,13 +1181,10 @@
     const starsEl = document.getElementById('total-stars-text');
     if (!container) return;
 
-    let totalStars = 0;
-    LEVELS.forEach(lvl => {
-      totalStars += (state.levelStars[lvl.id] || 0);
-    });
+    const totalStars = getTotalStars();
 
     if (unlockedEl) unlockedEl.textContent = `第 ${state.unlockedLevel} 关 / 共 ${LEVELS.length} 关`;
-    if (starsEl) starsEl.textContent = `⭐ ${totalStars} / ${LEVELS.length * 3}`;
+    if (starsEl) starsEl.textContent = `⭐ ${totalStars} / ${(LEVELS.length + SONGS.length) * 3}`;
 
     container.innerHTML = LEVELS.map(lvl => {
       const isUnlocked = lvl.id <= state.unlockedLevel;
@@ -1121,7 +1211,7 @@
     }).join('') + (() => {
       const unlocked = (state.levelStars[LEVELS.length] || 0) > 0;
       return `
-        <div class="level-card ${unlocked ? 'unlocked' : 'locked'} ${state.isEndlessMode ? 'current' : ''}" data-endless="1">
+        <div class="level-card ${unlocked ? 'unlocked' : 'locked'} ${state.isEndlessMode && !state.song ? 'current' : ''}" data-endless="1">
           <div class="level-card-top">
             <span class="level-badge-num">♾️ 无尽</span>
             <span class="level-stars-display">${unlocked ? '🏆 ' + state.endlessBest : '🔒'}</span>
@@ -1130,11 +1220,40 @@
           <div class="level-card-desc">${unlocked ? '排满一排就消除' : '通关第 8 关后解锁'}</div>
         </div>
       `;
-    })();
+    })() + `
+      <div class="level-section-title">🎵 音乐盒 · 投对糖果就能弹出一首歌（弹错不扣心）</div>
+    ` + SONGS.map((song, i) => {
+      const unlocked = isSongUnlocked(song);
+      const stars = state.songStars[song.id] || 0;
+      const starStr = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+      const isCur = state.song && state.song.idx === i;
+      return `
+        <div class="level-card song-card ${unlocked ? (stars > 0 ? 'completed' : 'unlocked') : 'locked'} ${isCur ? 'current' : ''}" data-song="${i}">
+          <div class="level-card-top">
+            <span class="level-badge-num">${song.icon} 乐曲</span>
+            <span class="level-stars-display">${unlocked ? starStr : '🔒'}</span>
+          </div>
+          <div class="level-card-title">${song.title}</div>
+          <div class="level-card-desc">${unlocked ? `🎶 ${song.notes.length} 个音符` : `通关第 ${song.needLevel} 关后解锁`}</div>
+        </div>
+      `;
+    }).join('');
 
     // Attach click handlers
     container.querySelectorAll('.level-card').forEach(card => {
       card.addEventListener('click', () => {
+        if (card.dataset.song !== undefined) {
+          const songIdx = parseInt(card.dataset.song, 10);
+          const song = SONGS[songIdx];
+          if (song && isSongUnlocked(song)) {
+            startSong(songIdx);
+            document.getElementById('level-select-modal').classList.remove('open');
+          } else if (song) {
+            sfx.playMismatch();
+            addFloatingText(state.width / 2, state.height / 2, `🔒 通关第 ${song.needLevel} 关解锁《${song.title}》`, '#d97706', 1.15);
+          }
+          return;
+        }
         if (card.dataset.endless) {
           if ((state.levelStars[LEVELS.length] || 0) > 0) {
             startLevel(LEVELS.length, true, true);
@@ -1193,7 +1312,28 @@
     return needed.sort((a, b) => state.columnCounts[a] - state.columnCounts[b])[0];
   }
 
+  function makeSongCandy(seq) {
+    const note = state.song.def.notes[seq];
+    return {
+      colorIdx: note.col,
+      shape: COLOR_COLUMNS[note.col].shape,
+      specialType: 'normal',
+      timer: SONG_CONFIG.candyTimer,
+      maxTimer: SONG_CONFIG.candyTimer,
+      age: 0,
+      alignTime: 0,
+      isRainbow: false,
+      scale: 0.1,
+      seq
+    };
+  }
+
   function createRandomCandy() {
+    if (state.song) {
+      const s = state.song;
+      if (s.pos >= s.def.notes.length) return null;
+      return makeSongCandy(s.pos++);
+    }
     const lvlConfig = getLevelConfig();
     const colorIdx = pickNeededColorIndex();
 
@@ -1255,6 +1395,7 @@
       homing: !!opts.homing,
       splitDone: !!opts.splitDone,
       quick: !!opts.quick,
+      seq: opts.seq,
       rotation: (Math.random() - 0.5) * 0.3,
       vRot: (Math.random() - 0.5) * 2.5
     });
@@ -1276,7 +1417,7 @@
     const dropX = state.cloud.x;
     const dropY = state.cloud.y + state.cloud.height * 0.48;
     // Lightning-fast drop (before the countdown ring is ~1/3 used) earns a speed bonus if it lands right
-    const quick = c.timer > 0 && c.age <= Math.max(0.9, c.maxTimer * 0.32);
+    const quick = c.maxTimer < 1000 && c.timer > 0 && c.age <= Math.max(0.9, c.maxTimer * 0.32);
     // Rainbow wildcard aimed at a full column: steer it to the lowest column instead
     let steerTo = null;
     if (c.isRainbow) {
@@ -1288,7 +1429,7 @@
     }
 
     // Advance tutorial step in Level 1
-    if (state.currentLevel === 1) {
+    if (isTutorialLevel()) {
       if (state.tutorialStep === 1 || state.tutorialStep === 2) {
         state.tutorialStep = 3;
       }
@@ -1321,7 +1462,8 @@
         specialType: c.specialType,
         isRainbow: c.isRainbow,
         homing: steerTo !== null || (state.magnetTimer > 0 && c.specialType !== 'bomb'),
-        quick
+        quick,
+        seq: c.seq
       });
       if (steerTo !== null) addFloatingText(dropX, dropY + 20, '🌈 飞去最矮的柱子', '#7c3aed', 1.0);
     }
@@ -1390,7 +1532,7 @@
 
   function triggerFeverMode() {
     const lvlConfig = getLevelConfig();
-    if (!lvlConfig.features.fever || state.feverTimer > 0 || state.isLevelCleared) return;
+    if (!lvlConfig.features.fever || state.feverTimer > 0 || state.isLevelCleared || state.bonus) return;
     state.feverGauge = 100;
     state.feverTimer = 5.5;
     state.feverSpawnCd = 0.12;
@@ -1406,7 +1548,7 @@
       addFloatingText(state.topIconPos[iconIdx]?.x || state.width / 2, state.layout.topIconsY + 24, '🔒 第5关解锁', '#4f5d75', 1.05);
       return false;
     }
-    if (state.isLevelCleared || state.topIconCharge[iconIdx] < 100) return false;
+    if (state.isLevelCleared || state.bonus || state.topIconCharge[iconIdx] < 100) return false;
     state.topIconCharge[iconIdx] = 0;
     state.topIconBounce[iconIdx] = 16;
     state.screenShake = 6;
@@ -1502,6 +1644,12 @@
       const slotY = getSlotCenterY(state.columnCounts[colIdx] - 1);
       spawnBurstParticles(col.centerX, slotY, COLOR_COLUMNS[colIdx].lightHex, 14, isRainbow);
 
+      // Music Box: a full column pops like a firework and starts over
+      if (state.song) {
+        if (state.columnCounts[colIdx] >= target) popSongColumn(colIdx);
+        return;
+      }
+
       // Check column fill
       if (state.columnCounts[colIdx] === target && !state.isEndlessMode) {
         unlockSticker('first_tube');
@@ -1518,18 +1666,15 @@
   }
 
   function checkLevelClearCondition() {
-    if (state.isLevelCleared || state.isEndlessMode) return;
+    if (state.isLevelCleared || state.isEndlessMode || state.song || state.bonus) return;
     const lvlConfig = getLevelConfig();
     const activeCols = lvlConfig.activeCols;
     const target = lvlConfig.targetPerTube;
 
     const allFull = activeCols.every(cIdx => state.columnCounts[cIdx] >= target);
     if (allFull) {
-      if (state.currentLevel === 8) {
-        triggerGrandFinale();
-      } else {
-        triggerLevelClear();
-      }
+      // Every column is full: celebrate with a Bonus Candy Rain, then show the result card
+      startBonusRain(state.currentLevel === LEVELS.length);
     }
   }
 
@@ -1630,7 +1775,7 @@
 
   // A "Rainbow Row" = every active column has reached the same new height.
   function checkRainbowRow() {
-    if (state.isLevelCleared || state.isLevelFailed) return;
+    if (state.isLevelCleared || state.isLevelFailed || state.song) return;
     const lvlConfig = getLevelConfig();
     const active = lvlConfig.activeCols;
     if (active.length < 2) return;
@@ -1721,6 +1866,25 @@
 
   function collectLuckyCandy(lc) {
     const lvlConfig = getLevelConfig();
+    if (lc.kind === 'bonus') {
+      const b = state.bonus;
+      if (!b) return;
+      b.caught += 1;
+      b.pts += b.each;
+      state.score += b.each;
+      // Catches climb a pentatonic ladder, so a good streak sounds like a little tune
+      const noteIdx = b.caught <= BONUS_CATCH_NOTES.length ? b.caught - 1 : 5 + ((b.caught - 1) % 5);
+      sfx.playRealPianoNote(BONUS_CATCH_NOTES[noteIdx], 0.8, 0);
+      spawnBurstParticles(lc.x, lc.y, COLOR_COLUMNS[lc.colorIdx].lightHex, 10, false);
+      addFloatingText(lc.x, lc.y - 14, `+${b.each}`, '#fff', 1.1);
+      triggerHaptic('match');
+      state.cloud.mood = 'joy';
+      state.cloud.moodTimer = 0.6;
+      state.cloud.scaleX = 1.1;
+      state.cloud.scaleY = 0.92;
+      state.cloud.bounceY = 5;
+      return;
+    }
     spawnBurstParticles(lc.x, lc.y, lc.kind === 'heart' ? '#ff4d6d' : '#ffd700', 16, true);
     sfx.playLuckyCatch(lc.kind === 'heart');
     triggerHaptic('match');
@@ -1765,7 +1929,7 @@
 
   function updateLuckyCandies(dt) {
     const lvlConfig = getLevelConfig();
-    if (!state.isLevelCleared && state.currentLevel >= LUCKY_START_LEVEL && lvlConfig.activeCols.length) {
+    if (!state.isLevelCleared && !state.bonus && !state.song && state.currentLevel >= LUCKY_START_LEVEL && lvlConfig.activeCols.length) {
       state.luckySpawnTimer -= dt;
       if (state.luckySpawnTimer <= 0) {
         state.luckySpawnTimer = 5.5 + Math.random() * 3.5;
@@ -1796,7 +1960,7 @@
 
   // Swap the held candy with the "next" preview (keeps the countdown, so no stalling)
   function swapCandies() {
-    if (!state.activeCandy || !state.nextCandy || state.isLevelCleared || state.isLevelFailed) return false;
+    if (state.song || !state.activeCandy || !state.nextCandy || state.isLevelCleared || state.isLevelFailed) return false;
     const a = state.activeCandy;
     const n = state.nextCandy;
     const props = ['colorIdx', 'shape', 'specialType', 'isRainbow'];
@@ -1811,6 +1975,228 @@
     sfx.playRealPianoNote('G5', 0.6, 0);
     triggerHaptic('drop');
     return true;
+  }
+
+  /* ---------------- Bonus Candy Rain (after the last candy of a level) ---------------- */
+
+  function startBonusRain(isFinale) {
+    const s3 = getStarScores()[1] || 100;
+    state.bonus = {
+      timer: BONUS_RAIN_DURATION,
+      t: 0,
+      spawnCd: 0.7,
+      caught: 0,
+      pts: 0,
+      each: Math.max(1, Math.round(s3 / 100)),
+      seed: Math.random() * 6,
+      isFinale: !!isFinale
+    };
+    state.lastBonusPts = 0;
+    // Calm the playfield: nothing can hurt you during the bonus
+    state.activeCandy = null;
+    state.nextCandy = null;
+    state.feverTimer = 0;
+    state.feverGauge = 0;
+    state.windForce = 0;
+    state.windTimer = 0;
+    state.columnFrozen = [0, 0, 0, 0, 0, 0, 0];
+    state.columnBugs = [null, null, null, null, null, null, null];
+    state.multiplierGates = [];
+    state.luckyCandies = [];
+    state.fallingCandies.forEach(fc => {
+      if (fc.specialType === 'bomb') {
+        fc.specialType = 'normal';
+        fc.isRainbow = true;
+      }
+    });
+    state.cloud.mood = 'joy';
+    state.cloud.moodTimer = 1.2;
+    showBanner('🎁 奖励糖果雨！', '#ec4899', '左右移动云朵，接住掉下来的糖果！');
+    triggerHaptic('combo');
+    updateHUD();
+  }
+
+  function updateBonusRain(dt) {
+    const b = state.bonus;
+    if (!b) return;
+    b.t += dt;
+    b.timer -= dt;
+    const cols = state.layout.columns;
+    const active = getLevelConfig().activeCols;
+    const minX = cols[Math.min(...active)].centerX;
+    const maxX = cols[Math.max(...active)].centerX;
+    b.spawnCd -= dt;
+    if (b.spawnCd <= 0 && b.timer > 1.4) {
+      b.spawnCd = 0.24;
+      // The rain snakes left and right so there is always a stream to chase
+      const mid = (minX + maxX) / 2;
+      const range = (maxX - minX) / 2;
+      const bx = mid + Math.sin(b.t * 1.7 + b.seed) * range * 0.95 + (Math.random() - 0.5) * state.cloud.width * 0.5;
+      state.luckyCandies.push({
+        baseX: Math.max(minX, Math.min(maxX, bx)),
+        x: bx,
+        y: -18,
+        vy: 125 + Math.random() * 25,
+        phase: Math.random() * Math.PI * 2,
+        sway: 5,
+        kind: 'bonus',
+        colorIdx: active[Math.floor(Math.random() * active.length)],
+        spin: Math.random() * 6,
+        life: 1
+      });
+    }
+    updateHUD();
+    if (b.timer <= 0) endBonusRain();
+  }
+
+  function endBonusRain() {
+    const b = state.bonus;
+    if (!b) return;
+    state.bonus = null;
+    state.lastBonusPts = b.pts;
+    state.luckyCandies = [];
+    if (b.caught >= 15) unlockSticker('candy_catcher');
+    if (b.isFinale) triggerGrandFinale(); else triggerLevelClear();
+  }
+
+  /* ---------------- Music Box mode ---------------- */
+
+  function startSong(songIdx) {
+    startLevel(state.currentLevel, true, false, songIdx);
+  }
+
+  // Replay whatever is being played right now (level / endless / song)
+  function restartCurrent(autoIntro = true) {
+    if (state.song) startLevel(state.currentLevel, autoIntro, false, state.song.idx);
+    else startLevel(state.currentLevel, autoIntro, state.isEndlessMode);
+  }
+
+  function getSongLyric(def, seq) {
+    if (def.lyrics && def.lyrics[seq]) return def.lyrics[seq];
+    const col = COLOR_COLUMNS[def.notes[seq].col];
+    return col.solfege.split(' ')[1] || '';
+  }
+
+  function popSongColumn(colIdx) {
+    const col = state.layout.columns[colIdx];
+    state.columnCounts[colIdx] = 0;
+    state.columnStacks[colIdx] = [];
+    state.score += 20;
+    if (col) {
+      for (let k = 0; k < 4; k++) {
+        spawnBurstParticles(col.centerX, getSlotCenterY(k * 3), '#ffd700', 14, true);
+      }
+      addFloatingText(col.centerX, col.topY + 40, '🎆 +20', '#d97706', 1.3);
+    }
+    state.screenShake = Math.max(state.screenShake, 4);
+  }
+
+  // A correct note landed: play it (the tune is literally made of your drops)
+  function onSongNoteLanded(fc, col, landingY) {
+    const s = state.song;
+    s.landed += 1;
+    sfx.playMatch(fc.colorIdx);
+    const lyric = fc.seq !== undefined ? getSongLyric(s.def, fc.seq) : '';
+    if (lyric) addFloatingText(col.centerX, landingY - 46, `♪ ${lyric}`, COLOR_COLUMNS[fc.colorIdx].lightHex, 1.35);
+    if (s.landed >= s.def.notes.length) triggerSongClear();
+  }
+
+  // Wrong lane in the Music Box: no heart lost, the same note simply comes back to the cloud
+  function onSongNoteMissed(fc) {
+    const s = state.song;
+    s.mistakes += 1;
+    state.combo = 0;
+    state.pendingDropCol = -1;
+    sfx.playMismatch();
+    triggerHaptic('error');
+    state.cloud.mood = 'oops';
+    state.cloud.moodTimer = 0.6;
+    state.columnHighlight[fc.colorIdx] = 1.8;
+    spawnBurstParticles(fc.x, fc.y, '#94a3b8', 12, false);
+    addFloatingText(fc.x, Math.min(fc.y - 10, state.layout.columnsTopY + 50), `再试一次 → ${COLOR_COLUMNS[fc.colorIdx].name}`, '#e11d48', 1.1);
+    if (fc.seq !== undefined) {
+      if (state.nextCandy) s.pos -= 1;
+      state.nextCandy = state.activeCandy;
+      state.activeCandy = makeSongCandy(fc.seq);
+    }
+    updateHUD();
+  }
+
+  function triggerSongClear() {
+    if (state.isLevelCleared) return;
+    const s = state.song;
+    state.isLevelCleared = true;
+    state.pendingDropCol = -1;
+    const total = s.def.notes.length;
+    s.stars = s.mistakes === 0 ? 3 : (s.mistakes <= Math.max(2, Math.floor(total * 0.12)) ? 2 : 1);
+    const starsBefore = getTotalStars();
+    state.songStars[s.def.id] = Math.max(state.songStars[s.def.id] || 0, s.stars);
+    s.outfitText = getNewOutfitText(starsBefore);
+    saveProgress();
+    unlockSticker('music_box');
+    triggerHaptic('clear');
+    spawnVictoryConfetti();
+
+    // Encore: the whole tune plays back in rhythm while the columns dance
+    let t = 1.0;
+    const events = s.def.notes.map((n, seq) => {
+      const ev = { t, col: n.col, seq };
+      t += n.beats * s.def.beat;
+      return ev;
+    });
+    state.songPlayback = { t: 0, i: 0, events, end: t + 0.5 };
+    showBanner(`🎵 听！你弹的《${s.def.title}》`, '#7c3aed', '点一下屏幕可以跳过');
+  }
+
+  function updateSongPlayback(dt) {
+    const pb = state.songPlayback;
+    if (!pb) return;
+    pb.t += dt;
+    const cols = state.layout.columns;
+    while (pb.i < pb.events.length && pb.t >= pb.events[pb.i].t) {
+      const ev = pb.events[pb.i++];
+      sfx.playMatch(ev.col);
+      state.columnPunchY[ev.col] = 10;
+      state.columnHighlight[ev.col] = 1.6;
+      state.cloud.targetX = cols[ev.col].centerX;
+      state.cloud.bounceY = -8;
+      spawnBurstParticles(cols[ev.col].centerX, cols[ev.col].topY + 24, COLOR_COLUMNS[ev.col].lightHex, 8, false);
+      addFloatingText(cols[ev.col].centerX, cols[ev.col].topY - 6, `♪ ${getSongLyric(state.song.def, ev.seq)}`, COLOR_COLUMNS[ev.col].lightHex, 1.3);
+    }
+    if (pb.t >= pb.end) finishSongPlayback();
+  }
+
+  function finishSongPlayback() {
+    if (!state.songPlayback || !state.song) return;
+    state.songPlayback = null;
+    const s = state.song;
+    const total = s.def.notes.length;
+    const stars = s.stars || 1;
+
+    document.getElementById('level-clear-title').textContent = `🎵 《${s.def.title}》演奏完成！`;
+    document.getElementById('level-clear-stars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+    const praise = s.mistakes === 0
+      ? '一个音都没弹错，完美演奏！'
+      : `弹错了 ${s.mistakes} 个音，再弹一次会更好听！`;
+    document.getElementById('level-clear-desc').textContent = praise + (s.outfitText || '');
+    document.getElementById('lc-candies').textContent = `${total} 个音符`;
+    document.getElementById('lc-time').textContent = formatTime(state.playTime);
+    document.getElementById('lc-combo').textContent = state.maxCombo;
+    document.getElementById('lc-score').textContent = state.score;
+
+    const nextSong = SONGS[s.idx + 1];
+    const nextTipEl = document.getElementById('level-unlock-next-tip');
+    if (nextTipEl) {
+      nextTipEl.style.display = 'inline-block';
+      if (!nextSong) nextTipEl.textContent = '🎉 所有曲子都会弹啦！';
+      else if (isSongUnlocked(nextSong)) nextTipEl.textContent = `🎶 下一首：《${nextSong.title}》`;
+      else nextTipEl.textContent = `🔒 通关第 ${nextSong.needLevel} 关解锁《${nextSong.title}》`;
+    }
+    const nextBtn = document.getElementById('btn-next-level');
+    if (nextBtn) nextBtn.textContent = nextSong && isSongUnlocked(nextSong) ? '🎶 弹下一首' : '🗺️ 回到地图';
+
+    sfx.playStarChime(stars - 1);
+    document.getElementById('level-clear-modal').classList.add('open');
   }
 
   const IS_TOUCH = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
@@ -1829,9 +2215,15 @@
     const lvlConfig = getLevelConfig();
     const totalTarget = getLevelTotalTarget(lvlConfig);
 
-    if (state.isEndlessMode) {
+    if (state.song) {
+      document.getElementById('level-val').textContent = `🎵 ${state.song.def.title}`;
+      document.getElementById('target-progress-val').textContent = `${state.song.landed}/${state.song.def.notes.length}`;
+    } else if (state.isEndlessMode) {
       document.getElementById('level-val').textContent = '♾️ 无尽';
       document.getElementById('target-progress-val').textContent = `消 ${state.endlessRows} 排`;
+    } else if (state.bonus) {
+      document.getElementById('level-val').textContent = `${state.currentLevel}/${LEVELS.length}`;
+      document.getElementById('target-progress-val').textContent = `🎁 ${Math.max(0, Math.ceil(state.bonus.timer))}秒`;
     } else {
       document.getElementById('level-val').textContent = `${state.currentLevel}/${LEVELS.length}`;
       document.getElementById('target-progress-val').textContent = `${state.levelCollected}/${totalTarget}`;
@@ -1840,7 +2232,9 @@
     // Score pill shows the next star goal
     const [s2, s3] = getStarScores(lvlConfig);
     let scoreText = `${state.score}`;
-    if (state.isEndlessMode) {
+    if (state.song) {
+      scoreText = `${state.score}`;
+    } else if (state.isEndlessMode) {
       scoreText = `${state.score} 🏆${Math.max(state.endlessBest, state.score)}`;
     } else if (state.score >= s3) {
       scoreText = `${state.score} ⭐⭐⭐`;
@@ -1858,6 +2252,7 @@
       }
       heartsEl.textContent = heartStr;
       const heartsPill = document.getElementById('hud-hearts-pill');
+      if (heartsPill) heartsPill.style.display = state.song ? 'none' : '';
       if (heartsPill) heartsPill.classList.toggle('critical', state.hearts === 1 && state.maxHearts > 1);
     }
 
@@ -1902,7 +2297,9 @@
     hideLevelIntroToast();
     const nameEl = document.getElementById('pause-level-name');
     if (nameEl) {
-      nameEl.textContent = state.isEndlessMode
+      nameEl.textContent = state.song
+        ? `🎵 音乐盒 · 《${state.song.def.title}》`
+        : state.isEndlessMode
         ? `♾️ 无尽模式 · 已消 ${state.endlessRows} 排`
         : `第 ${state.currentLevel} 关 · ${getLevelConfig().title}`;
     }
@@ -1932,14 +2329,14 @@
       clearTimeout(introToastTimer);
       introToastTimer = null;
     }
-    const lvlConfig = state.isEndlessMode ? ENDLESS_CONFIG : getLevelConfig(lvl);
+    const lvlConfig = state.song ? SONG_CONFIG : (state.isEndlessMode ? ENDLESS_CONFIG : getLevelConfig(lvl));
     const toast = document.getElementById('level-intro-toast');
     const tagEl = document.getElementById('toast-level-num');
     const titleEl = document.getElementById('toast-level-title');
     const tipEl = document.getElementById('toast-level-tip');
 
     if (toast && tagEl && titleEl && tipEl) {
-      tagEl.textContent = state.isEndlessMode ? '♾️ 无尽' : `第 ${lvlConfig.id} 关`;
+      tagEl.textContent = state.song ? '🎵 音乐盒' : (state.isEndlessMode ? '♾️ 无尽' : `第 ${lvlConfig.id} 关`);
       titleEl.textContent = `${lvlConfig.title} · ${lvlConfig.subtitle}`;
       tipEl.textContent = lvlConfig.tip;
       toast.classList.add('show');
@@ -1984,6 +2381,7 @@
     if (starsCount === 3) unlockSticker('speed_star');
 
     // Save Stars & Unlocked Level
+    const totalStarsBefore = getTotalStars();
     const prevStars = state.levelStars[state.currentLevel] || 0;
     if (starsCount > prevStars) {
       state.levelStars[state.currentLevel] = starsCount;
@@ -2012,7 +2410,10 @@
       const need = (state.score >= starInfo.s2 ? starInfo.s3 : starInfo.s2) - state.score;
       if (need > 0) nextStarTip = ` 再多 ${need} 分就能多 1 颗星！`;
     }
-    document.getElementById('level-clear-desc').textContent = `【${lvlConfig.title}】完成！${heartBadge}${nextStarTip}`;
+    const bonusTip = state.lastBonusPts > 0 ? ` 🎁 糖果雨 +${state.lastBonusPts} 分！` : '';
+    document.getElementById('level-clear-desc').textContent = `【${lvlConfig.title}】完成！${heartBadge}${bonusTip}${nextStarTip}${getNewOutfitText(totalStarsBefore)}`;
+    const nextBtnEl = document.getElementById('btn-next-level');
+    if (nextBtnEl) nextBtnEl.textContent = '🚀 进入下一关';
     document.getElementById('lc-candies').textContent = `${state.levelCollected} / ${getLevelTotalTarget(lvlConfig)}`;
     document.getElementById('lc-time').textContent = formatTime(elapsed);
     document.getElementById('lc-combo').textContent = state.maxCombo;
@@ -2134,6 +2535,7 @@
 
     const finaleStars = computeStars().stars;
     if (finaleStars === 3) unlockSticker('speed_star');
+    const totalStarsBefore = getTotalStars();
     state.levelStars[8] = Math.max(state.levelStars[8] || 0, finaleStars);
     const prevHigh8 = state.levelHighScores[8] || 0;
     if (state.score > prevHigh8) state.levelHighScores[8] = state.score;
@@ -2148,7 +2550,7 @@
 
     const unlockMsgEl = document.getElementById('win-unlock-msg');
     if (unlockMsgEl) {
-      unlockMsgEl.textContent = '7 根彩虹柱全部装满！♾️ 无尽模式已解锁，来挑战最高分吧！';
+      unlockMsgEl.textContent = '7 根彩虹柱全部装满！♾️ 无尽模式已解锁，来挑战最高分吧！' + getNewOutfitText(totalStarsBefore);
     }
 
     spawnVictoryConfetti();
@@ -2158,9 +2560,19 @@
     }, 700);
   }
 
-  function startLevel(lvlIndex, autoIntro = true, endless = false) {
+  function startLevel(lvlIndex, autoIntro = true, endless = false, songIdx = -1) {
     state.currentLevel = Math.max(1, Math.min(LEVELS.length, lvlIndex));
     state.isEndlessMode = !!endless;
+    state.song = SONGS[songIdx] ? { idx: songIdx, def: SONGS[songIdx], pos: 0, landed: 0, mistakes: 0 } : null;
+    if (state.song) {
+      state.isEndlessMode = false;
+      SONG_CONFIG.title = `《${state.song.def.title}》`;
+      SONG_CONFIG.activeCols = Array.from(new Set(state.song.def.notes.map(n => n.col))).sort((a, b) => a - b);
+    }
+    state.songPlayback = null;
+    state.pendingDropCol = -1;
+    state.bonus = null;
+    state.lastBonusPts = 0;
     ENDLESS_CONFIG.candyTimer = ENDLESS_BASE_TIMER;
     state.endlessRows = 0;
     state.checkpoint = null;
@@ -2222,7 +2634,7 @@
     state.luckyCount = 0;
 
     // Reset tutorial in Level 1
-    if (state.currentLevel === 1) {
+    if (isTutorialLevel()) {
       state.tutorialStep = 0;
       state.tutorialTimer = 0;
     } else {
@@ -2293,7 +2705,7 @@
     if (!state.isLevelCleared && !state.isLevelFailed) state.playTime += dt;
     const lvlConfig = getLevelConfig();
 
-    sfx.updateBGM(dt, state.feverTimer > 0);
+    if (!state.song) sfx.updateBGM(dt, state.feverTimer > 0);
 
     if (state.screenShake > 0) {
       state.screenShake = Math.max(0, state.screenShake - dt * 20);
@@ -2359,8 +2771,8 @@
 
     // Victory celebration state updates
     if (state.isLevelCleared) {
-      if (Math.random() < 0.15) spawnVictoryConfetti();
-      state.cloud.bounceY = Math.sin(performance.now() * 0.008) * 6;
+      if (Math.random() < (state.songPlayback ? 0.015 : 0.15)) spawnVictoryConfetti();
+      if (!state.songPlayback) state.cloud.bounceY = Math.sin(performance.now() * 0.008) * 6;
       state.cloud.mood = 'joy';
     }
 
@@ -2395,7 +2807,7 @@
     }
 
     // Multiplier Gates update & spawn
-    if (!state.isLevelCleared && lvlConfig.features.multiplierGates) {
+    if (!state.isLevelCleared && !state.bonus && lvlConfig.features.multiplierGates) {
       state.gateSpawnTimer -= dt;
       if (state.gateSpawnTimer <= 0) {
         state.gateSpawnTimer = 4.5 + Math.random() * 2.5;
@@ -2416,7 +2828,7 @@
     }
 
     // Troublemaker Hazards (Caterpillar bugs, Frost, Gentle Wind)
-    if (!state.isLevelCleared && lvlConfig.features.hazards) {
+    if (!state.isLevelCleared && !state.bonus && lvlConfig.features.hazards) {
       state.hazardSpawnTimer -= dt;
       if (state.hazardSpawnTimer <= 0) {
         state.hazardSpawnTimer = 9.0 + Math.random() * 3.0;
@@ -2477,6 +2889,17 @@
     state.cloud.x += (state.cloud.targetX - state.cloud.x) * Math.min(1, lerpFactor * dt);
     state.cloud.vx = (state.cloud.x - prevX) / Math.max(dt, 0.001);
 
+    // Music Box: a tapped lane drops as soon as the cloud arrives over it
+    if (state.pendingDropCol >= 0) {
+      const pc = cols[state.pendingDropCol];
+      if (!state.song || !pc || !state.activeCandy || state.isLevelCleared) {
+        state.pendingDropCol = -1;
+      } else if (Math.abs(state.cloud.x - pc.centerX) < Math.max(4, pc.width * 0.12)) {
+        state.pendingDropCol = -1;
+        dropActiveCandy();
+      }
+    }
+
     const targetEyeOffset = Math.max(-5, Math.min(5, state.cloud.vx * 0.015));
     state.cloud.eyeOffsetX += (targetEyeOffset - state.cloud.eyeOffsetX) * Math.min(1, 10 * dt);
 
@@ -2488,7 +2911,7 @@
     state.cloud.scaleX += (1 - state.cloud.scaleX) * Math.min(1, 15 * dt);
     state.cloud.scaleY += (1 - state.cloud.scaleY) * Math.min(1, 15 * dt);
 
-    if (!state.isLevelCleared) {
+    if (!state.isLevelCleared || state.songPlayback) {
       state.cloud.bounceY *= Math.pow(0.08, dt);
     }
     if (state.cloud.moodTimer > 0) {
@@ -2522,7 +2945,7 @@
     }
 
     // Tutorial step progression in Level 1
-    if (state.currentLevel === 1 && state.activeCandy) {
+    if (isTutorialLevel() && state.activeCandy) {
       const targetCol = state.activeCandy.colorIdx;
       const isAligned = currentHoverCol === targetCol;
       if (state.tutorialStep === 0 && Math.abs(state.cloud.vx) > 30) {
@@ -2536,7 +2959,7 @@
     }
 
     // Active Candy Countdown
-    if (!state.isLevelCleared) {
+    if (!state.isLevelCleared && !state.bonus) {
       if (!state.activeCandy) {
         spawnNextCandyOnCloud();
       } else {
@@ -2744,7 +3167,7 @@
             );
 
             // Tutorial feedback in Level 1
-            if (state.currentLevel === 1) {
+            if (isTutorialLevel()) {
               if (state.levelCollected === 1) {
                 addFloatingText(state.width / 2, state.cloud.y - 20, '🎉 放对啦！', '#1d8f24', 1.25);
               } else if (state.levelCollected >= 2 && state.tutorialStep < 4) {
@@ -2767,9 +3190,15 @@
             addFloatingText(col.centerX, landingY - 18, '⭐ +5', '#ffd700', 1.15);
           }
 
+          if (state.song) onSongNoteLanded(fc, col, landingY);
           updateHUD();
         } else {
           // Mismatch or dropped into inactive column
+          if (state.song) {
+            state.fallingCandies.splice(i, 1);
+            onSongNoteMissed(fc);
+            continue;
+          }
           const targetName = COLOR_COLUMNS[fc.colorIdx].name;
           spawnBurstParticles(fc.x, fc.y, '#e11d48', 26, false);
           state.columnHighlight[fc.colorIdx] = 1.8;
@@ -2845,6 +3274,8 @@
     }
 
     updateLuckyCandies(dt);
+    updateBonusRain(dt);
+    updateSongPlayback(dt);
 
     // Hot-streak sparkle trail under the cloud at high combo
     if (!state.isLevelCleared && state.combo >= 6 && Math.random() < dt * 22) {
@@ -2937,6 +3368,12 @@
       ctx.beginPath();
       ctx.arc(lc.x, lc.y, 26, 0, Math.PI * 2);
       ctx.fill();
+
+      if (lc.kind === 'bonus') {
+        drawCandy(ctx, lc.x, lc.y, state.layout.candyRadius * 0.85, lc.colorIdx, COLOR_COLUMNS[lc.colorIdx].shape, false, Math.sin(lc.spin) * 0.35);
+        ctx.restore();
+        continue;
+      }
 
       ctx.translate(lc.x, lc.y);
       ctx.strokeStyle = '#282a24';
@@ -3567,6 +4004,8 @@
       ctx.stroke();
     }
 
+    drawCloudOutfit(ctx, x, y, halfH, eyeSpacing, eyeY);
+
     // Combo multiplier badge on the cloud's left
     const comboTier = getComboTier();
     if (comboTier) {
@@ -3590,8 +4029,37 @@
       ctx.restore();
     }
 
-    // Next Candy Preview Bubble on Cloud's Right (Bigger & Clearer)
-    if (state.nextCandy) {
+    // Music Box: the bubble shows the next notes of the tune instead of the swap button
+    if (state.song) {
+      const s = state.song;
+      const upcoming = [];
+      if (state.nextCandy) upcoming.push(state.nextCandy.colorIdx);
+      for (let k = s.pos; k < s.def.notes.length && upcoming.length < 3; k++) upcoming.push(s.def.notes[k].col);
+      if (upcoming.length && !state.isLevelCleared) {
+        const r = getNextBubbleRect(false);
+        ctx.fillStyle = 'rgba(255,255,255,0.97)';
+        ctx.strokeStyle = '#282a24';
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.roundRect(r.x, r.y, r.w, r.h, r.h / 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#7c3aed';
+        ctx.font = `bold ${r.big ? 15 : 13}px sans-serif`;
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('♪', r.x + 7, r.y + r.h / 2 + 1);
+        ctx.textBaseline = 'alphabetic';
+        const dotR = r.big ? 9 : 7.5;
+        const startX = r.x + 20 + dotR;
+        const stepX = (r.w - 26 - dotR * 2) / 2;
+        upcoming.forEach((cIdx, k) => {
+          ctx.globalAlpha = 1 - k * 0.22;
+          drawCandy(ctx, startX + k * stepX, r.y + r.h / 2, dotR, cIdx, COLOR_COLUMNS[cIdx].shape, false, 0, 1, 'normal');
+        });
+        ctx.globalAlpha = 1;
+      }
+    } else if (state.nextCandy) {
       const nc = state.nextCandy;
       const r = getNextBubbleRect(false);
       ctx.fillStyle = 'rgba(255,255,255,0.97)';
@@ -3652,6 +4120,47 @@
 
       drawCandy(ctx, candyX, candyY, candyR, ac.colorIdx, ac.shape, ac.isRainbow, Math.sin(performance.now() * 0.005) * 0.12, 1, ac.specialType);
     }
+  }
+
+  // The outfit picked in the dress-up menu (drawn inside the cloud's own transform)
+  function drawCloudOutfit(ctx, x, y, halfH, eyeSpacing, eyeY) {
+    const outfit = OUTFITS.find(o => o.id === state.outfit);
+    if (!outfit || outfit.id === 'none') return;
+    ctx.save();
+    if (outfit.id === 'glasses') {
+      const lw = Math.max(15, eyeSpacing * 0.8);
+      const lh = 11;
+      ctx.fillStyle = '#1f2937';
+      ctx.strokeStyle = '#111827';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(x - eyeSpacing - lw / 2, eyeY - lh / 2 - 1, lw, lh, 4);
+      ctx.roundRect(x + eyeSpacing - lw / 2, eyeY - lh / 2 - 1, lw, lh, 4);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(x - eyeSpacing + lw / 2, eyeY - 2);
+      ctx.lineTo(x + eyeSpacing - lw / 2, eyeY - 2);
+      ctx.stroke();
+      // Little shine on each lens
+      ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(x - eyeSpacing - lw * 0.25, eyeY + 1);
+      ctx.lineTo(x - eyeSpacing - lw * 0.05, eyeY - 4);
+      ctx.moveTo(x + eyeSpacing - lw * 0.25, eyeY + 1);
+      ctx.lineTo(x + eyeSpacing - lw * 0.05, eyeY - 4);
+      ctx.stroke();
+    } else {
+      const size = Math.round(Math.max(22, Math.min(34, state.cloud.height * 0.62)));
+      ctx.translate(x - 2, y - halfH + size * 0.2);
+      ctx.rotate(-0.1);
+      ctx.font = `${size}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillStyle = '#000';
+      ctx.fillText(outfit.icon, 0, 0);
+    }
+    ctx.restore();
   }
 
   function drawRainbowColumns(ctx) {
@@ -3903,7 +4412,7 @@
 
   // Draw Interactive Tutorial Helpers on Canvas for Level 1 (Highlights Target Column without Obstructing Candies)
   function drawTutorialOverlay(ctx) {
-    if (state.currentLevel !== 1 || state.tutorialStep >= 4 || !state.activeCandy) return;
+    if (!isTutorialLevel() || state.tutorialStep >= 4 || !state.activeCandy) return;
 
     const targetColIdx = state.activeCandy.colorIdx;
     const colObj = state.layout.columns[targetColIdx];
@@ -4086,6 +4595,19 @@
 
     drawBanner(ctx);
 
+    // Bonus Candy Rain: rainbow time bar along the top edge
+    if (state.bonus) {
+      const frac = Math.max(0, state.bonus.timer / BONUS_RAIN_DURATION);
+      const barGrad = ctx.createLinearGradient(0, 0, state.width, 0);
+      COLOR_COLUMNS.forEach((c, i) => barGrad.addColorStop(i / (COLOR_COLUMNS.length - 1), c.hex));
+      ctx.save();
+      ctx.fillStyle = 'rgba(40, 42, 36, 0.12)';
+      ctx.fillRect(0, 0, state.width, 7);
+      ctx.fillStyle = barGrad;
+      ctx.fillRect(0, 0, state.width * frac, 7);
+      ctx.restore();
+    }
+
     // Gentle heart-loss flash (red edge glow only)
     if (state.heartLossFlash > 0) {
       ctx.save();
@@ -4207,6 +4729,13 @@
     sfx.init();
     hideLevelIntroToast();
 
+    // Tap anywhere to skip the end-of-song encore
+    if (state.songPlayback) {
+      finishSongPlayback();
+      return;
+    }
+    state.pendingDropCol = -1;
+
     const px = getCanvasX(e.clientX);
     const py = getCanvasY(e.clientY);
 
@@ -4258,12 +4787,17 @@
       const tappedCol = getColumnIndexAtX(px);
       const col = state.layout.columns[tappedCol];
       // Play the note of the color column that was tapped (tap on the cloud -> the column under the cloud)
-      if (!isGamePaused()) {
+      if (!isGamePaused() && !state.song) {
         const soundCol = state.tapStartOnCloud ? state.tapStartCloudCol : tappedCol;
         if (state.layout.columns[soundCol]) sfx.playMatch(soundCol);
       }
       if (state.tapStartOnCloud) {
         dropActiveCandy();
+      } else if (state.song && col) {
+        // Music Box plays like a piano: one tap on a lane = fly there and drop
+        state.cloud.targetX = col.centerX;
+        clampCloudX();
+        state.pendingDropCol = tappedCol;
       } else if (tappedCol === state.tapStartCloudCol && col) {
         state.cloud.targetX = col.centerX;
         clampCloudX();
@@ -4289,6 +4823,10 @@
     } else if (e.key === ' ' || e.key === 'ArrowDown' || e.key === 'Enter' || e.key === 's' || e.key === 'S') {
       e.preventDefault();
       if (isGamePaused()) return;
+      if (state.songPlayback) {
+        finishSongPlayback();
+        return;
+      }
       if (state.activeCandy && state.activeCandy.specialType === 'bomb') {
         discardHeldBomb();
       } else {
@@ -4311,6 +4849,7 @@
       if (state.layout.columns[idx]) {
         state.cloud.targetX = state.layout.columns[idx].centerX;
         clampCloudX();
+        if (state.song && !isGamePaused()) state.pendingDropCol = idx;
       }
     }
   });
@@ -4357,6 +4896,8 @@
       state.unlockedLevel = 1;
       state.levelStars = {};
       state.levelHighScores = {};
+      state.songStars = {};
+      state.outfit = 'none';
       saveProgress();
       startLevel(1);
     });
@@ -4365,6 +4906,12 @@
   // Level Clear buttons
   document.getElementById('btn-next-level').addEventListener('click', () => {
     levelClearModal.classList.remove('open');
+    if (state.song) {
+      const nextIdx = state.song.idx + 1;
+      if (SONGS[nextIdx] && isSongUnlocked(SONGS[nextIdx])) startSong(nextIdx);
+      else openLevelMap();
+      return;
+    }
     if (state.currentLevel < LEVELS.length) {
       startLevel(state.currentLevel + 1);
     } else {
@@ -4373,7 +4920,7 @@
   });
   document.getElementById('btn-replay-level').addEventListener('click', () => {
     levelClearModal.classList.remove('open');
-    startLevel(state.currentLevel);
+    restartCurrent(true);
   });
   document.getElementById('btn-open-map').addEventListener('click', () => {
     levelClearModal.classList.remove('open');
@@ -4385,7 +4932,7 @@
   if (btnRetryLevel) {
     btnRetryLevel.addEventListener('click', () => {
       levelFailModal.classList.remove('open');
-      startLevel(state.currentLevel, true, state.isEndlessMode);
+      restartCurrent(true);
     });
   }
   const btnCheckpoint = document.getElementById('btn-checkpoint-level');
@@ -4407,7 +4954,7 @@
   document.getElementById('btn-quick-reset').addEventListener('click', () => {
     document.getElementById('pause-modal').classList.remove('open');
     askConfirm('重新开始这一关？', '这一关现在的进度会清零。', () => {
-      startLevel(state.currentLevel, false, state.isEndlessMode);
+      restartCurrent(false);
       addFloatingText(state.width / 2, state.cloud.y - 20, '🔄 重新开始', '#4f5d75', 1.1);
     });
   });
@@ -4469,6 +5016,50 @@
     stickerModal.classList.remove('open');
   });
 
+  // Cloud Dress-up Modal
+  const outfitModal = document.getElementById('outfit-modal');
+  function renderOutfitModal() {
+    const container = document.getElementById('outfit-grid-container');
+    const label = document.getElementById('outfit-stars-label');
+    if (!container) return;
+    const total = getTotalStars();
+    if (label) label.textContent = `⭐ ${total}`;
+    container.innerHTML = OUTFITS.map(o => {
+      const unlocked = total >= o.need;
+      const wearing = state.outfit === o.id;
+      const desc = wearing ? '✅ 正在穿' : (unlocked ? '点一下穿上' : `再拿 ${o.need - total} 颗 ⭐ 解锁`);
+      return `
+        <div class="sticker-card outfit-card ${unlocked ? 'unlocked' : 'locked'} ${wearing ? 'wearing' : ''}" data-outfit="${o.id}">
+          <div class="sticker-icon">${unlocked ? o.icon : '🔒'}</div>
+          <div class="sticker-info">
+            <h4>${o.name}</h4>
+            <p>${desc}</p>
+          </div>
+        </div>
+      `;
+    }).join('');
+    container.querySelectorAll('.outfit-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const o = OUTFITS.find(x => x.id === card.dataset.outfit);
+        if (!o) return;
+        if (getTotalStars() < o.need) {
+          sfx.playMismatch();
+          return;
+        }
+        state.outfit = o.id;
+        saveProgress();
+        sfx.playRealPianoNote('G5', 0.7, 0);
+        renderOutfitModal();
+      });
+    });
+  }
+  document.getElementById('btn-outfit').addEventListener('click', () => {
+    renderOutfitModal();
+    outfitModal.classList.add('open');
+  });
+  document.getElementById('close-outfit-modal').addEventListener('click', () => outfitModal.classList.remove('open'));
+  document.getElementById('btn-music-box').addEventListener('click', openLevelMap);
+
   // Fever Pill click
   document.getElementById('fever-pill').addEventListener('click', () => {
     if (state.feverGauge >= 100 && state.feverTimer <= 0) {
@@ -4484,7 +5075,7 @@
     document.getElementById('pause-modal').classList.remove('open');
   });
   // Any menu entry closes the pause card first (the opened dialog keeps the game paused)
-  ['btn-level-map', 'btn-tutorial-hint', 'btn-stickers', 'btn-art'].forEach(id => {
+  ['btn-level-map', 'btn-tutorial-hint', 'btn-stickers', 'btn-art', 'btn-outfit', 'btn-music-box'].forEach(id => {
     document.getElementById(id).addEventListener('click', () => {
       document.getElementById('pause-modal').classList.remove('open');
     }, true);

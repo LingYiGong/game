@@ -687,6 +687,39 @@ html, body {
   box-shadow: 0 1px 0 var(--ink-dark);
 }
 
+/* Music Box section inside the level map */
+.level-section-title {
+  grid-column: 1 / -1;
+  margin-top: 6px;
+  padding: 6px 10px;
+  font-size: 14px;
+  font-weight: 900;
+  color: #7c3aed;
+  background: #f3ecff;
+  border: 2px dashed #b9a2f0;
+  border-radius: 12px;
+}
+
+.level-card.song-card.unlocked,
+.level-card.song-card.completed {
+  background: linear-gradient(135deg, #fbf8ff 0%, #ede4ff 100%);
+}
+
+/* Cloud dress-up cards */
+.outfit-card {
+  cursor: pointer;
+}
+
+.outfit-card.unlocked:active {
+  transform: scale(0.97);
+}
+
+.outfit-card.wearing {
+  border-color: #1d8f24;
+  background: linear-gradient(135deg, #f4fff2 0%, #d6f5d0 100%);
+  box-shadow: 2px 2px 0 rgba(29, 143, 36, 0.3);
+}
+
 /* Sticker Collection Grid */
 .sticker-grid {
   display: grid;

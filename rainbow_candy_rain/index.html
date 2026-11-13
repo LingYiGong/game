@@ -12,7 +12,7 @@
   <meta name="description" content="彩虹糖下雨（关卡闯关与教学进阶版）" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍬</text></svg>" />
   <title>彩虹糖下雨 - 魔法大闯关</title>
-  <link rel="stylesheet" href="style.css?v=20261113b" />
+  <link rel="stylesheet" href="style.css?v=20261113c" />
 </head>
 <body>
   <div id="app-shell">
@@ -64,6 +64,8 @@
       <div class="pause-grid">
         <button class="btn-cute" id="btn-level-map">🗺️ 关卡地图</button>
         <button class="btn-cute" id="btn-tutorial-hint">💡 玩法说明</button>
+        <button class="btn-cute" id="btn-music-box">🎵 音乐盒</button>
+        <button class="btn-cute" id="btn-outfit">👒 云朵装扮</button>
         <button class="btn-cute" id="btn-stickers">🏅 贴纸册</button>
         <button class="btn-cute" id="btn-art">🎨 小画师原作</button>
         <button class="btn-cute" id="btn-audio">🔊 只开音效</button>
@@ -91,7 +93,7 @@
   <div class="modal-backdrop" id="level-select-modal">
     <div class="modal-card level-modal-card">
       <div class="modal-header">
-        <h2>🗺️ 彩虹魔法闯关地图</h2>
+        <h2>🗺️ 闯关地图 & 🎵 音乐盒</h2>
         <button class="btn-cute" id="close-level-select">✖ 关闭</button>
       </div>
       <div class="level-progress-summary">
@@ -251,6 +253,9 @@
           • 🔥 <strong>连击倍率：</strong>连续投对 3 / 6 / 10 / 15 次，得分 ×2 / ×3 / ×4 / ×5！云朵会拖出彩虹尾巴！<br/>
           • ⚡ <strong>神速投放：</strong>糖果刚出现就马上投进正确跑道，额外加分！<br/>
           • 🌈 <strong>彩虹横排：</strong>让所有跑道一样高，就会奏响一排 Do-Re-Mi 彩虹音阶，大量加分！（百搭彩虹糖放进最矮的柱子最划算）<br/>
+          • 🎁 <strong>奖励糖果雨：</strong>每关装满所有柱子后，天上会下 7 秒糖果雨！左右移动云朵接住它们，接得越多加分越多，还能帮你多拿星星！<br/>
+          • 🎵 <strong>音乐盒：</strong>在「关卡地图」里选一首歌，糖果会按旋律的顺序出现——点一下同色跑道（或按数字键 <code>1～7</code>）就能弹出下一个音，弹完还会完整演奏一遍！弹错不扣心。<br/>
+          • 👒 <strong>云朵装扮：</strong>星星攒得越多，解锁的帽子、墨镜、王冠越多，在暂停菜单里给云朵换装！<br/>
           • 🍀 <strong>幸运糖果雨（第 2 关起）：</strong>天上会飘下金色幸运星，用云朵接住！集齐 3 颗，手里的糖果变成彩虹百搭糖；偶尔还会飘下 💖 爱心，接住回 1 颗生命！<br/>
           • 📍 <strong>存档点（第 7、8 关）：</strong>每完成 2 排彩虹横排自动存档，失败了可以从存档点继续！<br/>
           • ♾️ <strong>无尽模式（通关第 8 关解锁）：</strong>排满一排就消除，糖果越来越快，挑战最高分！<br/>
@@ -286,6 +291,20 @@
     </div>
   </div>
 
+  <!-- Cloud Dress-up Modal -->
+  <div class="modal-backdrop" id="outfit-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>👒 云朵装扮间 (<span id="outfit-stars-label">⭐ 0</span>)</h2>
+        <button class="btn-cute" id="close-outfit-modal">✖ 关闭</button>
+      </div>
+      <p style="font-size:13px; color:#555; line-height:1.4;">
+        闯关和音乐盒里拿到的星星越多，能给云朵穿的装扮就越多！
+      </p>
+      <div class="sticker-grid" id="outfit-grid-container"></div>
+    </div>
+  </div>
+
   <!-- Original Drawing Modal -->
   <div class="modal-backdrop" id="art-modal">
     <div class="modal-card">
@@ -306,6 +325,6 @@
   </div>
 
   <script src="sounds/embedded_landing_notes.js"></script>
-  <script src="game.js?v=20261113b"></script>
+  <script src="game.js?v=20261113c"></script>
 </body>
 </html>
