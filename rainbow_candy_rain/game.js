@@ -340,7 +340,8 @@
         }
       }
       if (this.ctx) {
-        if (this.ctx.state === 'suspended') {
+        // iOS/iPadOS can leave the context 'interrupted' (e.g. after switching apps), not just 'suspended'
+        if (this.ctx.state !== 'running') {
           this.ctx.resume().catch(() => {});
         }
         if (!this.masterGain) {
@@ -4186,6 +4187,11 @@
     const px = getCanvasX(e.clientX);
     state.cloud.targetX = px + state.dragOffsetX;
     clampCloudX();
+  });
+
+  // iPadOS system gestures (dock swipe, multitasking) cancel the pointer: just stop dragging
+  window.addEventListener('pointercancel', () => {
+    state.isDragging = false;
   });
 
   window.addEventListener('pointerup', (e) => {

@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 200">
+  <!-- Apiapia 游戏大厅 · 横版 Logo -->
+  <defs>
+    <clipPath id="head">
+      <path d="M28 122 C28 74 60 54 100 54 C140 54 172 74 172 122 C172 162 142 184 100 184 C58 184 28 162 28 122 Z"/>
+    </clipPath>
+  </defs>
+  <g transform="translate(14 8) scale(0.92)">
+    <g stroke="#282a24" stroke-linejoin="round" stroke-linecap="round">
+    <!-- 耳朵 -->
+    <path d="M36 100 L34 16 L94 60 Z" fill="#9b8f7e" stroke-width="7"/>
+    <path d="M164 100 L166 16 L106 60 Z" fill="#9b8f7e" stroke-width="7"/>
+    <path d="M48 80 L47 38 L78 61 Z" fill="#f4b3ad" stroke="none"/>
+    <path d="M152 80 L153 38 L122 61 Z" fill="#f4b3ad" stroke="none"/>
+    <!-- 脸 -->
+    <path d="M28 122 C28 74 60 54 100 54 C140 54 172 74 172 122 C172 162 142 184 100 184 C58 184 28 162 28 122 Z" fill="#ffffff" stroke="none"/>
+    <!-- 虎斑“小帽子” + 额头条纹 -->
+    <g clip-path="url(#head)">
+      <path d="M10 30 H190 V116 C168 112 154 92 134 88 C118 85 108 76 100 64 C92 76 82 85 66 88 C46 92 32 112 10 116 Z" fill="#9b8f7e" stroke="none"/>
+      <g stroke="#3d362e" stroke-width="5.5" fill="none">
+        <path d="M80 58 L85 78"/>
+        <path d="M91 54 L93 68"/>
+        <path d="M120 58 L115 78"/>
+        <path d="M109 54 L107 68"/>
+        <path d="M30 96 L48 92"/>
+        <path d="M170 96 L152 92"/>
+      </g>
+    </g>
+    <path d="M28 122 C28 74 60 54 100 54 C140 54 172 74 172 122 C172 162 142 184 100 184 C58 184 28 162 28 122 Z" fill="none" stroke-width="7"/>
+    <!-- 眼睛 -->
+    <circle cx="70" cy="114" r="20" fill="#d9dc3f" stroke-width="5.5"/>
+    <circle cx="130" cy="114" r="20" fill="#d9dc3f" stroke-width="5.5"/>
+    <ellipse cx="70" cy="115" rx="4.5" ry="14" fill="#282a24" stroke="none"/>
+    <ellipse cx="130" cy="115" rx="4.5" ry="14" fill="#282a24" stroke="none"/>
+    <circle cx="63" cy="106" r="4.5" fill="#fff" stroke="none"/>
+    <circle cx="123" cy="106" r="4.5" fill="#fff" stroke="none"/>
+    <!-- 腮红 -->
+    <ellipse cx="52" cy="146" rx="12" ry="6.5" fill="#f39bc3" opacity="0.6" stroke="none"/>
+    <ellipse cx="148" cy="146" rx="12" ry="6.5" fill="#f39bc3" opacity="0.6" stroke="none"/>
+    <!-- 鼻子和嘴 -->
+    <path d="M91 136 L109 136 L100 146 Z" fill="#ec9a93" stroke-width="4.5"/>
+    <path d="M100 146 V151 M100 151 C96 158 88 157 86 151 M100 151 C104 158 112 157 114 151" fill="none" stroke-width="4"/>
+  </g>
+    <g stroke="#282a24" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M40 140 L12 134"/><path d="M40 150 L12 154"/>
+      <path d="M160 140 L188 134"/><path d="M160 150 L188 154"/>
+    </g>
+  </g>
+  <g font-family="'Arial Rounded MT Bold','Comic Sans MS','PingFang SC','Microsoft YaHei',sans-serif" font-weight="900">
+    <text x="208" y="112" font-size="84" fill="#282a24" stroke="#282a24" stroke-width="10" stroke-linejoin="round" transform="translate(0 6)"><tspan>A</tspan><tspan>p</tspan><tspan>i</tspan><tspan>a</tspan><tspan>p</tspan><tspan>i</tspan><tspan>a</tspan></text>
+    <text x="208" y="112" font-size="84" stroke="#282a24" stroke-width="10" stroke-linejoin="round" paint-order="stroke"><tspan fill="#cf2027">A</tspan><tspan fill="#e36517">p</tspan><tspan fill="#f5c518">i</tspan><tspan fill="#1d8f24">a</tspan><tspan fill="#298cd4">p</tspan><tspan fill="#4650b0">i</tspan><tspan fill="#5d4b86">a</tspan></text>
+  </g>
+  <g transform="translate(212 132)">
+    <rect x="0" y="6" width="214" height="44" rx="22" fill="#282a24"/>
+    <rect x="0" y="0" width="214" height="44" rx="22" fill="#d4f5b4" stroke="#282a24" stroke-width="4.5"/>
+    <text x="107" y="31" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei','Hiragino Sans GB',sans-serif" font-weight="900" font-size="25" letter-spacing="6" fill="#282a24">游戏大厅</text>
+  </g>
+</svg>

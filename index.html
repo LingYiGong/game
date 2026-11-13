@@ -2,14 +2,23 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="description" content="彩虹糖下雨 — 根据小朋友于2026年11月1日亲手绘制的设计稿还原的趣味网页小游戏，支持电脑键盘与iPad/手机触屏。" />
-  <meta property="og:title" content="彩虹糖下雨 (Rainbow Candy Rain)" />
-  <meta property="og:description" content="根据小朋友于2026年11月1日亲手绘制的设计稿还原的趣味网页小游戏，支持电脑键盘与iPad/手机触屏。" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="description" content="Apiapia 游戏大厅 — 以家里的小猫 Apiapia 命名，收录小朋友亲手设计的趣味网页小游戏，支持电脑键盘与 iPad/手机触屏。" />
+  <meta property="og:title" content="Apiapia 游戏大厅" />
+  <meta property="og:description" content="收录小朋友亲手设计的趣味网页小游戏，支持电脑键盘与 iPad/手机触屏。" />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="artwork.jpg" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍬</text></svg>" />
-  <title>游戏大厅</title>
+  <meta property="og:image" content="images/icon-512.png" />
+  <!-- iPad / iPhone 添加到主屏幕：全屏打开，图标下方显示的名字 -->
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Apiapia" />
+  <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="images/icon-192.png" />
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
+  <meta name="theme-color" content="#2c241d" />
+  <title>Apiapia 游戏大厅</title>
   <style>
     * {
       box-sizing: border-box;
@@ -23,7 +32,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 18px;
+      padding: max(18px, env(safe-area-inset-top)) 18px max(18px, env(safe-area-inset-bottom));
       color: #282a24;
     }
     .hub-card {
@@ -46,6 +55,13 @@
       font-weight: 900;
       margin-bottom: 6px;
     }
+    .hub-logo {
+      display: block;
+      width: 100%;
+      max-width: 400px;
+      height: auto;
+      margin: 0 auto;
+    }
     .hub-header p {
       font-size: 13.5px;
       color: #555;
@@ -66,10 +82,12 @@
       box-shadow: 0 5px 0 #282a24;
       transition: transform 0.1s, box-shadow 0.1s, background 0.15s;
     }
+    @media (hover: hover) {
     .game-card.playable:hover {
       background: #fffbe6;
       transform: translateY(-2px);
       box-shadow: 0 7px 0 #282a24;
+    }
     }
     .game-card.playable:active {
       transform: translateY(3px);
@@ -136,7 +154,7 @@
 <body>
   <div class="hub-card">
     <div class="hub-header">
-      <h1>🌈 游戏大厅 (Game Hub)</h1>
+      <h1><img class="hub-logo" src="images/logo.svg" alt="Apiapia 游戏大厅" /></h1>
       <p>源自女儿 2026年11月1日 原创手绘设计 ｜ 电脑键盘 & 平板/手机触屏全兼容</p>
     </div>
 
