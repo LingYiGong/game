@@ -845,3 +845,80 @@ html, body {
     font-size: 13.5px;
   }
 }
+
+/* ---------------- Simplified HUD, pause menu & calmer dialogs ---------------- */
+.btn-pause {
+  font-size: 18px;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.stat-pill.pill-hearts.critical {
+  animation: heartCritical 0.8s ease-in-out infinite;
+  background: #ffe4e6;
+}
+
+@keyframes heartCritical {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.pause-card,
+.confirm-card {
+  max-width: 420px;
+  text-align: center;
+}
+
+.btn-primary-big {
+  font-size: 21px;
+  padding: 14px 34px;
+  border-radius: 20px;
+}
+
+.pause-card .btn-primary-big {
+  display: block;
+  width: 100%;
+  margin: 12px 0 16px;
+}
+
+.pause-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.pause-grid .btn-cute {
+  font-size: 15px;
+  padding: 10px 8px;
+}
+
+/* Result dialogs: stars & the main button first, numbers smaller */
+.victory-stats-grid {
+  gap: 8px;
+  margin: 10px 0 14px 0;
+}
+
+.vstat-box {
+  padding: 6px 6px;
+  border-radius: 12px;
+}
+
+.vstat-box .label {
+  font-size: 12px;
+}
+
+.vstat-box .num {
+  font-size: 18px;
+}
+
+.victory-stars {
+  font-size: 40px;
+}
+
+/* Honour the system "reduce motion" setting for CSS animations too */
+body.reduce-motion *,
+body.reduce-motion *::before,
+body.reduce-motion *::after {
+  animation: none !important;
+  transition: none !important;
+}

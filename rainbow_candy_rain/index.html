@@ -8,68 +8,29 @@
   <meta name="description" content="彩虹糖下雨（关卡闯关与教学进阶版）" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍬</text></svg>" />
   <title>彩虹糖下雨 - 魔法大闯关</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=20261113" />
 </head>
 <body>
   <div id="app-shell">
-    <!-- Top HUD Bar -->
+    <!-- Top HUD Bar (in-game essentials only; everything else lives in the pause menu) -->
     <div class="hud-bar">
       <div class="hud-stats">
-        <a class="btn-cute" href="../index.html" title="返回游戏大厅">🏠<span class="label-text"> 大厅</span></a>
-        
-        <!-- Level Pill: Clickable to open level select -->
-        <div class="stat-pill pill-target pill-clickable" id="hud-level-pill" title="点击打开关卡选择地图">
-          🚩<span class="label-text"> 关卡</span> <span class="val" id="level-val">1/8</span>
+        <button class="btn-cute btn-pause" id="btn-pause" title="暂停 / 菜单 (P)">⏸️</button>
+        <div class="stat-pill pill-target pill-clickable" id="hud-level-pill" title="关卡地图">
+          🚩 <span class="val" id="level-val">1/8</span>
         </div>
-
-        <!-- Target Progress Pill -->
-        <div class="stat-pill" id="hud-target-pill" title="本关收集目标进度">
-          🎯<span class="label-text"> 目标</span> <span class="val" id="target-progress-val">0/6</span>
+        <div class="stat-pill pill-hearts" id="hud-hearts-pill" title="生命：5 连击可恢复 1 颗">
+          <span class="val" id="hearts-val">❤️❤️❤️</span>
         </div>
-
-        <!-- Hearts / Life Pill -->
-        <div class="stat-pill pill-hearts" id="hud-hearts-pill" title="剩余生命红心：放错跑道或失误会扣除！5连击可恢复1颗！">
-          ❤️<span class="label-text"> 生命</span> <span class="val" id="hearts-val">❤️❤️❤️</span>
+        <div class="stat-pill" id="hud-target-pill" title="本关进度">
+          🎯 <span class="val" id="target-progress-val">0/6</span>
         </div>
-
-        <!-- Combo Streak Pill -->
-        <div class="stat-pill" title="连续投进同色柱子的连击加成">
-          🔥<span class="label-text"> 连击</span> <span class="val" id="combo-val">0</span>
+        <div class="stat-pill pill-fever" id="fever-pill" title="彩虹暴走能量" style="display:none;">
+          🌈 <span class="val" id="fever-val">0%</span>
         </div>
-
-        <!-- Fever Mode Pill (Dynamically visible in later levels) -->
-        <div class="stat-pill pill-fever" id="fever-pill" title="彩虹暴走能量！满100%触发全自动彩虹狂欢喷泉" style="display:none;">
-          🌈<span class="label-text"> 暴走</span> <span class="val" id="fever-val">0%</span>
+        <div class="stat-pill" title="分数 / 下一颗星需要的分数">
+          ⭐ <span class="val" id="score-val">0</span>
         </div>
-
-        <!-- Score Pill -->
-        <div class="stat-pill" title="本关得分">
-          ⭐<span class="label-text"> 分数</span> <span class="val" id="score-val">0</span>
-        </div>
-      </div>
-
-      <div class="hud-actions">
-        <button class="btn-cute active-mode" id="btn-level-map" title="查看并切换闯关地图">
-          🗺️ <span class="mode-long">闯关地图</span><span class="mode-short">地图</span>
-        </button>
-        <button class="btn-cute" id="btn-tutorial-hint" title="查看本关教学与玩法指引">
-          💡 <span class="mode-long">本关指引</span><span class="mode-short">指引</span>
-        </button>
-        <button class="btn-cute" id="btn-stickers" title="查看贴纸收集册">
-          🏅 <span class="mode-long">贴纸</span><span class="mode-short">贴纸</span>
-        </button>
-        <button class="btn-cute" id="btn-art" title="查看女儿的手绘原作">
-          🎨 <span class="mode-long">原作</span><span class="mode-short">画作</span>
-        </button>
-        <button class="btn-cute" id="btn-bgm" title="开关欢快八音盒背景音乐">
-          🎵 <span class="mode-long">音乐</span>
-        </button>
-        <button class="btn-cute" id="btn-sound" title="开关音效">
-          🔊
-        </button>
-        <button class="btn-cute" id="btn-quick-reset" title="重新开始本关">
-          🔄
-        </button>
       </div>
     </div>
 
@@ -86,6 +47,38 @@
           </div>
           <p class="toast-tip" id="toast-level-tip">滑动云朵对齐同色跑道，轻点屏幕放下糖果！</p>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pause Menu Modal (any open modal pauses the game) -->
+  <div class="modal-backdrop" id="pause-modal">
+    <div class="modal-card pause-card">
+      <h2 class="victory-title">⏸️ 休息一下</h2>
+      <p class="victory-subtitle" id="pause-level-name">第 1 关</p>
+      <button class="btn-win-replay btn-primary-big" id="btn-resume">▶️ 继续玩</button>
+      <div class="pause-grid">
+        <button class="btn-cute" id="btn-level-map">🗺️ 关卡地图</button>
+        <button class="btn-cute" id="btn-tutorial-hint">💡 玩法说明</button>
+        <button class="btn-cute" id="btn-stickers">🏅 贴纸册</button>
+        <button class="btn-cute" id="btn-art">🎨 小画师原作</button>
+        <button class="btn-cute" id="btn-audio">🔊 只开音效</button>
+        <button class="btn-cute" id="btn-motion">🌀 晃动特效：开</button>
+        <button class="btn-cute" id="btn-quick-reset">🔄 重新开始本关</button>
+        <a class="btn-cute" href="../index.html">🏠 返回大厅</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- In-game Confirm Dialog -->
+  <div class="modal-backdrop" id="confirm-modal">
+    <div class="modal-card confirm-card">
+      <div class="victory-badge">🤔</div>
+      <h2 class="victory-title" id="confirm-title">确定吗？</h2>
+      <p class="victory-subtitle" id="confirm-desc"></p>
+      <div class="victory-actions">
+        <button class="btn-win-replay" id="confirm-ok" style="background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);">确定</button>
+        <button class="btn-cute" id="confirm-cancel" style="font-size:16px; padding: 10px 22px;">取消</button>
       </div>
     </div>
   </div>
@@ -147,7 +140,7 @@
       </div>
 
       <div class="victory-actions">
-        <button class="btn-win-replay" id="btn-next-level">🚀 进入下一关</button>
+        <button class="btn-win-replay btn-primary-big" id="btn-next-level">🚀 进入下一关</button>
         <button class="btn-cute" id="btn-replay-level" style="font-size:15px; padding: 10px 16px;">🔄 再玩一次</button>
         <button class="btn-cute" id="btn-open-map" style="font-size:15px; padding: 10px 16px;">🗺️ 关卡地图</button>
       </div>
@@ -159,7 +152,7 @@
     <div class="modal-card level-fail-card">
       <div class="victory-badge" style="filter: drop-shadow(0 6px 12px rgba(220, 38, 38, 0.4));">💔</div>
       <h2 class="victory-title" style="color: #dc2626;" id="level-fail-title">关卡挑战失败！</h2>
-      <p class="victory-subtitle" id="level-fail-desc">生命红心耗尽啦！投错跑道或倒计时未对准会扣除生命哦~</p>
+      <p class="victory-subtitle" id="level-fail-desc">红心用完啦！</p>
 
       <div class="victory-stats-grid">
         <div class="vstat-box">
@@ -181,11 +174,12 @@
       </div>
 
       <div class="level-fail-tip-box" id="level-fail-tip">
-        💡 <strong>闯关通关心得：</strong>放慢手速看清糖果颜色，左右对准跑道再放下！连续接中 5 次可恢复 1 颗生命红心！
+        💡 看清形状再放下，5 连击能回 1 颗心！
       </div>
 
       <div class="victory-actions">
-        <button class="btn-win-replay" id="btn-retry-level" style="background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);">🔄 重新挑战</button>
+        <button class="btn-win-replay" id="btn-checkpoint-level" style="display:none; background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);">📍 从存档点继续</button>
+        <button class="btn-win-replay btn-primary-big" id="btn-retry-level" style="background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);">🔄 重新挑战</button>
         <button class="btn-cute" id="btn-fail-open-map" style="font-size:15px; padding: 10px 18px;">🗺️ 关卡地图</button>
       </div>
     </div>
@@ -220,7 +214,7 @@
       </div>
 
       <div class="victory-actions">
-        <button class="btn-win-replay" id="btn-win-replay">🎈 自由狂欢模式</button>
+        <button class="btn-win-replay btn-primary-big" id="btn-win-replay">♾️ 挑战无尽模式</button>
         <button class="btn-cute" id="btn-win-map" style="font-size:15px; padding: 10px 16px;">🗺️ 关卡地图</button>
         <button class="btn-cute" id="btn-win-stickers" style="font-size:15px; padding: 10px 16px;">🏅 贴纸册</button>
         <button class="btn-cute" id="btn-win-art" style="font-size:15px; padding: 10px 16px;">🎨 欣赏原作</button>
@@ -239,20 +233,32 @@
         <h4 style="color:#d97706; margin-bottom:4px;">🎯 核心规则：</h4>
         <p>
           把云朵嘴边的彩色糖果投进下方<strong>相同颜色的跑道</strong>。投中不仅能装满柱子，还能累积连击（Combo 🔥）获得更高分数！<br/>
-          ❤️ <strong>生命惩罚与恢复机制：</strong>投错颜色跑道、炸弹掉落爆炸或贪吃虫得逞都会扣除 1 颗生命红心；达成 <strong>5 连击（5x Combo）</strong> 即可恢复 1 颗生命红心！红心耗尽关卡挑战失败！
+          ❤️ <strong>生命：</strong>投错跑道、炸弹爆炸、贪吃虫得逞会扣 1 颗心；<strong>5 连击</strong>回 1 颗心。倒计时用完糖果会 💨 飘走（只断连击，不扣心）。<br/>
+          🍬 <strong>每种颜色有自己的形状：</strong>红色爱心、粉色圆球、绿色莓果、紫色葡萄、蓝色糖纸、橙色钻石、天蓝水滴。柱子里淡淡的影子就是它要的糖！<br/>
+          ⭐ <strong>星星看分数：</strong>分数越高星越多，一颗心没丢再奖励 1 颗星！
         </p>
         <h4 style="color:#298cd4; margin:10px 0 4px;">🕹️ 操控方式：</h4>
         <p>
-          • <strong>电脑端：</strong>按键盘 <code>← / →</code>（或 <code>A / D</code>）移动云朵，按 <code>空格 / Enter / ↓</code> 立即放下糖果；数字键 <code>1～7</code> 可快速对齐跑道！<br/>
-          • <strong>手机/iPad：</strong>单指按住屏幕左右拖动云朵，轻触屏幕立即放下糖果；也可直接点击跑道自动对齐！
+          • <strong>电脑端：</strong><code>← / →</code> 或 <code>A / D</code> 移动；<code>空格 / ↓ / S</code> 放下；<code>↑ / W / X</code> 换糖；<code>1～7</code> 直达跑道；<code>Q / E / R</code> 放魔法大招；<code>P / Esc</code> 暂停。<br/>
+          • <strong>手机/iPad：</strong>点一条跑道，云朵就飞过去；点<strong>云朵</strong>或<strong>云朵正下方的跑道</strong>就放下糖果；也可以按住屏幕左右拖动云朵。
+        </p>
+        <h4 style="color:#ec4899; margin:10px 0 4px;">🎉 越玩越爽的小秘密：</h4>
+        <p>
+          • 🔥 <strong>连击倍率：</strong>连续投对 3 / 6 / 10 / 15 次，得分 ×2 / ×3 / ×4 / ×5！云朵会拖出彩虹尾巴！<br/>
+          • ⚡ <strong>神速投放：</strong>糖果刚出现就马上投进正确跑道，额外加分！<br/>
+          • 🌈 <strong>彩虹横排：</strong>让所有跑道一样高，就会奏响一排 Do-Re-Mi 彩虹音阶，大量加分！（百搭彩虹糖放进最矮的柱子最划算）<br/>
+          • 🍀 <strong>幸运糖果雨（第 2 关起）：</strong>天上会飘下金色幸运星，用云朵接住！集齐 3 颗，手里的糖果变成彩虹百搭糖；偶尔还会飘下 💖 爱心，接住回 1 颗生命！<br/>
+          • 📍 <strong>存档点（第 7、8 关）：</strong>每完成 2 排彩虹横排自动存档，失败了可以从存档点继续！<br/>
+          • ♾️ <strong>无尽模式（通关第 8 关解锁）：</strong>排满一排就消除，糖果越来越快，挑战最高分！<br/>
+          • ⇄ <strong>换糖：</strong>点击云朵右上角的「⇄换」气泡（或按 <code>↑</code> / <code>W</code> / <code>X</code>）可以把手里的糖和下一颗交换！
         </p>
         <h4 style="color:#1d8f24; margin:10px 0 4px;">✨ 关卡进阶新玩法：</h4>
         <p>
           • 🌟 <strong>第 3 关 百搭彩虹糖：</strong>闪闪发光的彩虹星糖，投进任意柱子都算正确！<br/>
           • 🫧 <strong>第 4 关 空中倍增门：</strong>让糖果穿过漂浮的 <code>×2</code> / <code>×3</code> 泡泡圈，糖果瞬间分裂翻倍！<br/>
           • 🪄 <strong>第 5 关 顶部手绘大招：</strong>接糖果为顶部 6 大手绘图标充能，满 100% 直接点击图标召唤流星雨或全屏磁铁！<br/>
-          • 🐛 <strong>第 6 关 破冰与除虫：</strong>柱子被冰霜冻住或爬来贪吃虫？直接点击柱子拍碎冰块和赶走毛虫！<br/>
-          • 💣 <strong>第 7 关 拆弹专家：</strong>注意黑色炸弹！在空中点击炸弹可以直接拆弹拿大奖！<br/>
+          • 🐛 <strong>第 6 关 破冰与除虫：</strong>柱子被冰霜冻住或爬来贪吃虫？直接点击虫子或冰块把它们赶走！<br/>
+          • 💣 <strong>第 7 关 拆弹专家：</strong>注意黑色炸弹！在空中点击炸弹拆弹拿分！挂在云朵上的炸弹点一下可以扔掉。<br/>
           • 🌈 <strong>第 8 关 彩虹暴走喷泉：</strong>连击攒满 100% 触发全自动彩虹喷泉，集满 7 柱通关！
         </p>
       </div>
@@ -296,6 +302,6 @@
   </div>
 
   <script src="sounds/embedded_landing_notes.js"></script>
-  <script src="game.js"></script>
+  <script src="game.js?v=20261113"></script>
 </body>
 </html>

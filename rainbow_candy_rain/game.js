@@ -4,13 +4,13 @@
   // 7 Rainbow Colors matching daughter's original hand drawing (2026-11-01)
   // Pitch mapping: Helmholtz 小字1组 (Scientific Pitch Notation C4..B4 / 1 2 3 4 5 6 7)
   const COLOR_COLUMNS = [
-    { id: 'red',     name: '草莓红',   solfege: '1 Do',  pitch: 'C4', hex: '#cf2027', lightHex: '#ff6b72', darkHex: '#9e1318', noteFreq: 261.63, unlockLvl: 1 },
-    { id: 'pink',    name: '蜜桃粉',   solfege: '2 Re',  pitch: 'D4', hex: '#f39bc3', lightHex: '#ffd0e6', darkHex: '#d46b9b', noteFreq: 293.66, unlockLvl: 3 },
-    { id: 'green',   name: '苹果绿',   solfege: '3 Mi',  pitch: 'E4', hex: '#1d8f24', lightHex: '#5cd664', darkHex: '#116316', noteFreq: 329.63, unlockLvl: 2 },
-    { id: 'purple',  name: '葡萄紫',   solfege: '4 Fa',  pitch: 'F4', hex: '#5d4b86', lightHex: '#9b86cc', darkHex: '#3f3161', noteFreq: 349.23, unlockLvl: 4 },
-    { id: 'blue',    name: '蓝莓蓝',   solfege: '5 Sol', pitch: 'G4', hex: '#4650b0', lightHex: '#828cf2', darkHex: '#2b3380', noteFreq: 392.00, unlockLvl: 3 },
-    { id: 'orange',  name: '甜橙橘',   solfege: '6 La',  pitch: 'A4', hex: '#e36517', lightHex: '#ffa063', darkHex: '#ab4507', noteFreq: 440.00, unlockLvl: 5 },
-    { id: 'skyblue', name: '苏打天蓝', solfege: '7 Ti',  pitch: 'B4', hex: '#298cd4', lightHex: '#73c6ff', darkHex: '#186299', noteFreq: 493.88, unlockLvl: 1 }
+    { id: 'red', shape: 'heart',     name: '草莓红',   solfege: '1 Do',  pitch: 'C4', hex: '#cf2027', lightHex: '#ff6b72', darkHex: '#9e1318', noteFreq: 261.63, unlockLvl: 1 },
+    { id: 'pink', shape: 'round',    name: '蜜桃粉',   solfege: '2 Re',  pitch: 'D4', hex: '#f39bc3', lightHex: '#ffd0e6', darkHex: '#d46b9b', noteFreq: 293.66, unlockLvl: 3 },
+    { id: 'green', shape: 'berry',   name: '苹果绿',   solfege: '3 Mi',  pitch: 'E4', hex: '#1d8f24', lightHex: '#5cd664', darkHex: '#116316', noteFreq: 329.63, unlockLvl: 2 },
+    { id: 'purple', shape: 'grape',  name: '葡萄紫',   solfege: '4 Fa',  pitch: 'F4', hex: '#5d4b86', lightHex: '#9b86cc', darkHex: '#3f3161', noteFreq: 349.23, unlockLvl: 4 },
+    { id: 'blue', shape: 'wrapped',    name: '蓝莓蓝',   solfege: '5 Sol', pitch: 'G4', hex: '#4650b0', lightHex: '#828cf2', darkHex: '#2b3380', noteFreq: 392.00, unlockLvl: 3 },
+    { id: 'orange', shape: 'diamond',  name: '甜橙橘',   solfege: '6 La',  pitch: 'A4', hex: '#e36517', lightHex: '#ffa063', darkHex: '#ab4507', noteFreq: 440.00, unlockLvl: 5 },
+    { id: 'skyblue', shape: 'drop', name: '苏打天蓝', solfege: '7 Ti',  pitch: 'B4', hex: '#298cd4', lightHex: '#73c6ff', darkHex: '#186299', noteFreq: 493.88, unlockLvl: 1 }
   ];
 
   const TOTAL_TUBES = COLOR_COLUMNS.length; // 7
@@ -20,6 +20,7 @@
   const LEVELS = [
     {
       id: 1,
+      starScore: [45, 75],
       title: '初识彩虹',
       subtitle: '基础操作与色彩对应教学',
       tip: '注意：放错跑道会扣除 1 颗生命红心！对准同色跑道再轻点放下！',
@@ -43,6 +44,7 @@
     },
     {
       id: 2,
+      starScore: [220, 500],
       title: '连击练习',
       subtitle: '红绿蓝三色与连击节奏',
       tip: '失误放错会扣除红心！连续放对 5 次可恢复 1 颗红心（Combo 救命）！',
@@ -66,6 +68,7 @@
     },
     {
       id: 3,
+      starScore: [300, 650],
       title: '五彩斑斓',
       subtitle: '五色跑道与百搭彩虹糖',
       tip: '五色跑道开始守护 3 颗心！遇到百搭彩虹糖投进任意跑道都安全！',
@@ -89,6 +92,7 @@
     },
     {
       id: 4,
+      starScore: [600, 1300],
       title: '空中奇迹',
       subtitle: '倍增泡泡分裂与三连爆射',
       tip: '空中倍增门分裂糖果！注意：未对准跑道掉落依然会扣除红心！',
@@ -112,6 +116,7 @@
     },
     {
       id: 5,
+      starScore: [800, 1800],
       title: '画纸苏醒',
       subtitle: '释放顶部 6 大手绘魔法技能',
       tip: '顶部 6 大魔法觉醒！紫莓甘霖大招可救急补充糖果并净化全场！',
@@ -135,6 +140,7 @@
     },
     {
       id: 6,
+      starScore: [1000, 2300],
       title: '调皮捣蛋鬼',
       subtitle: '除虫破冰与跑道保卫战',
       tip: '调皮捣蛋鬼来袭！8 秒内点击赶跑贪吃虫（否则咬碎红心）并轻点破冰！',
@@ -159,6 +165,7 @@
     },
     {
       id: 7,
+      starScore: [1300, 3000],
       title: '拆弹大师',
       subtitle: '空中拦截炸弹与微风挑战',
       tip: '坏坏炸弹掉入跑道会引爆并直接扣 1 心！空中点击炸弹进行拆弹！',
@@ -183,6 +190,7 @@
     },
     {
       id: 8,
+      starScore: [2200, 5000],
       title: '彩虹大圆满',
       subtitle: '终极盛宴！7 柱各 10 颗集满 70 颗糖果',
       tip: '终极大决战！微风、炸弹、快速糖果全开，守护 3 颗心冲刺 70 颗大圆满！',
@@ -216,8 +224,44 @@
     { id: 'fever_party', icon: '😎', title: '彩虹暴走王', desc: '集满暴走能量，触发云朵彩虹喷泉狂欢' },
     { id: 'bomb_hero', icon: '💥', title: '拆弹小卫士', desc: '在半空中点击拍飞坏坏炸弹或赶走贪吃虫' },
     { id: 'speed_star', icon: '⚡', title: '闪电满星王', desc: '在任意挑战中斩获 ⭐⭐⭐ 评价' },
-    { id: 'grand_champion', icon: '👑', title: '彩虹大满贯', desc: '通关全部 8 个关卡完成彩虹大圆满！' }
+    { id: 'grand_champion', icon: '👑', title: '彩虹大满贯', desc: '通关全部 8 个关卡完成彩虹大圆满！' },
+    { id: 'lucky_catcher', icon: '🍀', title: '幸运接星手', desc: '用云朵接住 3 颗从天而降的幸运金星' },
+    { id: 'rainbow_row', icon: '🎹', title: '彩虹音阶师', desc: '让所有跑道齐平，奏响一排彩虹音阶' }
   ];
+
+  // Combo tiers: score multiplier + big celebratory banner when reached
+  const COMBO_TIERS = [
+    { min: 3,  mult: 2, label: '好棒！ ×2',        color: '#1d8f24' },
+    { min: 6,  mult: 3, label: '超厉害！ ×3',      color: '#298cd4' },
+    { min: 10, mult: 4, label: '彩虹神手！ ×4',    color: '#e36517' },
+    { min: 15, mult: 5, label: '无敌糖果王！ ×5',  color: '#ec4899' }
+  ];
+
+  // Endless mode (unlocked after clearing level 8): full rows disappear, the candy timer keeps speeding up
+  const ENDLESS_BASE_TIMER = 3.6;
+  const ENDLESS_CONFIG = {
+    id: 'endless',
+    title: '无尽糖果雨',
+    subtitle: '排满一排就消除，看你能坚持多久！',
+    tip: '让 7 根柱子一样高就能消掉一排，糖果会越来越快！',
+    tags: ['无尽挑战', '消除横排', '最高分'],
+    activeCols: [0, 1, 2, 3, 4, 5, 6],
+    targetPerTube: 10,
+    maxHearts: 3,
+    features: {
+      tutorial: false, combo: true, rainbowCandy: true, multiplierGates: true, topMagic: true,
+      hazards: true, hazardTypes: ['ice', 'bug', 'wind'], bombs: true, fever: true
+    },
+    allowedSpecials: ['normal', 'rainbow', 'triple', 'mystery', 'shower', 'bomb'],
+    candyTimer: ENDLESS_BASE_TIMER,
+    starScore: [0, 0]
+  };
+
+  // Levels whose long runs get a checkpoint every 2 rainbow rows
+  const CHECKPOINT_MIN_PER_TUBE = 7;
+
+  // Lucky Candy Rain (from level 2): golden stars & rare hearts drift down from the sky; catch them with the cloud!
+  const LUCKY_START_LEVEL = 2;
 
   // Real Acoustic Grand Piano Sample Engine (Yamaha Disklavier Pro Studio Samples)
   // Dual-mode audio engine: Web Audio AudioBuffer (polyphonic, low-latency) + HTML5 Audio pool fallback (for file:// protocol)
@@ -544,6 +588,22 @@
       gliss.forEach((n, i) => this.playRealPianoNote(n, 1.10, i * 0.038));
     }
 
+    // 6b. Rainbow Row: ascending scale of the active columns' own pitches (Do-Re-Mi... ear-training friendly)
+    // Starts after a short pause so the landing note is still heard cleanly on its own.
+    playRowScale(colIdxList, startDelay = 0.45, step = 0.11) {
+      colIdxList.forEach((cIdx, i) => {
+        const col = COLOR_COLUMNS[cIdx];
+        if (col) this.playRealPianoNote(col.pitch, 1.15, startDelay + i * step);
+      });
+      this.playRealPianoNote('C5', 1.2, startDelay + colIdxList.length * step);
+    }
+
+    // 6c. Lucky catch: soft high sparkle note
+    playLuckyCatch(isHeart = false) {
+      this.playRealPianoNote(isHeart ? 'E6' : 'C6', 0.85, 0);
+      if (isHeart) this.playRealPianoNote('G6', 0.75, 0.07);
+    }
+
     // 7. Mismatch / Misplacement: Single low acoustic piano note (clean, no chord cluster)
     playMismatch() {
       this.playRealPianoNote('D3', 1.20, 0);
@@ -631,6 +691,20 @@
     errorFlashTimer: 0,
     errorShockwaves: [],
     errorHeartPrompt: null,
+    heartLossFlash: 0,
+    playTime: 0,
+    introVisible: false,
+    reduceMotion: false,
+    audioMode: 'sfx', // 'sfx' | 'all' | 'mute'
+    colWeights: [1, 1, 1, 1, 1, 1, 1],
+    tapStartOnCloud: false,
+    tapStartCloudCol: -1,
+    driftingCandies: [],
+    blockedMsgCd: 0,
+    checkpoint: null,
+    usedCheckpoint: false,
+    endlessRows: 0,
+    endlessBest: 0,
     // Fever Rainbow Mode
     feverGauge: 0,
     feverTimer: 0,
@@ -675,6 +749,13 @@
     particles: [],
     confetti: [],
     floatingTexts: [],
+    // Fun layer: combo banner, rainbow rows, lucky candy rain
+    banner: null,
+    rowsCompleted: 0,
+    rowSweeps: [],
+    luckyCandies: [],
+    luckySpawnTimer: 4.0,
+    luckyCount: 0,
     topIconBounce: [0, 0, 0, 0, 0, 0],
     topIconCharge: [0, 0, 0, 0, 0, 0],
     topIconPos: [],
@@ -711,8 +792,25 @@
     return strokes;
   });
 
-  function getLevelConfig(lvl = state.currentLevel) {
+  function getLevelConfig(lvl) {
+    if (lvl === undefined) {
+      if (state.isEndlessMode) return ENDLESS_CONFIG;
+      lvl = state.currentLevel;
+    }
     return LEVELS[Math.max(0, Math.min(LEVELS.length - 1, lvl - 1))] || LEVELS[0];
+  }
+
+  function getStarScores(lvlConfig = getLevelConfig()) {
+    return lvlConfig.starScore || [0, 0];
+  }
+
+  // Stars come from score (combo, speed and rainbow rows all count); a no-heart-lost run earns +1 star
+  function computeStars() {
+    const [s2, s3] = getStarScores();
+    let stars = state.score >= s3 ? 3 : (state.score >= s2 ? 2 : 1);
+    const flawless = state.hearts >= state.maxHearts && !state.usedCheckpoint;
+    if (flawless) stars = Math.min(3, stars + 1);
+    return { stars, flawless, s2, s3 };
   }
 
   function getLevelTotalTarget(lvlConfig = getLevelConfig()) {
@@ -760,25 +858,9 @@
     state.cloud.y = state.layout.cloudY;
     state.layout.columnsTopY = state.layout.cloudY + state.cloud.height * 0.5 + Math.max(38, H * 0.062);
 
-    // 7 columns: contiguous, equal width for visual harmony and fairness
-    const numCols = COLOR_COLUMNS.length; // 7
-    const sideMargin = Math.max(4, W * 0.012);
-    const usableW = W - sideMargin * 2;
-    const colW = usableW / numCols;
-
-    let curX = sideMargin;
-    state.layout.columns = COLOR_COLUMNS.map((col, idx) => {
-      const topWave = Math.sin(idx * 1.7) * 3;
-      const colRect = {
-        index: idx,
-        x: curX,
-        width: colW,
-        centerX: curX + colW / 2,
-        topY: state.layout.columnsTopY + topWave
-      };
-      curX += colW;
-      return colRect;
-    });
+    // 7 columns: open lanes share the width, locked lanes shrink (animated in update)
+    state.layout.sideMargin = Math.max(4, W * 0.012);
+    layoutColumns();
 
     // Candy vertical stacking area:
     state.layout.storageTopY = state.layout.columnsTopY + 54;
@@ -787,8 +869,68 @@
 
     // Support up to 10 slots stacked vertically
     state.layout.slotHeight = (storageH - 6) / 10;
+    const tw = getTargetColWeights();
+    const colW = (W - state.layout.sideMargin * 2) / tw.reduce((a, b) => a + b, 0);
     state.layout.candyRadius = Math.max(15, Math.min(colW * 0.38, state.layout.slotHeight * 0.44, 26));
 
+    clampCloudX();
+  }
+
+  const LOCKED_COL_WEIGHT = 0.38;
+
+  function getTargetColWeights() {
+    const active = getLevelConfig().activeCols;
+    return COLOR_COLUMNS.map((_, i) => (active.includes(i) ? 1 : LOCKED_COL_WEIGHT));
+  }
+
+  function layoutColumns() {
+    const side = state.layout.sideMargin || 4;
+    const usableW = state.width - side * 2;
+    const w = state.colWeights;
+    const total = w.reduce((a, b) => a + b, 0);
+    let curX = side;
+    state.layout.columns = COLOR_COLUMNS.map((col, idx) => {
+      const width = (usableW * w[idx]) / total;
+      const rect = {
+        index: idx,
+        x: curX,
+        width,
+        centerX: curX + width / 2,
+        topY: state.layout.columnsTopY + Math.sin(idx * 1.7) * 3
+      };
+      curX += width;
+      return rect;
+    });
+  }
+
+  // Keep an x position at the same relative spot inside its column across a relayout
+  function remapXAcrossLayout(x, oldCols) {
+    let idx = oldCols.findIndex(c => x >= c.x && x <= c.x + c.width);
+    if (idx < 0) idx = x < oldCols[0].x ? 0 : oldCols.length - 1;
+    const o = oldCols[idx];
+    const n = state.layout.columns[idx];
+    const f = o.width > 0 ? (x - o.x) / o.width : 0.5;
+    return n.x + Math.max(0, Math.min(1, f)) * n.width;
+  }
+
+  function updateColumnWidths(dt) {
+    const target = getTargetColWeights();
+    let changed = false;
+    for (let i = 0; i < target.length; i++) {
+      const d = target[i] - state.colWeights[i];
+      if (Math.abs(d) > 0.002) {
+        state.colWeights[i] += d * Math.min(1, dt * 5);
+        changed = true;
+      } else if (d !== 0) {
+        state.colWeights[i] = target[i];
+        changed = true;
+      }
+    }
+    if (!changed || !state.layout.columns.length) return;
+    const oldCols = state.layout.columns.map(c => ({ x: c.x, width: c.width }));
+    layoutColumns();
+    state.cloud.x = remapXAcrossLayout(state.cloud.x, oldCols);
+    state.cloud.targetX = remapXAcrossLayout(state.cloud.targetX, oldCols);
     clampCloudX();
   }
 
@@ -824,6 +966,7 @@
         state.currentLevel = Math.max(1, Math.min(state.unlockedLevel, data.currentLevel || 1));
         state.levelStars = data.levelStars || {};
         state.levelHighScores = data.levelHighScores || {};
+        state.endlessBest = data.endlessBest || 0;
       }
     } catch (e) {
       state.unlockedLevel = 1;
@@ -845,7 +988,8 @@
         unlockedLevel: state.unlockedLevel,
         currentLevel: state.currentLevel,
         levelStars: state.levelStars,
-        levelHighScores: state.levelHighScores
+        levelHighScores: state.levelHighScores,
+        endlessBest: state.endlessBest
       };
       localStorage.setItem('rainbow_candy_levels_v2', JSON.stringify(data));
       localStorage.setItem('rainbow_candy_stickers_v2', JSON.stringify(state.unlockedStickers));
@@ -859,7 +1003,7 @@
     saveProgress();
     const def = STICKER_DEFS.find(s => s.id === id);
     if (def) {
-      addFloatingText(state.width / 2, state.cloud.y - 28, `🏅 解锁新贴纸：【${def.icon} ${def.title}】!`, '#d97706', 1.25);
+      addFloatingText(state.width / 2, state.cloud.y - 28, `🏅 新贴纸 ${def.icon} ${def.title}`, '#d97706', 1.25);
     }
   }
 
@@ -907,7 +1051,6 @@
       else if (stars === 2) starStr = '⭐⭐☆';
       else if (stars === 1) starStr = '⭐☆☆';
 
-      const tagHtml = lvl.tags.map(t => `<span class="level-tag">${t}</span>`).join('');
       const cardClass = isUnlocked ? (stars > 0 ? 'completed' : 'unlocked') : 'locked';
       const curClass = isCurrent ? 'current' : '';
 
@@ -918,15 +1061,36 @@
             <span class="level-stars-display">${isUnlocked ? starStr : '🔒'}</span>
           </div>
           <div class="level-card-title">${lvl.title}</div>
-          <div class="level-card-desc">${lvl.subtitle}</div>
-          <div class="level-card-tags">${tagHtml}</div>
+          <div class="level-card-desc">🏆 ${state.levelHighScores[lvl.id] || 0} · ⭐⭐⭐ ${lvl.starScore[1]}</div>
         </div>
       `;
-    }).join('');
+    }).join('') + (() => {
+      const unlocked = (state.levelStars[LEVELS.length] || 0) > 0;
+      return `
+        <div class="level-card ${unlocked ? 'unlocked' : 'locked'} ${state.isEndlessMode ? 'current' : ''}" data-endless="1">
+          <div class="level-card-top">
+            <span class="level-badge-num">♾️ 无尽</span>
+            <span class="level-stars-display">${unlocked ? '🏆 ' + state.endlessBest : '🔒'}</span>
+          </div>
+          <div class="level-card-title">${ENDLESS_CONFIG.title}</div>
+          <div class="level-card-desc">${unlocked ? '排满一排就消除' : '通关第 8 关后解锁'}</div>
+        </div>
+      `;
+    })();
 
     // Attach click handlers
     container.querySelectorAll('.level-card').forEach(card => {
       card.addEventListener('click', () => {
+        if (card.dataset.endless) {
+          if ((state.levelStars[LEVELS.length] || 0) > 0) {
+            startLevel(LEVELS.length, true, true);
+            document.getElementById('level-select-modal').classList.remove('open');
+          } else {
+            sfx.playMismatch();
+            addFloatingText(state.width / 2, state.height / 2, '🔒 通关第 8 关解锁', '#d97706', 1.15);
+          }
+          return;
+        }
         const lvlId = parseInt(card.dataset.level, 10);
         if (lvlId <= state.unlockedLevel) {
           startLevel(lvlId);
@@ -946,11 +1110,33 @@
 
     // Pick only from active columns that need candies
     const needed = activeCols.filter(cIdx => state.columnCounts[cIdx] < target);
+    if (state.isEndlessMode && needed.length && Math.random() < 0.5) {
+      const minC = Math.min(...needed.map(i => state.columnCounts[i]));
+      const lowest = needed.filter(i => state.columnCounts[i] === minC);
+      return lowest[Math.floor(Math.random() * lowest.length)];
+    }
     if (needed.length > 0) {
       return needed[Math.floor(Math.random() * needed.length)];
     }
     // If all full (rare before trigger), pick random active column
     return activeCols[Math.floor(Math.random() * activeCols.length)] || 0;
+  }
+
+  function discardHeldBomb() {
+    const candyX = state.cloud.x;
+    const candyY = state.cloud.y + state.cloud.height * 0.5 + state.layout.candyRadius + 6;
+    sfx.playSwat();
+    state.screenShake = Math.max(state.screenShake, 3);
+    spawnBurstParticles(candyX, candyY, '#9ca3af', 14, false);
+    addFloatingText(candyX, candyY - 10, '💨 扔掉炸弹', '#4b5563', 1.05);
+    spawnNextCandyOnCloud();
+  }
+
+  function getLowestNeededColumn() {
+    const lvlConfig = getLevelConfig();
+    const needed = lvlConfig.activeCols.filter(i => state.columnCounts[i] < lvlConfig.targetPerTube);
+    if (!needed.length) return null;
+    return needed.sort((a, b) => state.columnCounts[a] - state.columnCounts[b])[0];
   }
 
   function createRandomCandy() {
@@ -987,6 +1173,7 @@
       specialType,
       timer: maxTimer,
       maxTimer,
+      age: 0,
       alignTime: 0,
       isRainbow,
       scale: 0.1
@@ -1013,17 +1200,38 @@
       isRainbow: !!opts.isRainbow,
       homing: !!opts.homing,
       splitDone: !!opts.splitDone,
+      quick: !!opts.quick,
       rotation: (Math.random() - 0.5) * 0.3,
       vRot: (Math.random() - 0.5) * 2.5
     });
   }
 
   function dropActiveCandy() {
-    if (!state.activeCandy || state.isLevelCleared || state.fallingCandies.length >= 16) return;
+    if (!state.activeCandy || state.isLevelCleared) return;
+    if (state.fallingCandies.length >= 16) {
+      if (state.blockedMsgCd <= 0) {
+        state.blockedMsgCd = 0.8;
+        addFloatingText(state.cloud.x, state.cloud.y - 30, '⏳ 等一下~', '#64748b', 1.0);
+      }
+      state.cloud.scaleX = 0.94;
+      state.cloud.scaleY = 1.06;
+      return;
+    }
     hideLevelIntroToast();
     const c = state.activeCandy;
     const dropX = state.cloud.x;
     const dropY = state.cloud.y + state.cloud.height * 0.48;
+    // Lightning-fast drop (before the countdown ring is ~1/3 used) earns a speed bonus if it lands right
+    const quick = c.timer > 0 && c.age <= Math.max(0.9, c.maxTimer * 0.32);
+    // Rainbow wildcard aimed at a full column: steer it to the lowest column instead
+    let steerTo = null;
+    if (c.isRainbow) {
+      const lvlCfg = getLevelConfig();
+      const under = getColumnIndexAtX(dropX);
+      if (lvlCfg.activeCols.includes(under) && state.columnCounts[under] >= lvlCfg.targetPerTube) {
+        steerTo = getLowestNeededColumn();
+      }
+    }
 
     // Advance tutorial step in Level 1
     if (state.currentLevel === 1) {
@@ -1043,22 +1251,25 @@
           shape: c.shape,
           specialType: 'normal',
           isRainbow: false,
-          homing: state.magnetTimer > 0
+          homing: state.magnetTimer > 0,
+          quick
         });
       }
-      addFloatingText(dropX, dropY + 10, '⚡ 三连爆射糖!', COLOR_COLUMNS[c.colorIdx].hex, 1.15);
+      addFloatingText(dropX, dropY + 10, '⚡ ×3', COLOR_COLUMNS[c.colorIdx].hex, 1.15);
     } else {
       spawnFallingCandyObj({
         x: dropX,
         y: dropY,
         vx: state.cloud.vx * 0.08,
         vy: 145,
-        colorIdx: c.colorIdx,
+        colorIdx: steerTo !== null ? steerTo : c.colorIdx,
         shape: c.shape,
         specialType: c.specialType,
         isRainbow: c.isRainbow,
-        homing: state.magnetTimer > 0 && c.specialType !== 'bomb'
+        homing: steerTo !== null || (state.magnetTimer > 0 && c.specialType !== 'bomb'),
+        quick
       });
+      if (steerTo !== null) addFloatingText(dropX, dropY + 20, '🌈 飞去最矮的柱子', '#7c3aed', 1.0);
     }
 
     // Dynamic squash-and-stretch recoil on cloud release
@@ -1066,6 +1277,33 @@
     state.cloud.scaleX = 1.15;
     state.cloud.scaleY = 0.86;
     triggerHaptic('drop');
+    spawnNextCandyOnCloud();
+  }
+
+  // Countdown ran out: the candy floats away like a balloon. Breaks the combo, but costs no heart.
+  function candyFloatAway() {
+    const ac = state.activeCandy;
+    if (!ac) return;
+    const x = state.cloud.x;
+    const y = state.cloud.y + state.cloud.height * 0.5 + state.layout.candyRadius + 6;
+    state.driftingCandies.push({
+      x, y,
+      vx: (Math.random() - 0.5) * 70,
+      vy: -40,
+      rot: 0,
+      vRot: (Math.random() - 0.5) * 3,
+      life: 1.3,
+      colorIdx: ac.colorIdx,
+      shape: ac.shape,
+      isRainbow: ac.isRainbow,
+      specialType: ac.specialType
+    });
+    const hadCombo = getLevelConfig().features.combo && state.combo > 0;
+    state.combo = 0;
+    state.cloud.mood = 'oops';
+    state.cloud.moodTimer = 0.6;
+    addFloatingText(x, y - 30, hadCombo ? '💨 飘走了 · 连击断了' : '💨 飘走了', '#64748b', 1.1);
+    updateHUD();
     spawnNextCandyOnCloud();
   }
 
@@ -1105,13 +1343,13 @@
     state.screenShake = 8;
     sfx.playFeverStart();
     unlockSticker('fever_party');
-    addFloatingText(state.width / 2, state.layout.cloudY + 45, '🌈 彩虹暴走开启！全自动糖果狂欢！', '#ec4899', 1.4);
+    addFloatingText(state.width / 2, state.layout.cloudY + 45, '🌈 彩虹暴走！', '#ec4899', 1.4);
   }
 
   function activateTopIcon(iconIdx) {
     const lvlConfig = getLevelConfig();
     if (!lvlConfig.features.topMagic) {
-      addFloatingText(state.topIconPos[iconIdx]?.x || state.width / 2, state.layout.topIconsY + 24, '🌟 第 5 关解锁画作魔法大招哦！', '#4f5d75', 1.05);
+      addFloatingText(state.topIconPos[iconIdx]?.x || state.width / 2, state.layout.topIconsY + 24, '🔒 第5关解锁', '#4f5d75', 1.05);
       return false;
     }
     if (state.isLevelCleared || state.topIconCharge[iconIdx] < 100) return false;
@@ -1127,7 +1365,7 @@
 
     if (iconIdx === 0 || iconIdx === 3) {
       // Green Star: Meteor Shower (homing candies targeting needed columns)
-      addFloatingText(pos.x, pos.y + 24, '🌠 绿星魔法：流星糖果雨！', '#1d8f24', 1.3);
+      addFloatingText(pos.x, pos.y + 24, '🌠 流星雨！', '#1d8f24', 1.3);
       for (let m = 0; m < 5; m++) {
         const targetCol = pickNeededColorIndex();
         const targetX = cols[targetCol] ? cols[targetCol].centerX : state.width / 2;
@@ -1150,7 +1388,7 @@
       state.fallingCandies.forEach(fc => {
         if (fc.specialType !== 'bomb') fc.homing = true;
       });
-      addFloatingText(pos.x, pos.y + 24, '🧲 爱心魔法：7秒彩虹磁力制导！', '#e36517', 1.3);
+      addFloatingText(pos.x, pos.y + 24, '🧲 磁铁 7秒！', '#e36517', 1.3);
     } else {
       // Berry Heart: Purify all hazards + instant +1 candy in 2 most-needed columns!
       state.columnFrozen = [0, 0, 0, 0, 0, 0, 0];
@@ -1160,7 +1398,7 @@
         state.activeCandy.specialType = 'rainbow';
         state.activeCandy.isRainbow = true;
       }
-      addFloatingText(pos.x, pos.y + 24, '🍇 紫莓甘霖：净化全场 + 糖果补给！', '#7e3f8f', 1.3);
+      addFloatingText(pos.x, pos.y + 24, '🍇 净化 + 补糖！', '#7e3f8f', 1.3);
 
       const neededCols = lvlConfig.activeCols
         .filter(i => state.columnCounts[i] < lvlConfig.targetPerTube)
@@ -1211,21 +1449,22 @@
       spawnBurstParticles(col.centerX, slotY, COLOR_COLUMNS[colIdx].lightHex, 14, isRainbow);
 
       // Check column fill
-      if (state.columnCounts[colIdx] === target) {
+      if (state.columnCounts[colIdx] === target && !state.isEndlessMode) {
         unlockSticker('first_tube');
         spawnBurstParticles(col.centerX, col.topY + 30, '#ffd700', 26, true);
-        addFloatingText(col.centerX, col.topY - 14, `🎉 ${COLOR_COLUMNS[colIdx].name}收集达成!`, '#1d8f24', 1.35);
+        addFloatingText(col.centerX, col.topY - 14, `🎉 满啦！`, '#1d8f24', 1.35);
 
         // Check if level clear condition reached
         checkLevelClearCondition();
       }
+      checkRainbowRow();
     } else {
       state.score += 5;
     }
   }
 
   function checkLevelClearCondition() {
-    if (state.isLevelCleared) return;
+    if (state.isLevelCleared || state.isEndlessMode) return;
     const lvlConfig = getLevelConfig();
     const activeCols = lvlConfig.activeCols;
     const target = lvlConfig.targetPerTube;
@@ -1281,14 +1520,280 @@
     state.floatingTexts.push({ x, y, text, color, scale, alpha: 1, vy: -55, life: 1.15 });
   }
 
+  /* ---------------- Heart loss (shared by mismatch / bomb / bug) ---------------- */
+
+  // Gentle feedback while hearts remain; the full-screen alarm only fires when you're down to the last heart.
+  // Returns true if the level failed.
+  function loseHeart(x, y, shortText, alarmTitle, alarmSub, reason, resetCombo = true) {
+    state.hearts = Math.max(0, state.hearts - 1);
+    if (resetCombo) state.combo = 0;
+    state.cloud.mood = 'oops';
+    state.cloud.moodTimer = 0.95;
+    triggerHaptic('error');
+    sfx.playHeartLost();
+    if (state.hearts <= 1) {
+      triggerFullScreenError(x, y, alarmTitle, alarmSub);
+    } else {
+      state.screenShake = Math.max(state.screenShake, 5);
+      state.heartLossFlash = 0.5;
+    }
+    addFloatingText(x, y, shortText, '#e11d48', 1.25);
+    updateHUD();
+    if (state.hearts <= 0) {
+      triggerLevelFail(reason);
+      return true;
+    }
+    return false;
+  }
+
+  /* ---------------- Fun Layer: Combo Tiers, Rainbow Rows, Lucky Rain, Swap ---------------- */
+
+  function getComboTier(combo = state.combo) {
+    let tier = null;
+    for (const t of COMBO_TIERS) {
+      if (combo >= t.min) tier = t;
+    }
+    return tier;
+  }
+
+  function getComboMult() {
+    const tier = getComboTier();
+    return tier ? tier.mult : 1;
+  }
+
+  function showBanner(text, color = '#ec4899', sub = '') {
+    state.banner = { text, sub, color, life: 1.35, maxLife: 1.35 };
+  }
+
+  // Called right after combo increments: celebrate when a new tier is reached
+  function onComboIncreased() {
+    const tier = COMBO_TIERS.find(t => t.min === state.combo);
+    if (!tier) return;
+    showBanner(`🔥 ${state.combo} 连击 ${tier.label}`, tier.color, '连击越高，每颗糖得分越多！');
+    state.screenShake = Math.max(state.screenShake, 4);
+    spawnBurstParticles(state.cloud.x, state.cloud.y, tier.color, 22, true);
+  }
+
+  // A "Rainbow Row" = every active column has reached the same new height.
+  function checkRainbowRow() {
+    if (state.isLevelCleared || state.isLevelFailed) return;
+    const lvlConfig = getLevelConfig();
+    const active = lvlConfig.activeCols;
+    if (active.length < 2) return;
+    const minCount = Math.min(...active.map(i => state.columnCounts[i]));
+    if (state.isEndlessMode) {
+      if (minCount >= 1) clearEndlessRow(active);
+      return;
+    }
+    if (minCount <= state.rowsCompleted) return;
+
+    state.rowsCompleted = minCount;
+    const sorted = active.slice().sort((a, b) => a - b);
+    const bonus = 8 * active.length * getComboMult();
+    state.score += bonus;
+    unlockSticker('rainbow_row');
+
+    let rewardText = `+${bonus} 分`;
+    if (lvlConfig.features.fever && state.feverTimer <= 0) {
+      state.feverGauge = Math.min(100, state.feverGauge + 30);
+      rewardText += ' · 🌈暴走 +30%';
+    }
+    if (lvlConfig.features.topMagic) {
+      for (let k = 0; k < state.topIconCharge.length; k++) {
+        state.topIconCharge[k] = Math.min(100, state.topIconCharge[k] + 15);
+      }
+      rewardText += ' · 魔法充能';
+    }
+
+    // Checkpoint every 2 rows on the long levels
+    if (lvlConfig.targetPerTube >= CHECKPOINT_MIN_PER_TUBE && minCount % 2 === 0 && minCount < lvlConfig.targetPerTube) {
+      state.checkpoint = { rows: minCount, score: state.score };
+      rewardText += ' · 📍存档';
+    }
+
+    state.rowSweeps.push({ slot: minCount - 1, t: 0, dur: 1.5, order: sorted, hit: 0 });
+    sfx.playRowScale(sorted);
+    showBanner('🌈 彩虹横排！', '#7c3aed', rewardText);
+    triggerHaptic('combo');
+    updateHUD();
+    if (state.feverGauge >= 100) triggerFeverMode();
+  }
+
+  // Endless: a full bottom row pops away and everything drops down by one
+  function clearEndlessRow(active) {
+    const sorted = active.slice().sort((a, b) => a - b);
+    sorted.forEach(cIdx => {
+      const col = state.layout.columns[cIdx];
+      if (col) spawnBurstParticles(col.centerX, getSlotCenterY(0), COLOR_COLUMNS[cIdx].lightHex, 10, true);
+      state.columnCounts[cIdx] -= 1;
+      state.columnStacks[cIdx].shift();
+      state.columnPunchY[cIdx] = 9;
+    });
+    state.endlessRows += 1;
+    ENDLESS_CONFIG.candyTimer = Math.max(1.5, ENDLESS_BASE_TIMER - state.endlessRows * 0.1);
+    const bonus = 10 * sorted.length * getComboMult();
+    state.score += bonus;
+    unlockSticker('rainbow_row');
+    if (state.feverTimer <= 0) state.feverGauge = Math.min(100, state.feverGauge + 25);
+    state.rowSweeps.push({ slot: 0, t: 0, dur: 1.5, order: sorted, hit: 0 });
+    sfx.playRowScale(sorted);
+    showBanner(`🌈 消除第 ${state.endlessRows} 排！`, '#7c3aed', `+${bonus} 分 · 糖果变快啦`);
+    triggerHaptic('combo');
+    updateHUD();
+    if (state.feverGauge >= 100) triggerFeverMode();
+  }
+
+  function spawnLuckyCandy() {
+    const lvlConfig = getLevelConfig();
+    const canHeal = state.hearts < state.maxHearts;
+    const isHeart = canHeal && Math.random() < 0.18;
+    const cols = state.layout.columns;
+    const active = lvlConfig.activeCols;
+    // Prefer spawning somewhere reachable over the playfield of active columns
+    const minX = cols[Math.min(...active)]?.centerX || 40;
+    const maxX = cols[Math.max(...active)]?.centerX || state.width - 40;
+    state.luckyCandies.push({
+      baseX: minX + Math.random() * Math.max(1, maxX - minX),
+      x: 0,
+      y: -18,
+      vy: 42 + Math.random() * 18,
+      phase: Math.random() * Math.PI * 2,
+      sway: 18 + Math.random() * 22,
+      kind: isHeart ? 'heart' : 'gold',
+      spin: 0,
+      life: 1
+    });
+  }
+
+  function collectLuckyCandy(lc) {
+    const lvlConfig = getLevelConfig();
+    spawnBurstParticles(lc.x, lc.y, lc.kind === 'heart' ? '#ff4d6d' : '#ffd700', 16, true);
+    sfx.playLuckyCatch(lc.kind === 'heart');
+    triggerHaptic('match');
+    state.cloud.mood = 'joy';
+    state.cloud.moodTimer = 0.6;
+    state.cloud.scaleX = 1.12;
+    state.cloud.scaleY = 0.9;
+
+    if (lc.kind === 'heart') {
+      state.hearts = Math.min(state.maxHearts, state.hearts + 1);
+      addFloatingText(lc.x, lc.y - 16, '💖 +1❤️', '#ff2e63', 1.25);
+    } else {
+      state.luckyCount += 1;
+      const pts = 4 * getComboMult();
+      state.score += pts;
+      if (lvlConfig.features.fever && state.feverTimer <= 0) {
+        state.feverGauge = Math.min(100, state.feverGauge + 10);
+      }
+      if (lvlConfig.features.topMagic) {
+        for (let k = 0; k < state.topIconCharge.length; k++) {
+          state.topIconCharge[k] = Math.min(100, state.topIconCharge[k] + 8);
+        }
+      }
+      const step = ((state.luckyCount - 1) % 3) + 1;
+      if (step === 3) {
+        unlockSticker('lucky_catcher');
+        // Reward: the candy currently held becomes a rainbow wildcard (or the next one if holding a bomb)
+        const target = state.activeCandy && state.activeCandy.specialType !== 'bomb' ? state.activeCandy : state.nextCandy;
+        if (target) {
+          target.specialType = 'rainbow';
+          target.isRainbow = true;
+          target.shape = 'star';
+        }
+        showBanner('🍀 集齐 3 颗幸运星！', '#d97706', '云朵的糖果变成了彩虹百搭糖！');
+      } else {
+        addFloatingText(lc.x, lc.y - 16, `⭐ ${step}/3`, '#d97706', 1.15);
+      }
+      if (state.feverGauge >= 100) triggerFeverMode();
+    }
+    updateHUD();
+  }
+
+  function updateLuckyCandies(dt) {
+    const lvlConfig = getLevelConfig();
+    if (!state.isLevelCleared && state.currentLevel >= LUCKY_START_LEVEL && lvlConfig.activeCols.length) {
+      state.luckySpawnTimer -= dt;
+      if (state.luckySpawnTimer <= 0) {
+        state.luckySpawnTimer = 5.5 + Math.random() * 3.5;
+        spawnLuckyCandy();
+      }
+    }
+    const c = state.cloud;
+    for (let i = state.luckyCandies.length - 1; i >= 0; i--) {
+      const lc = state.luckyCandies[i];
+      lc.phase += dt * 2.2;
+      lc.spin += dt * 3;
+      lc.y += lc.vy * dt;
+      lc.x = Math.max(16, Math.min(state.width - 16, lc.baseX + Math.sin(lc.phase) * lc.sway));
+
+      // Caught by the cloud body?
+      if (!state.isLevelCleared && Math.abs(lc.x - c.x) <= c.width * 0.5 && Math.abs(lc.y - c.y) <= c.height * 0.55) {
+        collectLuckyCandy(lc);
+        state.luckyCandies.splice(i, 1);
+        continue;
+      }
+      // Missed: fades out as it passes the columns (no penalty)
+      if (lc.y > state.layout.columnsTopY) {
+        lc.life -= dt * 2.5;
+        if (lc.life <= 0) state.luckyCandies.splice(i, 1);
+      }
+    }
+  }
+
+  // Swap the held candy with the "next" preview (keeps the countdown, so no stalling)
+  function swapCandies() {
+    if (!state.activeCandy || !state.nextCandy || state.isLevelCleared || state.isLevelFailed) return false;
+    const a = state.activeCandy;
+    const n = state.nextCandy;
+    const props = ['colorIdx', 'shape', 'specialType', 'isRainbow'];
+    props.forEach(p => {
+      const tmp = a[p];
+      a[p] = n[p];
+      n[p] = tmp;
+    });
+    a.scale = 0.55;
+    state.cloud.scaleX = 0.9;
+    state.cloud.scaleY = 1.1;
+    sfx.playRealPianoNote('G5', 0.6, 0);
+    triggerHaptic('drop');
+    return true;
+  }
+
+  const IS_TOUCH = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+
+  function getNextBubbleRect(withBounce = true) {
+    const c = state.cloud;
+    const big = IS_TOUCH || state.width < 700;
+    const w = big ? 86 : 70;
+    const h = big ? 36 : 28;
+    const right = c.x + c.width / 2 + 6;
+    const cy = c.y + (withBounce ? c.bounceY : 0) - c.height / 2 - (big ? 18 : 14);
+    return { x: right - w, y: cy - h / 2, w, h, big };
+  }
+
   function updateHUD() {
     const lvlConfig = getLevelConfig();
     const totalTarget = getLevelTotalTarget(lvlConfig);
 
-    document.getElementById('level-val').textContent = `${state.currentLevel}/${LEVELS.length}`;
-    document.getElementById('target-progress-val').textContent = `${state.levelCollected}/${totalTarget}`;
-    document.getElementById('combo-val').textContent = state.combo;
-    document.getElementById('score-val').textContent = state.score;
+    if (state.isEndlessMode) {
+      document.getElementById('level-val').textContent = '♾️ 无尽';
+      document.getElementById('target-progress-val').textContent = `消 ${state.endlessRows} 排`;
+    } else {
+      document.getElementById('level-val').textContent = `${state.currentLevel}/${LEVELS.length}`;
+      document.getElementById('target-progress-val').textContent = `${state.levelCollected}/${totalTarget}`;
+    }
+
+    // Score pill shows the next star goal
+    const [s2, s3] = getStarScores(lvlConfig);
+    let scoreText = `${state.score}`;
+    if (state.isEndlessMode) {
+      scoreText = `${state.score} 🏆${Math.max(state.endlessBest, state.score)}`;
+    } else if (state.score >= s3) {
+      scoreText = `${state.score} ⭐⭐⭐`;
+    } else {
+      scoreText = `${state.score}/${state.score >= s2 ? s3 : s2}`;
+    }
+    document.getElementById('score-val').textContent = scoreText;
 
     // Hearts Pill
     const heartsEl = document.getElementById('hearts-val');
@@ -1298,6 +1803,8 @@
         heartStr += (h < state.hearts ? '❤️' : '🖤');
       }
       heartsEl.textContent = heartStr;
+      const heartsPill = document.getElementById('hud-hearts-pill');
+      if (heartsPill) heartsPill.classList.toggle('critical', state.hearts === 1 && state.maxHearts > 1);
     }
 
     const feverEl = document.getElementById('fever-val');
@@ -1327,22 +1834,62 @@
 
   let introToastTimer = null;
 
+  function isAnyModalOpen() {
+    return !!document.querySelector('.modal-backdrop.open');
+  }
+
+  // The game world freezes while any dialog is open or the level intro card is being read
+  function isGamePaused() {
+    return state.introVisible || isAnyModalOpen();
+  }
+
+  function openPauseMenu() {
+    if (isAnyModalOpen()) return;
+    hideLevelIntroToast();
+    const nameEl = document.getElementById('pause-level-name');
+    if (nameEl) {
+      nameEl.textContent = state.isEndlessMode
+        ? `♾️ 无尽模式 · 已消 ${state.endlessRows} 排`
+        : `第 ${state.currentLevel} 关 · ${getLevelConfig().title}`;
+    }
+    document.getElementById('pause-modal').classList.add('open');
+  }
+
+  function togglePauseMenu() {
+    const pm = document.getElementById('pause-modal');
+    if (pm.classList.contains('open')) {
+      pm.classList.remove('open');
+    } else if (!isAnyModalOpen() && !state.isLevelCleared && !state.isLevelFailed) {
+      openPauseMenu();
+    }
+  }
+
+  // In-game confirm dialog (replaces the browser's confirm())
+  let confirmHandler = null;
+  function askConfirm(title, desc, onOk) {
+    document.getElementById('confirm-title').textContent = title;
+    document.getElementById('confirm-desc').textContent = desc;
+    confirmHandler = onOk;
+    document.getElementById('confirm-modal').classList.add('open');
+  }
+
   function showLevelIntroToast(lvl = state.currentLevel) {
     if (introToastTimer) {
       clearTimeout(introToastTimer);
       introToastTimer = null;
     }
-    const lvlConfig = getLevelConfig(lvl);
+    const lvlConfig = state.isEndlessMode ? ENDLESS_CONFIG : getLevelConfig(lvl);
     const toast = document.getElementById('level-intro-toast');
     const tagEl = document.getElementById('toast-level-num');
     const titleEl = document.getElementById('toast-level-title');
     const tipEl = document.getElementById('toast-level-tip');
 
     if (toast && tagEl && titleEl && tipEl) {
-      tagEl.textContent = `第 ${lvlConfig.id} 关`;
+      tagEl.textContent = state.isEndlessMode ? '♾️ 无尽' : `第 ${lvlConfig.id} 关`;
       titleEl.textContent = `${lvlConfig.title} · ${lvlConfig.subtitle}`;
       tipEl.textContent = lvlConfig.tip;
       toast.classList.add('show');
+      state.introVisible = true;
 
       // 关卡弹窗作为提示，开始游戏后自动消失（无需手动点击开始挑战）
       introToastTimer = setTimeout(() => {
@@ -1358,6 +1905,7 @@
     }
     const toast = document.getElementById('level-intro-toast');
     if (toast) toast.classList.remove('show');
+    state.introVisible = false;
   }
 
   function triggerLevelClear() {
@@ -1371,18 +1919,13 @@
       }
     }, 850);
 
-    const elapsed = (Date.now() - state.levelStartTime) / 1000;
+    const elapsed = state.playTime;
     const lvlConfig = getLevelConfig();
-    const cond = lvlConfig.starConditions;
 
-    // Calculate Stars based on Hearts survival & Combo & Time
-    let starsCount = 1;
-    const flawlessHearts = state.hearts >= state.maxHearts;
-    if ((elapsed <= cond.star3Time && state.maxCombo >= cond.star3Combo) || (flawlessHearts && state.maxCombo >= Math.max(1, cond.star3Combo - 2))) {
-      starsCount = 3;
-    } else if (elapsed <= cond.star2Time || state.maxCombo >= Math.max(1, cond.star3Combo - 1) || state.hearts >= 2) {
-      starsCount = 2;
-    }
+    // Stars from score, +1 for not losing any heart
+    const starInfo = computeStars();
+    const starsCount = starInfo.stars;
+    const flawlessHearts = starInfo.flawless;
 
     if (starsCount === 3) unlockSticker('speed_star');
 
@@ -1409,8 +1952,13 @@
 
     document.getElementById('level-clear-title').textContent = `🎉 第 ${state.currentLevel} 关 通关成功！`;
     document.getElementById('level-clear-stars').textContent = starStr;
-    const heartBadge = flawlessHearts ? '❤️ 满心完美通关！' : `❤️ 剩余 ${state.hearts} 心过关！`;
-    document.getElementById('level-clear-desc').textContent = `恭喜完成【${lvlConfig.title}】全部目标！${heartBadge}`;
+    const heartBadge = flawlessHearts ? '❤️ 一颗心没丢，奖励 +1⭐！' : `❤️ 剩余 ${state.hearts} 心`;
+    let nextStarTip = '';
+    if (starsCount < 3) {
+      const need = (state.score >= starInfo.s2 ? starInfo.s3 : starInfo.s2) - state.score;
+      if (need > 0) nextStarTip = ` 再多 ${need} 分就能多 1 颗星！`;
+    }
+    document.getElementById('level-clear-desc').textContent = `【${lvlConfig.title}】完成！${heartBadge}${nextStarTip}`;
     document.getElementById('lc-candies').textContent = `${state.levelCollected} / ${getLevelTotalTarget(lvlConfig)}`;
     document.getElementById('lc-time').textContent = formatTime(elapsed);
     document.getElementById('lc-combo').textContent = state.maxCombo;
@@ -1436,6 +1984,12 @@
   }
 
   function triggerFullScreenError(x, y, title, subtitle = '') {
+    if (state.reduceMotion) {
+      // Calm version: just the message card, no flashing / shockwaves / shaking
+      state.errorHeartPrompt = { title, subtitle, timer: 1.25, maxTimer: 1.25 };
+      state.heartLossFlash = 0.5;
+      return;
+    }
     state.errorFlashTimer = 0.9;
     state.screenShake = 18;
     state.errorHeartPrompt = {
@@ -1469,27 +2023,42 @@
     state.cloud.mood = 'oops';
     state.screenShake = 12;
 
-    const elapsed = (Date.now() - state.levelStartTime) / 1000;
+    const elapsed = state.playTime;
     const lvlConfig = getLevelConfig();
 
     document.getElementById('level-fail-title').textContent = `第 ${state.currentLevel} 关 挑战遗憾失败`;
-    let reasonDesc = '生命红心耗尽啦！投错颜色跑道会扣除红心哦~';
-    let tipDesc = '💡 <strong>小画师建议：</strong>放慢节奏，看清糖果颜色左右对准再放下！连续接对 5 次 Combo 可恢复 1 颗生命红心！';
+    let reasonDesc = '红心用完啦！';
+    let tipDesc = '💡 看清形状再放下，5 连击能回 1 颗心！';
 
     if (reason === 'bomb') {
-      reasonDesc = '坏坏炸弹掉入跑道引爆并扣光了红心！下次在半空中直接点击炸弹拆弹！';
-      tipDesc = '💡 <strong>拆弹小技巧：</strong>黑色炸弹出现时，直接用手指轻触或鼠标点击空中炸弹，即可直接拆除！';
+      reasonDesc = '被炸弹炸到啦！';
+      tipDesc = '💡 炸弹挂在云朵上时点它扔掉，掉下来时点它拆掉！';
     } else if (reason === 'bug') {
-      reasonDesc = '贪吃虫抢走糖果并扣光了红心！及时点击虫子把它赶跑！';
-      tipDesc = '💡 <strong>除虫小技巧：</strong>贪吃虫爬上跑道时，直接点击该跑道拍飞贪吃虫，保护糖果与红心！';
+      reasonDesc = '贪吃虫偷走了红心！';
+      tipDesc = '💡 看到虫子马上点它！';
     } else if (reason === 'timeout') {
-      reasonDesc = '倒计时耗尽糖果自动落下错配跑道，扣光了红心！';
-      tipDesc = '💡 <strong>手速小建议：</strong>注意糖果外围的倒计时光环，在光环转完前尽快移动云朵对准跑道！';
+      reasonDesc = '红心用完啦！';
+      tipDesc = '💡 注意糖果外圈的倒计时！';
+    }
+
+    const cpBtn = document.getElementById('btn-checkpoint-level');
+    if (state.isEndlessMode) {
+      const isNewBest = state.score > state.endlessBest;
+      if (isNewBest) state.endlessBest = state.score;
+      saveProgress();
+      document.getElementById('level-fail-title').textContent = isNewBest ? '♾️ 新纪录！🏆' : '♾️ 无尽模式结束';
+      reasonDesc = `消除了 ${state.endlessRows} 排，得分 ${state.score}（最高 ${state.endlessBest}）`;
+      tipDesc = '💡 彩虹糖放进最矮的柱子！';
+    }
+    if (cpBtn) {
+      const cp = !state.isEndlessMode && state.checkpoint;
+      cpBtn.style.display = cp ? '' : 'none';
+      if (cp) cpBtn.textContent = `📍 从第 ${cp.rows} 排继续`;
     }
 
     document.getElementById('level-fail-desc').textContent = reasonDesc;
     document.getElementById('level-fail-tip').innerHTML = tipDesc;
-    document.getElementById('lf-candies').textContent = `${state.levelCollected} / ${getLevelTotalTarget(lvlConfig)}`;
+    document.getElementById('lf-candies').textContent = state.isEndlessMode ? `${state.levelCollected}` : `${state.levelCollected} / ${getLevelTotalTarget(lvlConfig)}`;
     document.getElementById('lf-time').textContent = formatTime(elapsed);
     document.getElementById('lf-combo').textContent = state.maxCombo;
     document.getElementById('lf-score').textContent = state.score;
@@ -1506,15 +2075,17 @@
     triggerHaptic('clear');
     sfx.playVictory();
 
-    const elapsed = (Date.now() - state.levelStartTime) / 1000;
+    const elapsed = state.playTime;
     unlockSticker('grand_champion');
-    unlockSticker('speed_star');
 
-    // 3 Stars for Level 8
-    state.levelStars[8] = 3;
+    const finaleStars = computeStars().stars;
+    if (finaleStars === 3) unlockSticker('speed_star');
+    state.levelStars[8] = Math.max(state.levelStars[8] || 0, finaleStars);
+    const prevHigh8 = state.levelHighScores[8] || 0;
+    if (state.score > prevHigh8) state.levelHighScores[8] = state.score;
     saveProgress();
 
-    document.getElementById('win-stars').textContent = '⭐⭐⭐';
+    document.getElementById('win-stars').textContent = '⭐'.repeat(finaleStars) + '☆'.repeat(3 - finaleStars);
     document.getElementById('win-rank').textContent = '👑 传奇彩虹大魔法师';
     document.getElementById('win-candies').textContent = '70 / 70';
     document.getElementById('win-time').textContent = formatTime(elapsed);
@@ -1523,7 +2094,7 @@
 
     const unlockMsgEl = document.getElementById('win-unlock-msg');
     if (unlockMsgEl) {
-      unlockMsgEl.textContent = '小画师画作里的 7 根彩虹柱全部装满 10 颗糖果！大圆满达成！';
+      unlockMsgEl.textContent = '7 根彩虹柱全部装满！♾️ 无尽模式已解锁，来挑战最高分吧！';
     }
 
     spawnVictoryConfetti();
@@ -1533,8 +2104,16 @@
     }, 700);
   }
 
-  function startLevel(lvlIndex, autoIntro = true) {
+  function startLevel(lvlIndex, autoIntro = true, endless = false) {
     state.currentLevel = Math.max(1, Math.min(LEVELS.length, lvlIndex));
+    state.isEndlessMode = !!endless;
+    ENDLESS_CONFIG.candyTimer = ENDLESS_BASE_TIMER;
+    state.endlessRows = 0;
+    state.checkpoint = null;
+    state.usedCheckpoint = false;
+    state.heartLossFlash = 0;
+    state.driftingCandies = [];
+    state.playTime = 0;
     state.isLevelCleared = false;
     state.isLevelFailed = false;
     state.isGrandFinale = false;
@@ -1580,6 +2159,13 @@
     state.hazardSpawnTimer = lvlConfig.features.hazards ? 8.0 : 99999;
     state.confetti = [];
     state.activeCandy = null;
+    state.nextCandy = null;
+    state.banner = null;
+    state.rowsCompleted = 0;
+    state.rowSweeps = [];
+    state.luckyCandies = [];
+    state.luckySpawnTimer = 3.5;
+    state.luckyCount = 0;
 
     // Reset tutorial in Level 1
     if (state.currentLevel === 1) {
@@ -1588,6 +2174,8 @@
     } else {
       state.tutorialStep = 4;
     }
+
+    computeLayout();
 
     // Align cloud over first active column
     const firstActive = lvlConfig.activeCols[0] || 0;
@@ -1616,9 +2204,39 @@
     saveProgress();
   }
 
+  // Restart a long level from its last checkpoint (rows rebuilt, hearts refilled, score restored)
+  function resumeFromCheckpoint() {
+    const cp = state.checkpoint;
+    if (!cp) return;
+    startLevel(state.currentLevel, false);
+    const lvlConfig = getLevelConfig();
+    lvlConfig.activeCols.forEach(cIdx => {
+      for (let r = 0; r < cp.rows; r++) {
+        state.columnStacks[cIdx].push({
+          radius: state.layout.candyRadius,
+          colorIdx: cIdx,
+          shape: COLOR_COLUMNS[cIdx].shape,
+          isRainbow: false,
+          rotation: (Math.random() - 0.5) * 0.18,
+          squish: 1
+        });
+      }
+      state.columnCounts[cIdx] = cp.rows;
+    });
+    state.levelCollected = cp.rows * lvlConfig.activeCols.length;
+    state.rowsCompleted = cp.rows;
+    state.score = cp.score;
+    state.checkpoint = cp;
+    state.usedCheckpoint = true;
+    updateHUD();
+    showBanner(`📍 从第 ${cp.rows} 排继续！`, '#0284c7', '红心已经补满，加油！');
+  }
+
   function update(dt) {
+    updateColumnWidths(dt);
     const cols = state.layout.columns;
     if (!cols.length) return;
+    if (!state.isLevelCleared && !state.isLevelFailed) state.playTime += dt;
     const lvlConfig = getLevelConfig();
 
     sfx.updateBGM(dt, state.feverTimer > 0);
@@ -1629,6 +2247,19 @@
 
     if (state.errorFlashTimer > 0) {
       state.errorFlashTimer = Math.max(0, state.errorFlashTimer - dt);
+    }
+    if (state.heartLossFlash > 0) {
+      state.heartLossFlash = Math.max(0, state.heartLossFlash - dt);
+    }
+    if (state.blockedMsgCd > 0) state.blockedMsgCd -= dt;
+    for (let i = state.driftingCandies.length - 1; i >= 0; i--) {
+      const d = state.driftingCandies[i];
+      d.vy -= 40 * dt;
+      d.x += d.vx * dt;
+      d.y += d.vy * dt;
+      d.rot += d.vRot * dt;
+      d.life -= dt;
+      if (d.life <= 0) state.driftingCandies.splice(i, 1);
     }
 
     if (state.errorHeartPrompt) {
@@ -1741,14 +2372,14 @@
           const roll = Math.random();
           if (lvlConfig.features.hazardTypes?.includes('bug') && roll < 0.45 && !state.columnBugs[cIdx]) {
             state.columnBugs[cIdx] = { hp: 1, timer: 9.0, phase: 0 };
-            addFloatingText(cols[cIdx].centerX, cols[cIdx].topY - 22, '🐛 贪吃虫来了! 快点击赶跑!', '#d97706', 1.1);
+            addFloatingText(cols[cIdx].centerX, cols[cIdx].topY - 22, '🐛 点我！', '#d97706', 1.1);
           } else if (lvlConfig.features.hazardTypes?.includes('ice') && roll < 0.80 && state.columnFrozen[cIdx] <= 0) {
             state.columnFrozen[cIdx] = 8.0;
-            addFloatingText(cols[cIdx].centerX, cols[cIdx].topY - 22, '❄️ 冰晶封住! 点击或投糖破冰!', '#298cd4', 1.1);
+            addFloatingText(cols[cIdx].centerX, cols[cIdx].topY - 22, '❄️ 点我破冰', '#298cd4', 1.1);
           } else if (lvlConfig.features.hazardTypes?.includes('wind')) {
             state.windTimer = 5.0;
             state.windForce = (Math.random() < 0.5 ? -1 : 1) * 50;
-            addFloatingText(state.width / 2, state.layout.cloudY + 55, state.windForce > 0 ? '🌬️ 调皮东风吹来啦 ➔' : '🌬️ ⬅ 调皮西风吹来啦', '#0284c7', 1.15);
+            addFloatingText(state.width / 2, state.layout.cloudY + 55, state.windForce > 0 ? '🌬️ 刮风 ➔' : '⬅ 刮风 🌬️', '#0284c7', 1.15);
           }
         }
       }
@@ -1773,15 +2404,8 @@
             state.columnCounts[i] -= 1;
             state.levelCollected = Math.max(0, state.levelCollected - 1);
             state.columnStacks[i].pop();
-            state.hearts = Math.max(0, state.hearts - 1);
-            sfx.playHeartLost();
-            triggerFullScreenError(cols[i].centerX, cols[i].topY, '🐛 贪吃虫得逞！生命 -1', '爬上跑道时直接点击虫子将其赶跑！');
-            addFloatingText(cols[i].centerX, cols[i].topY - 16, '🐛 哎呀被偷吃1颗并扣1心! 快点虫子!', '#cf2027', 1.2);
-            updateHUD();
-            if (state.hearts <= 0) {
-              triggerLevelFail('bug');
-              return;
-            }
+            state.columnBugs[i] = null;
+            if (loseHeart(cols[i].centerX, cols[i].topY - 16, '🐛 偷吃 -1❤️', '🐛 贪吃虫得逞！', '虫子出现时点它赶跑！', 'bug', false)) return;
           }
           state.columnBugs[i] = null;
         }
@@ -1838,6 +2462,8 @@
       state.columnHighlight[i] += (targetGlow - state.columnHighlight[i]) * Math.min(1, 10 * dt);
       if (state.columnCounts[i] >= lvlConfig.targetPerTube) {
         state.columnFullGlow[i] = Math.min(1, state.columnFullGlow[i] + dt * 2);
+      } else {
+        state.columnFullGlow[i] = Math.max(0, state.columnFullGlow[i] - dt * 2);
       }
     }
 
@@ -1862,11 +2488,12 @@
       } else {
         const ac = state.activeCandy;
         ac.scale = Math.min(1, ac.scale + dt * 5);
+        ac.age = (ac.age || 0) + dt;
 
         // Auto drop only if timer isn't infinite
         if (ac.timer < 1000) {
           ac.timer -= dt;
-          if (ac.timer <= 0) dropActiveCandy();
+          if (ac.timer <= 0) candyFloatAway();
         }
       }
     }
@@ -1904,7 +2531,7 @@
       if (fc.specialType === 'mystery' && fc.y >= midAirY) {
         sfx.playGateMultiply();
         spawnBurstParticles(fc.x, fc.y, '#ffd700', 22, true);
-        addFloatingText(fc.x, fc.y - 12, '🎁 盲盒大爆发 ×3!', '#d97706', 1.25);
+        addFloatingText(fc.x, fc.y - 12, '🎁 ×3！', '#d97706', 1.25);
         for (let m = -1; m <= 1; m++) {
           const cIdx = pickNeededColorIndex();
           spawnFallingCandyObj({
@@ -1933,7 +2560,7 @@
             sfx.playGateMultiply();
             unlockSticker('bubble_split');
             spawnBurstParticles(gate.x, gate.y, gate.color, 18, true);
-            addFloatingText(gate.x, gate.y - 14, `🫧 穿过${gate.label}！分裂×${gate.mult}!`, gate.color, 1.25);
+            addFloatingText(gate.x, gate.y - 14, `🫧 ×${gate.mult}！`, gate.color, 1.25);
 
             const extraCount = gate.mult - 1;
             for (let k = 0; k < extraCount; k++) {
@@ -1967,26 +2594,14 @@
       if (fc.y >= Math.max(col.topY + 20, landingY)) {
         // 1. Bomb landing
         if (fc.specialType === 'bomb') {
-          triggerHaptic('error');
-          sfx.playHeartLost();
           spawnBurstParticles(fc.x, col.topY + 20, '#ef4444', 28, false);
-          state.hearts = Math.max(0, state.hearts - 1);
-          triggerFullScreenError(fc.x, col.topY + 20, '💣 炸弹引爆！生命 -1', '黑色炸弹掉入跑道会爆炸！空中点击可拆弹！');
           if (state.columnCounts[colIdx] > 0 && isColActive) {
             state.columnCounts[colIdx] -= 1;
             state.levelCollected = Math.max(0, state.levelCollected - 1);
             state.columnStacks[colIdx].pop();
-            addFloatingText(col.centerX, col.topY - 12, '💣 炸弹爆炸！扣 1 心 & 炸飞1颗！', '#cf2027', 1.25);
-          } else {
-            addFloatingText(col.centerX, col.topY - 12, '💣 炸弹引爆！扣 1 心！空中点它可拆弹！', '#cf2027', 1.2);
           }
-          state.combo = 0;
-          updateHUD();
           state.fallingCandies.splice(i, 1);
-          if (state.hearts <= 0) {
-            triggerLevelFail('bomb');
-            return;
-          }
+          if (loseHeart(col.centerX, col.topY - 12, '💣 -1❤️', '💣 炸弹爆炸！', '下次在空中点它拆弹！', 'bomb')) return;
           continue;
         }
 
@@ -1997,14 +2612,14 @@
           triggerHaptic('swat');
           unlockSticker('bomb_hero');
           spawnBurstParticles(col.centerX, col.topY, '#5cd664', 18, true);
-          addFloatingText(col.centerX, col.topY - 24, '🐛 砸跑贪吃虫 +12分!', '#1d8f24', 1.2);
+          addFloatingText(col.centerX, col.topY - 24, '🐛 +12', '#1d8f24', 1.2);
         }
         if (state.columnFrozen[colIdx] > 0) {
           state.columnFrozen[colIdx] = 0;
           state.score += 10;
           triggerHaptic('swat');
           spawnBurstParticles(col.centerX, col.topY, '#73c6ff', 18, false);
-          addFloatingText(col.centerX, col.topY - 24, '❄️ 破冰成功 +10分!', '#298cd4', 1.2);
+          addFloatingText(col.centerX, col.topY - 24, '❄️ +10', '#298cd4', 1.2);
         }
 
         // 3. Match checking
@@ -2015,19 +2630,29 @@
             state.combo += 1;
             if (state.combo > state.maxCombo) state.maxCombo = state.combo;
             if (state.combo >= 10) unlockSticker('combo_master');
+            onComboIncreased();
 
             // 5-Combo Heart Recovery Bonus!
             if (state.combo % 5 === 0 && state.hearts < state.maxHearts) {
               state.hearts = Math.min(state.maxHearts, state.hearts + 1);
               spawnBurstParticles(state.cloud.x, state.cloud.y - 18, '#ff4d6d', 20, true);
-              addFloatingText(state.cloud.x, state.cloud.y - 28, '💖 达成 5 连击！奖励恢复 1 颗生命红心！', '#ff2e63', 1.35);
+              addFloatingText(state.cloud.x, state.cloud.y - 28, '💖 5连击 +1❤️', '#ff2e63', 1.35);
             }
           } else {
             state.combo = 1;
           }
 
-          const points = fc.isRainbow ? 5 : (1 + Math.min(state.combo - 1, 6));
+          const basePoints = fc.isRainbow ? 5 : (1 + Math.min(state.combo - 1, 6));
+          const mult = getComboMult();
+          const quickBonus = fc.quick ? 3 : 0;
+          const points = (basePoints + quickBonus) * mult;
           state.score += points;
+          if (fc.quick) {
+            addFloatingText(col.centerX, landingY - 44, '⚡ 神速', '#f59e0b', 1.0);
+            if (lvlConfig.features.fever && state.feverTimer <= 0) {
+              state.feverGauge = Math.min(100, state.feverGauge + 5);
+            }
+          }
 
           // Charge top magic icons if feature is enabled
           if (lvlConfig.features.topMagic) {
@@ -2047,7 +2672,7 @@
           // Shower special candy
           if (fc.specialType === 'shower') {
             sfx.playMatch(colIdx);
-            addFloatingText(state.width / 2, state.layout.columnsTopY - 24, '🌧️ 七彩甘霖糖！活跃跑道各加1！', '#298cd4', 1.35);
+            addFloatingText(state.width / 2, state.layout.columnsTopY - 24, '🌧️ 每柱 +1！', '#298cd4', 1.35);
             lvlConfig.activeCols.forEach(c => addCandyToColumn(c, 'star', false));
           } else if (currentCount < lvlConfig.targetPerTube) {
             addCandyToColumn(colIdx, fc.shape, fc.isRainbow);
@@ -2062,7 +2687,7 @@
             addFloatingText(
               col.centerX,
               landingY - 18,
-              state.combo > 1 ? `+${points} (${progressStr}) 🔥x${state.combo}!` : `+${points} (${progressStr})`,
+              `+${points}`,
               '#fff',
               1.15
             );
@@ -2070,12 +2695,19 @@
             // Tutorial feedback in Level 1
             if (state.currentLevel === 1) {
               if (state.levelCollected === 1) {
-                addFloatingText(state.width / 2, state.cloud.y - 20, '🎉 成功放入！连续放对还能提升连击得分！', '#1d8f24', 1.25);
+                addFloatingText(state.width / 2, state.cloud.y - 20, '🎉 放对啦！', '#1d8f24', 1.25);
               } else if (state.levelCollected >= 2 && state.tutorialStep < 4) {
                 state.tutorialStep = 4;
-                addFloatingText(state.width / 2, state.cloud.y - 20, '🌟 太棒了！把红蓝两柱集满即可过关！', '#298cd4', 1.2);
+                addFloatingText(state.width / 2, state.cloud.y - 20, '🌟 装满两柱就过关！', '#298cd4', 1.2);
               }
             }
+          } else if (fc.isRainbow && getLowestNeededColumn() !== null) {
+            // Rainbow landed on a full column: hop over to the lowest one
+            const to = getLowestNeededColumn();
+            spawnBurstParticles(fc.x, landingY, '#ffd700', 12, true);
+            addCandyToColumn(to, 'star', true);
+            sfx.playMatch(to);
+            addFloatingText(cols[to].centerX, cols[to].topY - 14, '🌈 跳过来啦', '#7c3aed', 1.1);
           } else {
             // Already full
             state.columnPunchY[colIdx] = 6.0;
@@ -2083,41 +2715,25 @@
             sfx.playMatch(colIdx);
             state.score += 5;
             spawnBurstParticles(fc.x, landingY, '#ffd700', 12, true);
-            addFloatingText(col.centerX, landingY - 18, '已达标额外奖励 +5! ⭐', '#ffd700', 1.15);
+            addFloatingText(col.centerX, landingY - 18, '⭐ +5', '#ffd700', 1.15);
           }
 
           updateHUD();
         } else {
           // Mismatch or dropped into inactive column
-          state.combo = 0;
-          state.cloud.mood = 'oops';
-          state.cloud.moodTimer = 0.95;
-          triggerHaptic('error');
-          sfx.playHeartLost();
-          state.hearts = Math.max(0, state.hearts - 1);
-
           const targetName = COLOR_COLUMNS[fc.colorIdx].name;
           spawnBurstParticles(fc.x, fc.y, '#e11d48', 26, false);
-          triggerFullScreenError(
-            fc.x,
-            col.topY + 15,
-            !isColActive ? '💔 跑道未开启！生命 -1' : '💔 放错颜色！生命 -1',
-            `正确目标是【${targetName}】跑道`
-          );
-
-          if (!isColActive) {
-            addFloatingText(fc.x, Math.min(fc.y - 10, state.layout.columnsTopY + 50), `💔 跑道未开启 -1心! 应移到【${targetName}】`, '#e11d48', 1.25);
-          } else {
-            addFloatingText(fc.x, Math.min(fc.y - 10, state.layout.columnsTopY + 50), `💔 放错颜色 -1心! 我是【${targetName}】`, '#e11d48', 1.25);
-          }
           state.columnHighlight[fc.colorIdx] = 1.8;
-          updateHUD();
           state.fallingCandies.splice(i, 1);
-
-          if (state.hearts <= 0) {
-            triggerLevelFail('mismatch');
-            return;
-          }
+          const failed = loseHeart(
+            fc.x,
+            Math.min(fc.y - 10, state.layout.columnsTopY + 50),
+            `💔 → ${targetName}`,
+            !isColActive ? '💔 这条跑道还没开' : '💔 放错颜色啦',
+            `它要去【${targetName}】`,
+            'mismatch'
+          );
+          if (failed) return;
           continue;
         }
 
@@ -2155,9 +2771,197 @@
       ft.alpha = Math.max(0, Math.min(1, ft.life * 1.5));
       if (ft.life <= 0) state.floatingTexts.splice(i, 1);
     }
+
+    // Big center banner
+    if (state.banner) {
+      state.banner.life -= dt;
+      if (state.banner.life <= 0) state.banner = null;
+    }
+
+    // Rainbow row sweeps: each column pops in time with its scale note
+    for (let i = state.rowSweeps.length - 1; i >= 0; i--) {
+      const sw = state.rowSweeps[i];
+      sw.t += dt;
+      while (sw.hit < sw.order.length && sw.t >= 0.45 + sw.hit * 0.11) {
+        const cIdx = sw.order[sw.hit];
+        const col = cols[cIdx];
+        if (col) {
+          state.columnPunchY[cIdx] = 9;
+          state.columnHighlight[cIdx] = 1.6;
+          spawnBurstParticles(col.centerX, getSlotCenterY(sw.slot), COLOR_COLUMNS[cIdx].lightHex, 8, false);
+        }
+        sw.hit++;
+      }
+      if (sw.t >= sw.dur) state.rowSweeps.splice(i, 1);
+    }
+
+    updateLuckyCandies(dt);
+
+    // Hot-streak sparkle trail under the cloud at high combo
+    if (!state.isLevelCleared && state.combo >= 6 && Math.random() < dt * 22) {
+      const side = (Math.random() - 0.5) * state.cloud.width * 0.9;
+      state.particles.push({
+        x: state.cloud.x + side,
+        y: state.cloud.y + state.cloud.height * 0.4,
+        vx: -state.cloud.vx * 0.15 + (Math.random() - 0.5) * 30,
+        vy: 20 + Math.random() * 40,
+        radius: 2.5 + Math.random() * 3,
+        color: COLOR_COLUMNS[Math.floor(Math.random() * COLOR_COLUMNS.length)].lightHex,
+        alpha: 1,
+        life: 0.5 + Math.random() * 0.3,
+        maxLife: 0.8
+      });
+    }
   }
 
   /* ---------------- Drawing functions ---------------- */
+
+  function drawRowSweeps(ctx) {
+    if (!state.rowSweeps.length) return;
+    const cols = state.layout.columns;
+    for (const sw of state.rowSweeps) {
+      const first = cols[sw.order[0]];
+      const last = cols[sw.order[sw.order.length - 1]];
+      if (!first || !last) continue;
+      const x0 = first.x + 2;
+      const x1 = last.x + last.width - 2;
+      const y = getSlotCenterY(sw.slot);
+      const h = Math.max(14, state.layout.slotHeight * 0.92);
+      const headT = Math.min(1, Math.max(0, (sw.t - 0.35) / (sw.order.length * 0.11 + 0.15)));
+      const fade = sw.t < sw.dur - 0.5 ? 1 : Math.max(0, (sw.dur - sw.t) / 0.5);
+      const headX = x0 + (x1 - x0) * headT;
+      if (headX - x0 < 2) continue;
+
+      ctx.save();
+      const grad = ctx.createLinearGradient(x0, 0, x1, 0);
+      COLOR_COLUMNS.forEach((c, i) => grad.addColorStop(i / (COLOR_COLUMNS.length - 1), c.lightHex));
+      ctx.globalAlpha = 0.5 * fade;
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.roundRect(x0, y - h / 2, headX - x0, h, Math.min(h / 2, (headX - x0) / 2));
+      ctx.fill();
+      ctx.globalAlpha = 0.9 * fade;
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // Shining head star
+      ctx.globalAlpha = fade;
+      ctx.translate(headX, y);
+      ctx.rotate(sw.t * 6);
+      ctx.fillStyle = '#ffd700';
+      ctx.strokeStyle = '#282a24';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let k = 0; k < 10; k++) {
+        const r = k % 2 === 0 ? h * 0.6 : h * 0.26;
+        const a = (Math.PI * k) / 5 - Math.PI / 2;
+        ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  function drawLuckyCandies(ctx) {
+    const cloudY = state.cloud.y;
+    for (const lc of state.luckyCandies) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, lc.life);
+
+      // Landing hint: soft shadow on the cloud's line so kids can see where to catch it
+      if (lc.y < cloudY) {
+        const near = 1 - Math.min(1, (cloudY - lc.y) / 140);
+        ctx.fillStyle = `rgba(245, 158, 11, ${0.12 + near * 0.25})`;
+        ctx.beginPath();
+        ctx.ellipse(lc.x, cloudY - state.cloud.height * 0.5 - 2, 10 + near * 8, 3.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Glow
+      const glow = ctx.createRadialGradient(lc.x, lc.y, 2, lc.x, lc.y, 26);
+      glow.addColorStop(0, lc.kind === 'heart' ? 'rgba(255, 77, 109, 0.55)' : 'rgba(255, 215, 0, 0.6)');
+      glow.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(lc.x, lc.y, 26, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.translate(lc.x, lc.y);
+      ctx.strokeStyle = '#282a24';
+      ctx.lineWidth = 2;
+      if (lc.kind === 'heart') {
+        const s = 1.25 + Math.sin(lc.spin * 2) * 0.08;
+        ctx.scale(s * 2, s * 2);
+        ctx.beginPath();
+        ctx.moveTo(0, 4.5);
+        ctx.bezierCurveTo(-5.5, 0.8, -6.5, -5.5, 0, -2);
+        ctx.bezierCurveTo(6.5, -5.5, 5.5, 0.8, 0, 4.5);
+        ctx.closePath();
+        ctx.fillStyle = '#ef4444';
+        ctx.fill();
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      } else {
+        ctx.rotate(Math.sin(lc.spin) * 0.4);
+        ctx.fillStyle = '#ffd43b';
+        ctx.beginPath();
+        for (let k = 0; k < 10; k++) {
+          const r = k % 2 === 0 ? 13 : 6;
+          const a = (Math.PI * k) / 5 - Math.PI / 2;
+          ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(255,255,255,0.85)';
+        ctx.beginPath();
+        ctx.arc(-3, -3, 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+  }
+
+  function drawBanner(ctx) {
+    const b = state.banner;
+    if (!b) return;
+    const t = 1 - b.life / b.maxLife; // 0 -> 1
+    const pop = t < 0.15 ? 0.6 + (t / 0.15) * 0.55 : (t < 0.25 ? 1.15 - ((t - 0.15) / 0.1) * 0.15 : 1);
+    const alpha = b.life < 0.35 ? b.life / 0.35 : 1;
+    const cx = state.width / 2;
+    const cy = state.layout.columnsTopY + (state.height - state.layout.columnsTopY) * 0.32;
+    const fontSize = Math.round(Math.min(40, Math.max(24, state.width * 0.06)));
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.translate(cx, cy - t * 18);
+    ctx.scale(pop, pop);
+    ctx.rotate(-0.03);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = `900 ${fontSize}px "PingFang SC", "Microsoft YaHei", sans-serif`;
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 9;
+    ctx.strokeStyle = '#ffffff';
+    ctx.strokeText(b.text, 0, 0);
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = '#282a24';
+    ctx.strokeText(b.text, 0, 0);
+    ctx.fillStyle = b.color;
+    ctx.fillText(b.text, 0, 0);
+    if (b.sub) {
+      ctx.font = `800 ${Math.round(fontSize * 0.42)}px "PingFang SC", "Microsoft YaHei", sans-serif`;
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = '#ffffff';
+      ctx.strokeText(b.sub, 0, fontSize * 0.85);
+      ctx.fillStyle = '#282a24';
+      ctx.fillText(b.sub, 0, fontSize * 0.85);
+    }
+    ctx.restore();
+  }
 
   function drawGreenStarIcon(ctx, cx, cy, size) {
     ctx.save();
@@ -2305,10 +3109,19 @@
       }
 
       if (isReady) {
+        // Button base + glow so a charged icon clearly looks pressable
+        ctx.save();
+        ctx.globalAlpha = 0.35 + Math.sin(performance.now() * 0.01 + i) * 0.15;
+        ctx.fillStyle = '#ffd43b';
+        ctx.beginPath();
+        ctx.arc(ix, iy, iconSize * 1.7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
         ctx.font = 'bold 12px sans-serif';
         ctx.textAlign = 'center';
         ctx.fillStyle = '#b45309';
-        ctx.fillText('✨点击放大招', ix, iy + iconSize * 1.52);
+        const keyHint = IS_TOUCH ? '' : ` ${['Q', 'E', 'R'][i % 3]}`;
+        ctx.fillText(`✨点我${keyHint}`, ix, iy + iconSize * 1.52);
       }
       ctx.restore();
     }
@@ -2316,6 +3129,8 @@
 
   function drawCandy(ctx, x, y, radius, colorIdx, shape, isRainbow = false, rotation = 0, squish = 1, specialType = 'normal') {
     const col = COLOR_COLUMNS[colorIdx] || COLOR_COLUMNS[0];
+    // Every color always has its own shape (easier for little kids & color-blind players)
+    if (!isRainbow && col.shape) shape = col.shape;
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(rotation);
@@ -2521,6 +3336,45 @@
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
+    } else if (shape === 'grape') {
+      // Grape bunch: 6 little berries + stem
+      const g = radius * 0.36;
+      const pts = [[-g, -g * 1.1], [g, -g * 1.1], [-g * 1.9, -g * 0.1], [0, -g * 0.1], [g * 1.9, -g * 0.1], [-g, g * 0.95], [g, g * 0.95], [0, g * 1.95]];
+      pts.forEach(([gx, gy]) => {
+        ctx.beginPath();
+        ctx.arc(gx, gy, g * 1.02, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      });
+      ctx.strokeStyle = '#1d8f24';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, -g * 1.9);
+      ctx.lineTo(g * 0.6, -g * 2.7);
+      ctx.stroke();
+    } else if (shape === 'diamond') {
+      ctx.beginPath();
+      ctx.moveTo(0, -radius * 0.95);
+      ctx.lineTo(radius * 0.85, -radius * 0.2);
+      ctx.lineTo(0, radius * 0.95);
+      ctx.lineTo(-radius * 0.85, -radius * 0.2);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(-radius * 0.85, -radius * 0.2);
+      ctx.lineTo(radius * 0.85, -radius * 0.2);
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+    } else if (shape === 'drop') {
+      ctx.beginPath();
+      ctx.moveTo(0, -radius * 1.0);
+      ctx.bezierCurveTo(radius * 0.25, -radius * 0.55, radius * 0.88, -radius * 0.05, radius * 0.88, radius * 0.3);
+      ctx.arc(0, radius * 0.3, radius * 0.88, 0, Math.PI);
+      ctx.bezierCurveTo(-radius * 0.88, -radius * 0.05, -radius * 0.25, -radius * 0.55, 0, -radius * 1.0);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
     } else {
       // Classic round ball candy
       ctx.beginPath();
@@ -2588,52 +3442,6 @@
     ctx.rotate(c.angle || 0);
     ctx.scale(c.scaleX || 1, c.scaleY || 1);
     ctx.translate(-x, -y);
-
-    // Floating Mini Hearts above Cloud Bar (Immediate health status)
-    const numHearts = state.maxHearts;
-    const heartSpacing = 18;
-    const totalHeartsW = (numHearts - 1) * heartSpacing;
-    const heartsBaseX = x - totalHeartsW / 2;
-    const heartsBaseY = y - halfH - 12;
-
-    for (let h = 0; h < numHearts; h++) {
-      const hx = heartsBaseX + h * heartSpacing;
-      const isAlive = h < state.hearts;
-      const isCritical = state.hearts === 1 && isAlive;
-      const pulseScale = isCritical ? (1 + Math.sin(performance.now() * 0.012) * 0.2) : 1;
-
-      ctx.save();
-      ctx.translate(hx, heartsBaseY);
-      ctx.scale(pulseScale, pulseScale);
-
-      // Heart Path
-      ctx.beginPath();
-      ctx.moveTo(0, 4.5);
-      ctx.bezierCurveTo(-5.5, 0.8, -6.5, -5.5, 0, -2);
-      ctx.bezierCurveTo(6.5, -5.5, 5.5, 0.8, 0, 4.5);
-      ctx.closePath();
-
-      if (isAlive) {
-        ctx.fillStyle = '#ef4444';
-        ctx.fill();
-        ctx.strokeStyle = '#991b1b';
-        ctx.lineWidth = 1.2;
-        ctx.stroke();
-
-        // Highlight glint
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-        ctx.beginPath();
-        ctx.arc(-2, -2.5, 1.2, 0, Math.PI * 2);
-        ctx.fill();
-      } else {
-        ctx.fillStyle = 'rgba(120, 120, 120, 0.22)';
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(70, 70, 70, 0.4)';
-        ctx.lineWidth = 1.2;
-        ctx.stroke();
-      }
-      ctx.restore();
-    }
 
     // Thick Hand-Drawn Yellow-Green Frame
     ctx.beginPath();
@@ -2710,24 +3518,48 @@
       ctx.stroke();
     }
 
-    // Next Candy Preview Bubble on Cloud's Right (Bigger & Clearer)
-    if (state.nextCandy) {
-      const nc = state.nextCandy;
-      const bx = x + halfW - 22;
+    // Combo multiplier badge on the cloud's left
+    const comboTier = getComboTier();
+    if (comboTier) {
+      const bx = x - halfW + 4;
       const by = y - halfH - 14;
-      ctx.fillStyle = 'rgba(255,255,255,0.95)';
+      const wob = Math.sin(performance.now() * 0.012) * 0.08;
+      ctx.save();
+      ctx.translate(bx + 22, by);
+      ctx.rotate(wob);
+      ctx.fillStyle = comboTier.color;
       ctx.strokeStyle = '#282a24';
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.roundRect(bx - 42, by - 13, 68, 27, 13);
+      ctx.roundRect(-24, -13, 74, 26, 13);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = '#fff';
+      ctx.font = '900 14px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`🔥${state.combo} ×${comboTier.mult}`, 13, 5);
+      ctx.restore();
+    }
+
+    // Next Candy Preview Bubble on Cloud's Right (Bigger & Clearer)
+    if (state.nextCandy) {
+      const nc = state.nextCandy;
+      const r = getNextBubbleRect(false);
+      ctx.fillStyle = 'rgba(255,255,255,0.97)';
+      ctx.strokeStyle = '#282a24';
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.roundRect(r.x, r.y, r.w, r.h, r.h / 2);
       ctx.fill();
       ctx.stroke();
 
       ctx.fillStyle = '#444';
-      ctx.font = 'bold 13px sans-serif';
+      ctx.font = `bold ${r.big ? 15 : 13}px sans-serif`;
       ctx.textAlign = 'left';
-      ctx.fillText('下颗', bx - 36, by + 4);
-      drawCandy(ctx, bx + 12, by, 8.5, nc.colorIdx, nc.shape, nc.isRainbow, 0, 1, nc.specialType);
+      ctx.textBaseline = 'middle';
+      ctx.fillText('⇄换', r.x + 8, r.y + r.h / 2 + 1);
+      ctx.textBaseline = 'alphabetic';
+      drawCandy(ctx, r.x + r.w - r.h / 2 - 2, r.y + r.h / 2, r.big ? 11 : 9, nc.colorIdx, nc.shape, nc.isRainbow, 0, 1, nc.specialType);
     }
 
     ctx.restore();
@@ -2736,7 +3568,9 @@
     if (state.activeCandy) {
       const ac = state.activeCandy;
       const candyR = state.layout.candyRadius * ac.scale;
-      const candyX = x;
+      const urgent = ac.timer < 1.0 && ac.timer < 1000;
+      const blink = urgent && Math.floor(performance.now() / 120) % 2 === 0;
+      const candyX = x + (urgent ? Math.sin(performance.now() * 0.06) * 2.5 : 0);
       const candyY = y + c.bounceY + halfH + candyR * 0.95 + 6;
       const colInfo = COLOR_COLUMNS[ac.colorIdx];
       const hoverIdx = getColumnIndexAtX(candyX);
@@ -2760,8 +3594,8 @@
         ctx.beginPath();
         const progress = Math.max(0, ac.timer / ac.maxTimer);
         ctx.arc(candyX, candyY, candyR + 6, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * progress);
-        ctx.strokeStyle = ac.specialType === 'bomb' ? '#ef4444' : (isMatch ? '#1d8f24' : colInfo.hex);
-        ctx.lineWidth = 3.5;
+        ctx.strokeStyle = blink ? '#ef4444' : (ac.specialType === 'bomb' ? '#ef4444' : (isMatch ? '#1d8f24' : colInfo.hex));
+        ctx.lineWidth = urgent ? 5 : 3.5;
         ctx.lineCap = 'round';
         ctx.stroke();
         ctx.restore();
@@ -2887,15 +3721,10 @@
       ctx.save();
 
       if (isActive) {
-        ctx.font = 'bold 15px "PingFang SC", "Microsoft YaHei", sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillStyle = '#ffffff';
-        ctx.shadowColor = 'rgba(0,0,0,0.55)';
-        ctx.shadowBlur = 4;
-        ctx.fillText(`${colDef.name} · ${colDef.solfege.split(' ')[0]}`, colRect.centerX, topY + 22);
 
-        // Progress Badge
-        const pillY = topY + 43;
+        // Progress Badge (the lane's color & shape already say which lane it is)
+        const pillY = topY + 24;
         const pillW = Math.min(colRect.width * 0.9, 56);
         const pillH = 22;
 
@@ -2915,26 +3744,12 @@
         ctx.textBaseline = 'middle';
         ctx.fillText(isFull ? '⭐达成' : `${count}/${curLevelConfig.targetPerTube}`, colRect.centerX, pillY);
       } else {
-        // Dormant column tag
-        ctx.font = 'bold 13px sans-serif';
+        // Locked lane: just a lock
+        ctx.font = `${Math.min(18, colRect.width * 0.55)}px sans-serif`;
         ctx.textAlign = 'center';
-        ctx.fillStyle = '#6b7280';
-        ctx.fillText(colDef.name, colRect.centerX, topY + 20);
-
-        const pillY = topY + 41;
-        const pillW = Math.min(colRect.width * 0.92, 58);
-        ctx.beginPath();
-        ctx.roundRect(colRect.centerX - pillW / 2, pillY - 10, pillW, 20, 10);
-        ctx.fillStyle = '#f3f4f6';
-        ctx.fill();
-        ctx.strokeStyle = '#9ca3af';
-        ctx.lineWidth = 1.4;
-        ctx.stroke();
-
-        ctx.font = 'bold 11.5px sans-serif';
-        ctx.fillStyle = '#6b7280';
         ctx.textBaseline = 'middle';
-        ctx.fillText(`🔒第${colDef.unlockLvl}关`, colRect.centerX, pillY);
+        ctx.globalAlpha = 0.7;
+        ctx.fillText('🔒', colRect.centerX, topY + 24);
       }
       ctx.restore();
 
@@ -2944,6 +3759,14 @@
         const sc = stack[sIdx];
         const sy = getSlotCenterY(sIdx) + punchY;
         drawCandy(ctx, colRect.centerX, sy, sc.radius || state.layout.candyRadius, sc.colorIdx, sc.shape, sc.isRainbow, sc.rotation, sc.squish || 1);
+      }
+
+      // Ghost hint: shows which candy shape belongs here
+      if (isActive && stack.length < curLevelConfig.targetPerTube) {
+        ctx.save();
+        ctx.globalAlpha = 0.2 + Math.sin(performance.now() * 0.004 + i) * 0.06;
+        drawCandy(ctx, colRect.centerX, getSlotCenterY(stack.length) + punchY, state.layout.candyRadius * 0.9, i, 'round', false, 0, 1);
+        ctx.restore();
       }
 
       // Frost overlay
@@ -3005,12 +3828,13 @@
       ctx.font = `bold ${colRect.width < 75 ? 12 : 13.5}px "PingFang SC", "Microsoft YaHei", sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(colDef.solfege || `${i + 1}`, colRect.centerX, keyY + 11);
+      const narrowKey = colRect.width < 52;
+      ctx.fillText(narrowKey ? `${i + 1}` : (colDef.solfege || `${i + 1}`), colRect.centerX, keyY + 11);
 
       // Pitch notation (C4, D4, E4...)
       ctx.fillStyle = punchY > 1 ? colDef.hex : (isActive ? colDef.hex : '#9ca3af');
       ctx.font = 'bold 9.5px monospace';
-      ctx.fillText(colDef.pitch || '', colRect.centerX, keyY + 21);
+      if (!narrowKey) ctx.fillText(colDef.pitch || '', colRect.centerX, keyY + 21);
       ctx.restore();
 
       ctx.restore();
@@ -3134,7 +3958,7 @@
     ctx.save();
     ctx.scale(state.dpr, state.dpr);
 
-    if (state.screenShake > 0.2) {
+    if (state.screenShake > 0.2 && !state.reduceMotion) {
       const sx = (Math.random() - 0.5) * state.screenShake;
       const sy = (Math.random() - 0.5) * state.screenShake;
       ctx.translate(sx, sy);
@@ -3146,6 +3970,7 @@
 
     drawTopHeaderDecorations(ctx);
     drawRainbowColumns(ctx);
+    drawRowSweeps(ctx);
     drawMultiplierGates(ctx);
 
     // Falling Candies with dynamic aerodynamic fall stretch
@@ -3155,7 +3980,15 @@
       drawCandy(ctx, fc.x, fc.y, fc.radius, fc.colorIdx, fc.shape, fc.isRainbow, fc.rotation, stretchSquish, fc.specialType);
     }
 
+    for (const d of state.driftingCandies) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, Math.min(1, d.life / 0.8));
+      drawCandy(ctx, d.x, d.y, state.layout.candyRadius * 0.9, d.colorIdx, d.shape, d.isRainbow, d.rot, 1, d.specialType);
+      ctx.restore();
+    }
+
     drawCloudBar(ctx);
+    drawLuckyCandies(ctx);
     drawTutorialOverlay(ctx);
 
     // Particles
@@ -3202,6 +4035,18 @@
       ctx.restore();
     }
 
+    drawBanner(ctx);
+
+    // Gentle heart-loss flash (red edge glow only)
+    if (state.heartLossFlash > 0) {
+      ctx.save();
+      ctx.globalAlpha = state.heartLossFlash / 0.5;
+      ctx.strokeStyle = 'rgba(239, 68, 68, 0.75)';
+      ctx.lineWidth = 14;
+      ctx.strokeRect(7, 7, state.width - 14, state.height - 14);
+      ctx.restore();
+    }
+
     // Full-screen Penalty Effect (Red Danger Vignette, Expanding Shockwaves & Central Warning Card)
     drawFullScreenErrorEffect(ctx);
 
@@ -3221,24 +4066,24 @@
   function trySwatInteractiveTargets(px, py) {
     const lvlConfig = getLevelConfig();
 
+    // 0. Tap the "next candy" bubble to swap candies
+    const nb = getNextBubbleRect();
+    const pad = nb.big ? 14 : 8;
+    if (px >= nb.x - pad && px <= nb.x + nb.w + pad && py >= nb.y - pad && py <= nb.y + nb.h + pad) {
+      if (swapCandies()) return true;
+    }
+
     // 1. Check click on Top 6 Hand-drawn Magic Icons
     for (let i = 0; i < state.topIconPos.length; i++) {
       const pos = state.topIconPos[i];
       if (Math.hypot(px - pos.x, py - pos.y) <= pos.r + 10) {
-        if (!lvlConfig.features.topMagic) {
-          sfx.playTone(330, 0.12);
-          addFloatingText(pos.x, pos.y + 20, '🌟 第 5 关解锁画作魔法大招哦！', '#4f5d75', 0.95);
-          return true;
-        }
-        if (state.topIconCharge[i] >= 100) {
+        // Icons are only "buttons" when fully charged; otherwise a tap just gives a tiny wiggle
+        if (lvlConfig.features.topMagic && state.topIconCharge[i] >= 100) {
           activateTopIcon(i);
-          return true;
         } else {
-          state.topIconBounce[i] = 8;
-          sfx.playTone(440 + i * 50, 0.12);
-          addFloatingText(pos.x, pos.y + 20, `⚡ 能量 ${Math.floor(state.topIconCharge[i])}% (投糖充能满100%放大招)`, '#4f5d75', 0.95);
-          return true;
+          state.topIconBounce[i] = 5;
         }
+        return true;
       }
     }
 
@@ -3251,28 +4096,19 @@
         state.score += 15;
         state.screenShake = 6;
         spawnBurstParticles(fc.x, fc.y, '#fde047', 24, true);
-        addFloatingText(fc.x, fc.y - 12, '💥 空中拆弹成功 +15分!', '#1d8f24', 1.3);
+        addFloatingText(fc.x, fc.y - 12, '💥 拆弹 +15', '#1d8f24', 1.3);
         state.fallingCandies.splice(i, 1);
         updateHUD();
         return true;
       }
     }
 
-    // 3. Swatting an active Bomb held under the cloud
+    // 3. A bomb hanging under the cloud: tap to throw it away (no reward, just safe)
     if (state.activeCandy && state.activeCandy.specialType === 'bomb') {
       const candyX = state.cloud.x;
       const candyY = state.cloud.y + state.cloud.height * 0.5 + state.layout.candyRadius + 6;
       if (Math.hypot(px - candyX, py - candyY) <= state.layout.candyRadius * 2.2) {
-        sfx.playSwat();
-        unlockSticker('bomb_hero');
-        state.score += 15;
-        state.screenShake = 5;
-        spawnBurstParticles(candyX, candyY, '#fde047', 22, true);
-        addFloatingText(candyX, candyY - 10, '💥 拍飞坏炸弹 +15分！变彩虹糖！', '#1d8f24', 1.25);
-        state.activeCandy.specialType = 'rainbow';
-        state.activeCandy.isRainbow = true;
-        state.activeCandy.shape = 'star';
-        updateHUD();
+        discardHeldBomb();
         return true;
       }
     }
@@ -3281,14 +4117,16 @@
     const cols = state.layout.columns;
     for (let i = 0; i < cols.length; i++) {
       const col = cols[i];
-      if (Math.abs(px - col.centerX) <= col.width * 0.65 && Math.abs(py - col.topY) <= 46) {
-        if (state.columnBugs[i]) {
+      const onBug = state.columnBugs[i] && Math.hypot(px - col.centerX, py - (col.topY - 6)) <= 30;
+      const onIce = state.columnFrozen[i] > 0 && px >= col.x && px <= col.x + col.width && py >= col.topY - 6 && py <= col.topY + 54;
+      if (onBug || onIce) {
+        if (onBug) {
           state.columnBugs[i] = null;
           state.score += 12;
           sfx.playSwat();
           unlockSticker('bomb_hero');
           spawnBurstParticles(col.centerX, col.topY, '#84cc16', 20, true);
-          addFloatingText(col.centerX, col.topY - 18, '🐛 赶走贪吃虫 +12分！送1颗糖！', '#1d8f24', 1.2);
+          addFloatingText(col.centerX, col.topY - 18, '🐛 +12 送1颗', '#1d8f24', 1.2);
           addCandyToColumn(i, 'heart', false);
           updateHUD();
           return true;
@@ -3298,7 +4136,7 @@
           state.score += 10;
           sfx.playSwat();
           spawnBurstParticles(col.centerX, col.topY, '#38bdf8', 18, false);
-          addFloatingText(col.centerX, col.topY - 18, '❄️ 咔嚓破冰 +10分！', '#0284c7', 1.2);
+          addFloatingText(col.centerX, col.topY - 18, '❄️ +10', '#0284c7', 1.2);
           updateHUD();
           return true;
         }
@@ -3306,6 +4144,13 @@
     }
 
     return false;
+  }
+
+  function isPointOnCloud(px, py) {
+    const c = state.cloud;
+    const top = c.y - c.height / 2 - 6;
+    const bottom = c.y + c.height / 2 + state.layout.candyRadius * 2 + 12;
+    return Math.abs(px - c.x) <= c.width / 2 + 4 && py >= top && py <= bottom;
   }
 
   canvas.addEventListener('pointerdown', (e) => {
@@ -3324,6 +4169,8 @@
     state.TapStartTime = performance.now();
     state.TapStartX = px;
     state.TapStartY = py;
+    state.tapStartOnCloud = isPointOnCloud(px, py);
+    state.tapStartCloudCol = getColumnIndexAtX(state.cloud.x);
 
     if (Math.abs(px - state.cloud.x) < state.cloud.width * 0.6 && py < state.layout.columnsTopY + 40) {
       state.dragOffsetX = state.cloud.x - px;
@@ -3349,15 +4196,21 @@
     const elapsed = performance.now() - (state.TapStartTime || 0);
     const moved = Math.hypot(px - (state.TapStartX || px), py - (state.TapStartY || py));
 
-    // Quick tap: drop candy or align
+    // Quick tap:
+    //  - on the cloud (or its candy)          -> drop
+    //  - on the lane the cloud was already over -> drop
+    //  - on any other lane                     -> only move there (never drops by accident)
     if (elapsed < 320 && moved < 18) {
       const tappedCol = getColumnIndexAtX(px);
-      const currentCol = getColumnIndexAtX(state.cloud.x);
-
-      if (tappedCol === currentCol || Math.abs(px - state.cloud.x) < state.cloud.width * 0.45) {
+      const col = state.layout.columns[tappedCol];
+      if (state.tapStartOnCloud) {
         dropActiveCandy();
-      } else if (state.layout.columns[tappedCol]) {
-        state.cloud.targetX = state.layout.columns[tappedCol].centerX;
+      } else if (tappedCol === state.tapStartCloudCol && col) {
+        state.cloud.targetX = col.centerX;
+        clampCloudX();
+        dropActiveCandy();
+      } else if (col) {
+        state.cloud.targetX = col.centerX;
         clampCloudX();
       }
     }
@@ -3366,7 +4219,7 @@
   // Keyboard controls for desktop
   window.addEventListener('keydown', (e) => {
     sfx.init();
-    hideLevelIntroToast();
+    if (!isAnyModalOpen()) hideLevelIntroToast();
 
     if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
       e.preventDefault();
@@ -3376,19 +4229,24 @@
       state.keys.right = true;
     } else if (e.key === ' ' || e.key === 'ArrowDown' || e.key === 'Enter' || e.key === 's' || e.key === 'S') {
       e.preventDefault();
+      if (isGamePaused()) return;
       if (state.activeCandy && state.activeCandy.specialType === 'bomb') {
-        const candyX = state.cloud.x;
-        const candyY = state.cloud.y + state.cloud.height * 0.5 + state.layout.candyRadius + 6;
-        trySwatInteractiveTargets(candyX, candyY);
+        discardHeldBomb();
       } else {
         dropActiveCandy();
       }
+    } else if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === 'x' || e.key === 'X' || e.key === 'Shift') {
+      e.preventDefault();
+      if (!isGamePaused()) swapCandies();
     } else if (e.key === 'q' || e.key === 'Q') {
-      if (!activateTopIcon(0)) activateTopIcon(3);
-    } else if (e.key === 'w' || e.key === 'W') {
-      if (!activateTopIcon(1)) activateTopIcon(4);
+      if (!isGamePaused() && !activateTopIcon(0)) activateTopIcon(3);
     } else if (e.key === 'e' || e.key === 'E') {
-      if (!activateTopIcon(2)) activateTopIcon(5);
+      if (!isGamePaused() && !activateTopIcon(1)) activateTopIcon(4);
+    } else if (e.key === 'r' || e.key === 'R') {
+      if (!isGamePaused() && !activateTopIcon(2)) activateTopIcon(5);
+    } else if (e.key === 'p' || e.key === 'P' || e.key === 'Escape') {
+      e.preventDefault();
+      togglePauseMenu();
     } else if (e.key >= '1' && e.key <= '7') {
       const idx = parseInt(e.key, 10) - 1;
       if (state.layout.columns[idx]) {
@@ -3429,18 +4287,20 @@
   const hudHeartsPill = document.getElementById('hud-hearts-pill');
   if (hudHeartsPill) {
     hudHeartsPill.addEventListener('click', () => {
-      addFloatingText(state.width / 2, state.cloud.y - 18, `❤️ 当前生命：${state.hearts}/${state.maxHearts}（达成 5 连击可恢复 1 心）`, '#ff2e63', 1.15);
+      addFloatingText(state.width / 2, state.cloud.y - 18, `❤️ ${state.hearts}/${state.maxHearts} · 5连击回1心`, '#ff2e63', 1.15);
     });
   }
 
   // Reset levels
   document.getElementById('btn-reset-levels').addEventListener('click', () => {
-    if (confirm('确定要重置关卡闯关进度吗？重置后将从第 1 关重新开始。')) {
+    levelSelectModal.classList.remove('open');
+    askConfirm('清空所有进度？', '所有关卡的星星和解锁都会清空，从第 1 关重新开始。这一步不能撤销。', () => {
       state.unlockedLevel = 1;
       state.levelStars = {};
+      state.levelHighScores = {};
       saveProgress();
       startLevel(1);
-    }
+    });
   });
 
   // Level Clear buttons
@@ -3466,7 +4326,14 @@
   if (btnRetryLevel) {
     btnRetryLevel.addEventListener('click', () => {
       levelFailModal.classList.remove('open');
-      startLevel(state.currentLevel);
+      startLevel(state.currentLevel, true, state.isEndlessMode);
+    });
+  }
+  const btnCheckpoint = document.getElementById('btn-checkpoint-level');
+  if (btnCheckpoint) {
+    btnCheckpoint.addEventListener('click', () => {
+      levelFailModal.classList.remove('open');
+      resumeFromCheckpoint();
     });
   }
   const btnFailOpenMap = document.getElementById('btn-fail-open-map');
@@ -3479,8 +4346,11 @@
 
   // Quick reset in HUD
   document.getElementById('btn-quick-reset').addEventListener('click', () => {
-    startLevel(state.currentLevel, false);
-    addFloatingText(state.width / 2, state.cloud.y - 20, `🔄 已重新开始第 ${state.currentLevel} 关`, '#4f5d75', 1.1);
+    document.getElementById('pause-modal').classList.remove('open');
+    askConfirm('重新开始这一关？', '这一关现在的进度会清零。', () => {
+      startLevel(state.currentLevel, false, state.isEndlessMode);
+      addFloatingText(state.width / 2, state.cloud.y - 20, '🔄 重新开始', '#4f5d75', 1.1);
+    });
   });
 
   // Tutorial / Guidance Modal
@@ -3511,7 +4381,7 @@
   // Victory modal buttons
   document.getElementById('btn-win-replay').addEventListener('click', () => {
     victoryModal.classList.remove('open');
-    startLevel(8);
+    startLevel(LEVELS.length, true, true);
   });
   document.getElementById('btn-win-map').addEventListener('click', () => {
     victoryModal.classList.remove('open');
@@ -3545,26 +4415,82 @@
     if (state.feverGauge >= 100 && state.feverTimer <= 0) {
       triggerFeverMode();
     } else {
-      addFloatingText(state.width / 2, state.layout.cloudY - 15, `🌈 连续接准糖果攒满100%即可触发彩虹暴走！`, '#7c3aed', 1.0);
+      addFloatingText(state.width / 2, state.layout.cloudY - 15, '🌈 投对糖攒满100%', '#7c3aed', 1.0);
     }
   });
 
-  // Music Box BGM toggle
-  const btnBgm = document.getElementById('btn-bgm');
-  btnBgm.addEventListener('click', () => {
-    sfx.init();
-    sfx.bgmEnabled = !sfx.bgmEnabled;
-    btnBgm.classList.toggle('active-mode', sfx.bgmEnabled);
-    btnBgm.innerHTML = sfx.bgmEnabled ? '🎵 <span class="mode-long">音乐开</span>' : '🎵 <span class="mode-long">音乐</span>';
+  // Pause menu wiring
+  document.getElementById('btn-pause').addEventListener('click', () => openPauseMenu());
+  document.getElementById('btn-resume').addEventListener('click', () => {
+    document.getElementById('pause-modal').classList.remove('open');
+  });
+  // Any menu entry closes the pause card first (the opened dialog keeps the game paused)
+  ['btn-level-map', 'btn-tutorial-hint', 'btn-stickers', 'btn-art'].forEach(id => {
+    document.getElementById(id).addEventListener('click', () => {
+      document.getElementById('pause-modal').classList.remove('open');
+    }, true);
   });
 
-  // Sound FX toggle
-  const btnSound = document.getElementById('btn-sound');
-  btnSound.addEventListener('click', () => {
-    sfx.enabled = !sfx.enabled;
-    btnSound.textContent = sfx.enabled ? '🔊' : '🔇';
-    if (sfx.enabled) sfx.playTone(440, 0.15);
+  document.getElementById('confirm-ok').addEventListener('click', () => {
+    document.getElementById('confirm-modal').classList.remove('open');
+    const fn = confirmHandler;
+    confirmHandler = null;
+    if (fn) fn();
   });
+  document.getElementById('confirm-cancel').addEventListener('click', () => {
+    document.getElementById('confirm-modal').classList.remove('open');
+    confirmHandler = null;
+  });
+
+  // Auto-pause when switching apps / tabs
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && !state.isLevelCleared && !state.isLevelFailed) openPauseMenu();
+  });
+
+  // One sound button: sound effects only -> music + effects -> mute
+  const AUDIO_MODES = {
+    sfx:  { label: '🔊 只开音效', next: 'all',  enabled: true,  bgm: false },
+    all:  { label: '🎵 音乐+音效', next: 'mute', enabled: true,  bgm: true },
+    mute: { label: '🔇 静音',     next: 'sfx',  enabled: false, bgm: false }
+  };
+  const btnAudio = document.getElementById('btn-audio');
+  function applyAudioMode(mode) {
+    const m = AUDIO_MODES[mode] || AUDIO_MODES.sfx;
+    state.audioMode = AUDIO_MODES[mode] ? mode : 'sfx';
+    sfx.enabled = m.enabled;
+    sfx.bgmEnabled = m.bgm;
+    btnAudio.textContent = m.label;
+    try { localStorage.setItem('rainbow_candy_audio_mode', state.audioMode); } catch (_) {}
+  }
+  btnAudio.addEventListener('click', () => {
+    sfx.init();
+    applyAudioMode(AUDIO_MODES[state.audioMode].next);
+    if (sfx.enabled) sfx.playRealPianoNote('C5', 0.8, 0);
+  });
+
+  // Reduce motion: follows the system setting by default, can be switched in the pause menu
+  const btnMotion = document.getElementById('btn-motion');
+  function applyReduceMotion(on) {
+    state.reduceMotion = !!on;
+    document.body.classList.toggle('reduce-motion', state.reduceMotion);
+    btnMotion.textContent = state.reduceMotion ? '🌀 晃动特效：关' : '🌀 晃动特效：开';
+  }
+  btnMotion.addEventListener('click', () => {
+    applyReduceMotion(!state.reduceMotion);
+    try { localStorage.setItem('rainbow_candy_reduce_motion', state.reduceMotion ? '1' : '0'); } catch (_) {}
+  });
+
+  (() => {
+    let savedAudio = null;
+    let savedMotion = null;
+    try {
+      savedAudio = localStorage.getItem('rainbow_candy_audio_mode');
+      savedMotion = localStorage.getItem('rainbow_candy_reduce_motion');
+    } catch (_) {}
+    applyAudioMode(savedAudio || 'sfx');
+    const systemReduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    applyReduceMotion(savedMotion === null ? systemReduce : savedMotion === '1');
+  })();
 
   // Initialization
   loadSavedProgress();
@@ -3577,7 +4503,7 @@
   function loop(now) {
     const dt = Math.min(0.05, Math.max(0.001, (now - lastTime) / 1000));
     lastTime = now;
-    update(dt);
+    if (!isGamePaused()) update(dt);
     render();
     requestAnimationFrame(loop);
   }
