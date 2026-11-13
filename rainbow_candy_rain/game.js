@@ -605,7 +605,7 @@
       // Kept silent so only landing tones are heard
     }
 
-    // 2. Candy Landing in Column: Strictly Helmholtz 小字1组 (1 2 3 4 5 6 7 -> C4..B4)
+    // 2. Tapped color column: Strictly Helmholtz 小字1组 (1 2 3 4 5 6 7 -> C4..B4)
     // Pure single acoustic Grand Piano note for ear training (听音/练耳). No chords, no harmony layers!
     playMatch(colIndex) {
       const col = COLOR_COLUMNS[colIndex] || COLOR_COLUMNS[0];
@@ -2725,7 +2725,6 @@
 
           // Shower special candy
           if (fc.specialType === 'shower') {
-            sfx.playMatch(colIdx);
             addFloatingText(state.width / 2, state.layout.columnsTopY - 24, '🌧️ 每柱 +1！', '#298cd4', 1.35);
             lvlConfig.activeCols.forEach(c => addCandyToColumn(c, 'star', false));
           } else if (currentCount < lvlConfig.targetPerTube) {
@@ -2735,8 +2734,6 @@
             state.cloud.bounceY = -10;
             state.topIconBounce[colIdx % 6] = 10;
 
-            // Pure single piano note for ear-training
-            sfx.playMatch(colIdx);
             const progressStr = `${state.columnCounts[colIdx]}/${lvlConfig.targetPerTube}`;
             addFloatingText(
               col.centerX,
@@ -2760,13 +2757,11 @@
             const to = getLowestNeededColumn();
             spawnBurstParticles(fc.x, landingY, '#ffd700', 12, true);
             addCandyToColumn(to, 'star', true);
-            sfx.playMatch(to);
             addFloatingText(cols[to].centerX, cols[to].topY - 14, '🌈 跳过来啦', '#7c3aed', 1.1);
           } else {
             // Already full
             state.columnPunchY[colIdx] = 6.0;
             triggerHaptic('match');
-            sfx.playMatch(colIdx);
             state.score += 5;
             spawnBurstParticles(fc.x, landingY, '#ffd700', 12, true);
             addFloatingText(col.centerX, landingY - 18, '⭐ +5', '#ffd700', 1.15);
@@ -4262,6 +4257,11 @@
     if (elapsed < 320 && moved < 18) {
       const tappedCol = getColumnIndexAtX(px);
       const col = state.layout.columns[tappedCol];
+      // Play the note of the color column that was tapped (tap on the cloud -> the column under the cloud)
+      if (!isGamePaused()) {
+        const soundCol = state.tapStartOnCloud ? state.tapStartCloudCol : tappedCol;
+        if (state.layout.columns[soundCol]) sfx.playMatch(soundCol);
+      }
       if (state.tapStartOnCloud) {
         dropActiveCandy();
       } else if (tappedCol === state.tapStartCloudCol && col) {
